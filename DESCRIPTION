@@ -1,9 +1,26 @@
-Package: GeoAvir
+Package: GeoAviR
 Type: Package
-Title: What the package does (short line)
-Version: 1.0
-Date: 2014-11-28
-Author: Who wrote it
-Maintainer: Who to complain to <yourfault@somewhere.net>
-Description: More about what it does (maybe more than one line)
-License: What license is it under?
+Title: Mapping and implementing distance sampling for seabird at-sea data
+Version: 0.6.5
+Date: 2014-07-06
+Author: Christian Roy, Francois Rousseu and Francois Bolduc
+Maintainer: Francois Bolduc <francois.Bolduc@ec.gc.ca>
+Description: This package will allow the user to plot abundance and correct
+    densities for data collected within a distance sampling framework if
+    needed.
+Depends:
+    colorspace,
+    geosphere,
+    gplots,
+    ggplot2,
+    maptools,
+    plyr,
+    rgeos,
+    unmarked,
+    sp
+Suggests:
+    rgdal
+License: GPL-2
+Encoding: latin1
+LazyLoad: yes
+LazyDataCompression: xz
