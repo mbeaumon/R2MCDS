@@ -92,7 +92,7 @@
 #'surveys for estimating population size.} Journal of Applied Ecology 47: 5-14.
 #'DOI: 10.1111/j.1365-2664.2009.01737.x
 
-#'@section Author:Francois Rousseu, François Bolduc
+#'@section Author:Francois Rousseu, Fran?ois Bolduc
 
 #'@examples
 #'########################################
@@ -635,15 +635,16 @@ function(dataset,
 		
 		x<-readLines(file.path(path,res.file[i]))
 		y<-readLines(file.path(path,det.file[i]))
-		ans<-vector(mode="list",length=5)
-		ans[[1]]<-model_fittingMCDS(x)
-		ans[[2]]<-parameter_estimatesMCDS(x)
-		ans[[3]]<-chi_square_testMCDS(x)
-		ans[[4]]<-density_estimateMCDS(x)
+		ans<-vector(mode="list",length=7)
+		ans[[1]]<-dataset
+    ans[[2]]<-model_fittingMCDS(x)
+		ans[[3]]<-parameter_estimatesMCDS(x)
+		ans[[4]]<-chi_square_testMCDS(x)
+		ans[[5]]<-density_estimateMCDS(x)
 		#browser()
-		ans[[5]]<-detection_probabilityMCDS(y)
-		ans[[6]]<-path
-		names(ans)<-c("model_fitting","parameter_estimates","chi_square_test","density_estimate","detection","path")
+		ans[[6]]<-detection_probabilityMCDS(y)
+		ans[[7]]<-path
+		names(ans)<-c("original data","model_fitting","parameter_estimates","chi_square_test","density_estimate","detection","path")
 		class(ans)<-"distanceFit"
 		#ans
 		lans[[i]]<-ans
