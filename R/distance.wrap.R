@@ -626,6 +626,12 @@ function(dataset,
 		####################################################
 		### output
 		
+    ### subset original observations
+		input.data <- list()
+    input.data[[1]] <- dat
+		input.data[[2]] <- breaks
+		names(input.data)<-c("observations","breaks")
+    
 		log<-readLines(file.path(path,log.file[i]))
 		res<-readLines(file.path(path,res.file[i]))
 		if(any(grep("No fit possible",log)) || length(res)<1L){
@@ -636,7 +642,7 @@ function(dataset,
 		x<-readLines(file.path(path,res.file[i]))
 		y<-readLines(file.path(path,det.file[i]))
 		ans<-vector(mode="list",length=7)
-		ans[[1]]<-dataset
+		ans[[1]]<-input.data
     ans[[2]]<-model_fittingMCDS(x)
 		ans[[3]]<-parameter_estimatesMCDS(x)
 		ans[[4]]<-chi_square_testMCDS(x)
@@ -644,7 +650,7 @@ function(dataset,
 		#browser()
 		ans[[6]]<-detection_probabilityMCDS(y)
 		ans[[7]]<-path
-		names(ans)<-c("original data","model_fitting","parameter_estimates","chi_square_test","density_estimate","detection","path")
+		names(ans)<-c("input data","model_fitting","parameter_estimates","chi_square_test","density_estimate","detection","path")
 		class(ans)<-"distanceFit"
 		#ans
 		lans[[i]]<-ans

@@ -7,8 +7,9 @@ function(x){
 	  ans<-dtable(x,w=w,char="---------")	  
 	  #ans<-ans[c(3,1,2),]
 	  ans<-data.frame(Stratum="Global",ans,stringsAsFactors=F)
-	  names(ans)<-c("Stratum","Parameters","Estimates","SE*","% of var.","95% Lower","95% Upper")
-	  res$Global<-ans	
+	  names(ans)<-c("Stratum","Parameters","Estimates","SE","% of var.","95% Lower","95% Upper")
+	  ans[,3:7]<- sapply(1:5, function(i){as.numeric(ans[,i+2])})
+    res$Global<-ans	
 	}
 	stratum_names<-get_stratum_names(x)
 	g<-grep("Density Estimates/Global",x)
@@ -28,8 +29,9 @@ function(x){
       tab		
 		})						
 	  ans<-do.call("rbind",ans)		
-		names(ans)<-c("Stratum","Parameters","Estimates","SE*","% of var.","95% Lower","95% Upper")
-		res$Stratum<-ans			
+		names(ans)<-c("Stratum","Parameters","Estimates","SE","% of var.","95% Lower","95% Upper")
+		ans[,3:7]<- sapply(1:5, function(i){as.numeric(ans[,i+2])})
+    res$Stratum<-ans			
 	}
 	g<-grep("Estimation Summary - Density&Abundance",x)
   if(length(g)==2L){
@@ -39,7 +41,8 @@ function(x){
     	if(any(gg)){gg<-min(gg)-1}else{gg<-length(x)}
     	ans<-dtable(x=x,char=c(g[2]+5,gg))	
     	ans<-data.frame(Stratum="Global",ans,stringsAsFactors=F)
-    	names(ans)<-c("Stratum","Parameters","Estimates","SE*","% of var.","95% Lower","95% Upper")
+    	names(ans)<-c("Stratum","Parameters","Estimates","SE","% of var.","95% Lower","95% Upper")
+    	ans[,3:7]<- sapply(1:5, function(i){as.numeric(ans[,i+2])})
     	res$Global<-ans
     }
   }  

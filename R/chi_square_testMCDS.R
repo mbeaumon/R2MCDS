@@ -6,7 +6,10 @@ function(x){
 	if(any(w)){
 		tab<-dtable(x,w,char="---------")
 		tab<-data.frame(Stratum="Global",tab,stringsAsFactors=F)
-		names(tab)<-c("Stratum","Cell","CutsLo","CutsUp","Observed","Predicted","Chi.values")
+		names(tab)<-c("Stratum","Distance bin","Breaks","Break2","Observed","Predicted","Chi.values")
+		tab[,3:7]<- sapply(1:5, function(i){as.numeric(tab[,i+2])})
+		tab[,"Breaks"] <- paste("[",tab[,"Breaks"]," - ",tab[,"Break2"],"[", sep="")
+		tab <- tab[,-4]
 	  res$Global<-tab
 	}
 	stratum_names<-get_stratum_names(x)
@@ -21,8 +24,11 @@ function(x){
 			tab		
 		})						
 		ans<-do.call("rbind",ans)		
-		names(ans)<-c("Stratum","Cell","CutsLo","CutsUp","Observed","Predicted","Chi.values")
-		res$Stratum<-ans			
+		names(ans)<-c("Stratum","Distance bin","Breaks","Break2","Observed","Predicted","Chi.values")
+		ans[,3:7]<- sapply(1:5, function(i){as.numeric(ans[,i+2])})
+		ans[,"Breaks"] <- paste("[",ans[,"Breaks"]," - ",ans[,"Break2"],"[", sep="")
+		ans <- ans[,-4]
+    res$Stratum<-ans			
 	}
 	res
 }
