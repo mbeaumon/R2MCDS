@@ -13,14 +13,16 @@ function(x){
 		  i[length(i)]
 	  })
 	  ans<-as.numeric(ans)
-	  names(ans)<-c("effort","samples","width","left","observations")
 	  l<-strsplit(x[(g+7):(g+8)]," ")
 	  l<-sapply(l,function(i){
 	  	i<-paste(i[i!=""],collapse=" ")
-	  })
-	  ans<-c(ans,l)
-	  ans<-data.frame(Descriptives=paste(names(ans),ans,sep=" : "))
-	  res$Global<-ans
+	  })[1]
+	  descrip <- c("effort","samples","width","left","observations")
+	  ans<-data.frame(Parameters=descrip,Values=ans)
+	  res$Global<-list()
+	  res$Global[[1]]<-ans
+	  res$Global[[2]]<-l
+    names(res$Global) <- c("Parameters","Type")
  }
 	stratum_names<-get_stratum_names(x)
 	l<-any(unlist(sapply(paste("Detection Fct/",stratum_names,"/Parameter Estimates",sep=""),function(i){grep(i,x,fixed=TRUE)})))
@@ -42,8 +44,8 @@ function(x){
 				l<-sapply(l,function(i){
 					i<-paste(i[i!=""],collapse=" ")
 				})
-				ans<-c(ans,l)
-				ans<-data.frame(Descriptives=paste(names(ans),ans,sep=" : "))				
+				descrip <- c("effort","samples","width","left","observations")
+				ans<-data.frame(Parameters=descrip,Values=ans)	
 			  return(ans)
 			}else{
 			  return(NULL)

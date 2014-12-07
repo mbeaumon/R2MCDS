@@ -117,7 +117,7 @@
 #'x<-distance.wrap(alcids,path=path,pathMCDS=pathMCDS,breaks=breaks,STR_LABEL=STR_LABEL,STR_AREA=STR_AREA,SMP_LABEL=SMP_LABEL,SMP_EFFORT=SMP_EFFORT,DISTANCE=DISTANCE,SIZE=SIZE,verbose=FALSE)
 #'
 #'### Plot results
-#'resume.plot(x,title="ECSAS modelling",subtitle="Quebec extraction", file="tempo", directory="C:/temp/distance", PDF=T)
+#'Global.summary(model=x, file="alcidae_global", directory="C:/temp/distance")
 #'
 #'### Run separate analysis for years 2008-2009
 #'lsub<-list(Year=c(2008,2009))
@@ -127,7 +127,7 @@
 #'
 #'### Get the names of the different models produced and plot results for the first model
 #'names(x)
-#'resume.plot(x,subset="2008", file="tempo", directory="C:/temp/distance", PDF=T)
+#'Global.summary(model=x, file="alcidae", directory="C:/temp/distance")
 #'
 #'### Plot all results in a single line
 #'lapply(x,resume.plot)

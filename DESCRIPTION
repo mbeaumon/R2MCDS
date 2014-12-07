@@ -16,8 +16,8 @@ Depends:
     maptools,
     plyr,
     rgeos,
-    unmarked,
-    sp
+    xtable,
+    sp,
 Suggests:
     rgdal
 License: GPL-2
