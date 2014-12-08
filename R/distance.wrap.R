@@ -103,7 +103,7 @@
 #'alcids<-filterECSAS(alcidae)
 #'
 #'### Set arguments and parameters
-#'path<-getwd()
+#'path<-("c:/temp/distance")
 #'pathMCDS<-"C:/Program Files (x86)/Distance 6"
 #'breaks<-c(0,50,100,200,300)
 #'STR_LABEL<-"STR_LABEL"
@@ -183,7 +183,7 @@
 #'d<-d[order(d$zone),]
 #'
 #'### Set common model arguments
-#'path<-getwd()
+#'path<-("c:/temp/distance")
 #'pathMCDS<-"C:/Program Files (x86)/Distance 6"
 #'breaks<-c(0,50,100,200,300)
 #'SMP_LABEL<-"SMP_LABEL"
@@ -320,6 +320,9 @@ function(dataset,
 		dataset<-dataset[dataset$Date>=min(period) & dataset$Date<=max(period),]
 	}
 	
+  #Make sure the directory exist to save output
+	dir.create(path, recursive = TRUE, showWarnings = FALSE)
+  
 	# this recursively fits a model to get an estimate of p for a rarer species
 	if(!is.null(rare)){		
 		if(!names(rare)%in%names(dataset)){stop(paste("The column",names(rare)[1],"not in dataset"))}

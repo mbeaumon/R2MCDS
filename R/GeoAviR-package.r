@@ -15,14 +15,14 @@
 #'}
 #'@references
 #'S.T. Buckland, D.R. Anderson, K.P. Burnham, J.L Laake, D.L. Borchers and L. Thomas. 2001. \emph{Introduction to Distance Sampling}. Estimating abundance of biological populations. Oxford University Press.\cr
-#'Royle, J. A., D. K. Dawson, and S. Bates. 2004. \emph{Modeling abundance effects in distance sampling}. Ecology 85:1591–1597\cr
-#'Fiske, I. and R. B. Chandler. 2011. \emph{unmarked: An R package for fitting hierarchical models of wildlife occurrence and abundance}. Journal of Statistical Software 43:1–23.\cr 
+#'Royle, J. A., D. K. Dawson, and S. Bates. 2004. \emph{Modeling abundance effects in distance sampling}. Ecology 85:1591-1597\cr
+#'Fiske, I. and R. B. Chandler. 2011. \emph{unmarked: An R package for fitting hierarchical models of wildlife occurrence and abundance}. Journal of Statistical Software 43:1-23.\cr 
 #'Thomas, L., S.T. Buckland, E.A. Rexstad, J. L. Laake, S. Strindberg, S. L. Hedley, J. R.B. Bishop, T. A. Marques, and K. P. Burnham. 2010.  Distance software: design and analysis of distance sampling surveys for estimating population size.  Journal of Applied Ecology 47: 5-14.
 #'@examples
 ###Import the data
 #'data(alcidae)
 
-###Check the naïve detection histogram
+###Check the na?ve detection histogram
 #'hist.wrap(alcidae,Trn.Value="Count", Dist.class="Distance", Keep.class=c("A", "B", "C", "D"),
 #'          Breaks=c(0,50,100,200,300), Trn.ID="WatchID",  Trn.length="WatchLenKm", Resume=FALSE)
 
@@ -77,7 +77,7 @@ NULL
 #'@name alcidae
 #'@examples
 #'data(alcidae)
-#'###Check the naïve detection histogram
+#'###Check the na?ve detection histogram
 #'hist.wrap(alcidae,Trn.Value="Count", Dist.class="Distance", Keep.class=c("A", "B", "C", "D"),
 #'          Breaks=c(0,50,100,200,300), Trn.ID="WatchID",  Trn.length="WatchLenKm", Resume=F)
 #'#END

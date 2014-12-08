@@ -12,7 +12,7 @@
 #'This function will prints all the summary tables and an histogram with the predicted detection function in on a 11 X 8 inches PDF. If Global summary is applied on a list in will produce a serie of PDF. 
 #'@references 
 #'S.T. Buckland, D.R. Anderson, K.P. Burnham, J.L Laake, D.L. Borchers and L. Thomas. 2001. \emph{Introduction to Distance Sampling}. Estimating abundance of biological populations. Oxford University Press.
-#'@section Author:Christian Roy, Francois Rousseu
+#'@section Author:Christian Roy
 #'@examples
 #'### Import and filter data
 #'data(alcidae)
