@@ -23,6 +23,7 @@
 #'data(alcidae)
 #'alcids<-filterECSAS(alcidae)
 #'##END
+NULL
 
 #'@title sample dataset for the distance analysis
 #'
