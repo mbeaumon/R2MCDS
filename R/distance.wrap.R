@@ -522,8 +522,8 @@ function(dataset,
 		#opts["Fields="]<-paste(paste(fields,collapse=", "),";",sep="")
 		#dat<-dataset
 		opts["Factor"]<-if(!is.null(factor)){labels<-sort(unique(dat[,factor]))
-																																							labels<-labels[!is.na(labels)]
-																																							paste(paste(paste(c(" /Name="," /Levels="," /Labels="),c(factor,length(labels),paste(labels,collapse=",")),sep=""),collapse=""),";",sep="")
+		labels<-labels[!is.na(labels)]
+		paste(paste(paste(c(" /Name="," /Levels="," /Labels="),c(factor,length(labels),paste(labels,collapse=",")),sep=""),collapse=""),";",sep="")
 		}else{
 			NULL
 		}
@@ -546,16 +546,15 @@ function(dataset,
 		}else{
 			if(stratum=="STR_LABEL"){
 				
-				opts["Density="]<-"Stratum /Design=None;" # in post stratify and stratify only, both lines are the same
+				opts["Density="]<-"Stratum /DESIGN=strata /WEIGHT=area;" # in post stratify and stratify only, both lines are the same
 				opts["Encounter="]<-"Stratum;"
 				opts["Detection="]<-paste(detection,";",sep="")
-				opts["Size="]<-"Stratum;"
+				opts["Size="]<-"All;"
 			}else{
-				
-				opts["Density="]<-"Stratum /Design=None;"
+				opts["Density="]<-"Stratum /DESIGN=None;"
 				opts["Encounter="]<-"Stratum;"
 				opts["Detection="]<-paste(detection,";",sep="")
-				opts["Size="]<-"Stratum;"
+				opts["Size="]<-"All;"
 				#dat[,"STR_LABEL"]<-dat[,stratum]			
 				#dat<-dat[,names(dat)[names(dat)!=stratum]]	
 				opts["Fields="]<-paste(paste(names(dat),collapse=", "),";",sep="")
@@ -585,7 +584,7 @@ function(dataset,
 			opts[["Estimator1"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion="," /NAP=",if(va){" /Covariates="}else{NULL}),c("UN","CO","AIC","0",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
 		}
 		opts["Monotone="]<-paste(monotone,";",sep="")
-		opts["Pick="]<-"AIC;"
+		opts["Pick="]<-"AICC;"
 		opts["GOF;"]<-""
 		opts["Cluster /Bias="]<-"GXLOG;"
 		opts["VarN="]<-"Empirical;"

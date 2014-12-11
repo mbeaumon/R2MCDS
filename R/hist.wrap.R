@@ -8,7 +8,7 @@
 #'@param Dist.class which column in the data.frame hold the information for the distance class.
 #'@param Keep.class which class of observations should be used for the analysis.
 #'@param Breaks what are the intervals for the distance analysis.
-#'@color fill color for the bars
+#'@param color fill color for the bars
 #'@details
 #' Make a histogram of the observations in function of the distance class
 #'@section Author:Christian Roy

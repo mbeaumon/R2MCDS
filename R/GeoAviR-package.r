@@ -8,8 +8,8 @@
 #'\tabular{ll}{
 #'Package: \tab GeoAviR\cr
 #'Type: \tab Package\cr
-#'Version: \tab 0.6.2\cr
-#'Date: \tab 2014-05-17\cr
+#'Version: \tab 0.7.0\cr
+#'Date: \tab 2014-12-05\cr
 #'License: \tab GPL-2\cr
 #'LazyLoad: \tab yes\cr
 #'}
@@ -19,31 +19,10 @@
 #'Fiske, I. and R. B. Chandler. 2011. \emph{unmarked: An R package for fitting hierarchical models of wildlife occurrence and abundance}. Journal of Statistical Software 43:1-23.\cr 
 #'Thomas, L., S.T. Buckland, E.A. Rexstad, J. L. Laake, S. Strindberg, S. L. Hedley, J. R.B. Bishop, T. A. Marques, and K. P. Burnham. 2010.  Distance software: design and analysis of distance sampling surveys for estimating population size.  Journal of Applied Ecology 47: 5-14.
 #'@examples
-###Import the data
+#'### Import and filter data
 #'data(alcidae)
-
-###Check the na?ve detection histogram
-#'hist.wrap(alcidae,Trn.Value="Count", Dist.class="Distance", Keep.class=c("A", "B", "C", "D"),
-#'          Breaks=c(0,50,100,200,300), Trn.ID="WatchID",  Trn.length="WatchLenKm", Resume=FALSE)
-
-###Run the three basic unmarked models
-#'alcidae.output<-unmarked.wrap(alcidae,Trn.Value="Count", Dist.class="Distance", Keep.class=c("A", "B", "C", "D"),
-#'                             Breaks=c(0,50,100,200,300),  Trn.ID="WatchID",  Trn.length="WatchLenKm", Resume=TRUE)
-
-###Look at the structure of the output
-#'str(alcidae.output)
-
-###Look at output of the exponential model 
-#'summary(alcidae.output[[2]])
-
-####Plot the summary table and hsitogram for each model
-#'par(ask=T)
-#'resume.plot(alcidae.output[[1]])
-#'resume.plot(alcidae.output[[2]])
-#'resume.plot(alcidae.output[[3]])
-#'par(ask=F)
-#END
-NULL
+#'alcids<-filterECSAS(alcidae)
+#'##END
 
 #'@title sample dataset for the distance analysis
 #'
