@@ -184,7 +184,7 @@ d<-merge(d,temp,sort=FALSE)
 d<-d[,c("zone","zone_area","Date","SMP_LABEL","SMP_EFFORT","Distance","Count","Alpha","LatStart","LongStart")]
 dd<-ddply(d,.(SMP_LABEL),function(i){sum(i$Count,na.rm=TRUE)}) #eliminate duplicate lines for transect without observations
 dd<-dd[dd$V1==0,] #get the label name for transect without observations
-d<-d[(d$SMP_LABEL\\\%in\\\%dd$SMP_LABEL & !duplicated(d$SMP_LABEL)) | (!d$SMP_LABEL\\\%in\\\%dd$SMP_LABEL & !(d$Alpha=="")),] #keep only lines for empty transects or non-empty lines for non-empty transects
+d<-d[(d$SMP_LABEL\%in\%dd$SMP_LABEL & !duplicated(d$SMP_LABEL)) | (!d$SMP_LABEL\%in\%dd$SMP_LABEL & !(d$Alpha=="")),] #keep only lines for empty transects or non-empty lines for non-empty transects
 d<-d[order(d$zone),]
 
 ### Set common model arguments
