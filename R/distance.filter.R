@@ -48,12 +48,13 @@ function(x, transect.id="WatchID",distance.field="Distance", distance.labels=c("
                           x<-x[x[,"WatchLenKm"]>0,] 
                           x<-x[!is.na(x[,"LatStart"]),]
                           x<-x[!is.na(x[,"LongStart"]),]
-                         	y<-x
+                          x<-x[!(x[,"Distance"]=="" & x[,"Alpha"]!=""),] #eliminates observations recorded without a distance
+                          x[,"Distance"]<-ifelse(x[,"Distance"]=="",NA,as.character(x[,"Distance"]))    #writes NA when there is no distance, when nothing in the transect
+                          x<-x[x[,"Distance"]%in%c(distance.labels,NA),]
+                          y<-x
                         	y[,"Distance"]<-NA
-                        	y[,"Alpha"]<-""
-                        	x<-x[!(x[,"Distance"]=="" & x[,"Alpha"]!=""),] #eliminates observations recorded without a distance
-                        	x[,"Distance"]<-ifelse(x[,"Distance"]=="",NA,as.character(x[,"Distance"])) #writes NA when there is no distance, when nothing in the transect
-                        	x<-x[x[,"Distance"]%in%c("A","B","C","D",NA),]
+                        	#y[,"Alpha"]<-""
+                          y[,c("Alpha","English","Latin","InTransect")] <- ""
                         	x[,"Distance"]<-as.character(x[,"Distance"])
                           
                           for(i in 1:length(distance.labels)){

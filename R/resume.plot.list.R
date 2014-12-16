@@ -60,10 +60,10 @@ function(model,subset=NULL,stratum=FALSE,title=NULL,subtitle=NULL,
   	#model fitting
   	y<-model$model_fitting
   	if(!stratum || is.null(y[["Stratum"]])){
-  		yy<-y[["Global"]]
+  		yy<-y$Global$Parameters
   		if(is.null(yy)){yy<-y[["Stratum"]]}	
   	}else{
-  		yy<-y[["Stratum"]]
+  		yy<-y$Global$Parameters
   	}
   	textplot(yy, show.rownames = FALSE, cmar=1)
   	title("Model Fitting", cex.main = 2)
