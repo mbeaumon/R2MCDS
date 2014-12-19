@@ -10,4 +10,5 @@ Version 0.7
 * resume.plot is deprecated
 * Global.summary replace resume.plot
 * distance.wrap output has been modified to accomodate change for Global.summary
-
+* ECSASfilter and Distancefilter bugs have been fixed
+* Added print and summary function for distanceFit objects
