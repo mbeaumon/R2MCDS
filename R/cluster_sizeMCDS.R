@@ -16,8 +16,8 @@ cluster_sizeMCDS <- function(x){
   ans[[3]] <- c(as.numeric(substr(x[g],25,30)), as.numeric(substr(x[g],58,65)))
   names(ans[[3]]) <- c(trim(substr(x[g],2,22)),trim(substr(x[g],35,55)))
   
-  g.2 <- grep("Estimation Summary - Expected cluster size ",x) 
-  ans[[4]] <- as.numeric(dtable(x,w=g,char=c(g.2+5,g.2+5), nbcol=5))
+  g.2 <- grep("Average cluster size",x)
+  ans[[4]] <- as.numeric(dtable(x,w=g.2,char=c(g.2+1,g.2+1), nbcol=5))
   names(ans[[4]])<- c("Average cluster size","%CV","df","Lower 95%CI", "Upper 95%CI")
   return(ans)
 }

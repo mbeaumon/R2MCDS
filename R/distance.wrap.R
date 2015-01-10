@@ -586,16 +586,16 @@ function(dataset,
 		
 		x<-readLines(file.path(path,res.file[i]))
 		y<-readLines(file.path(path,det.file[i]))
-		ans<-vector(mode="list",length=7)
+		ans<-vector(mode="list",length=8)
 		ans[[1]]<-input.data
     ans[[2]]<-model_fittingMCDS(x)
 		ans[[3]]<-parameter_estimatesMCDS(x)
 		ans[[4]]<-chi_square_testMCDS(x)
 		ans[[5]]<-density_estimateMCDS(x)
-		#browser()
-		ans[[6]]<-detection_probabilityMCDS(y)
-		ans[[7]]<-path
-		names(ans)<-c("input_data","model_fitting","parameter_estimates","chi_square_test","density_estimate","detection","path")
+		ans[[6]]<-ifelse(is.null(rare)==TRUE,cluster_sizeMCDS(x),"No cluster size evaluation are made for rare species")
+		ans[[7]]<-detection_probabilityMCDS(y)
+		ans[[8]]<-path
+		names(ans)<-c("input_data","model_fitting","parameter_estimates","chi_square_test","density_estimate","cluster_size","detection","path")
 		class(ans)<-"distanceFit"
 		#ans
 		lans[[i]]<-ans
