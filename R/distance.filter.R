@@ -53,8 +53,6 @@ function(x, transect.id="WatchID",distance.field="Distance", distance.labels=c("
                           x<-x[x[,"Distance"]%in%c(distance.labels,NA),]
                           y<-x
                         	y[,"Distance"]<-NA
-                        	#y[,"Alpha"]<-""
-                          y[,c("Alpha","English","Latin","InTransect")] <- ""
                         	x[,"Distance"]<-as.character(x[,"Distance"])
                           
                           for(i in 1:length(distance.labels)){
@@ -74,6 +72,8 @@ function(x, transect.id="WatchID",distance.field="Distance", distance.labels=c("
                           x[,"LatStart"] <- as.numeric(x[,"LatStart"])
                           x[,"LongStart"] <- as.numeric(x[,"LongStart"])
                           x[,"WatchLenKm"] <- as.numeric(x[,"WatchLenKm"])
+                          #make sure some Alpha is a factor
+                          
                           
                           #Warning
                           if((min(x[,"LatStart"])<0 & 0<max(x[,"LatStart"])) | (max(x[,"LatStart"])<0 & 0<min(x[,"LatStart"]))==T)                          

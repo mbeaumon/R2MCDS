@@ -10,6 +10,13 @@ function(x){
 		names(ans)<-c("Stratum","Parameters","Estimates","SE","% of var.","95% Lower","95% Upper")
 		ans[,3:7]<- sapply(1:5, function(i){as.numeric(ans[,i+2])})
     res$Global<-ans	
+    ##grab degree of freedom
+		s1 <-grep("Estimation Summary - Detection probability",x)
+		s2 <-grep("Estimation Summary - Expected cluster size",x)
+		tdf <-dtable(x,s1,char=c(s1+5,s2-1))
+		keepdf <- tdf[,4]
+		names(keepdf) <- tdf[,1]
+		res$Global$df <- as.numeric(keepdf[ match(res$Global$Parameters, names(keepdf))])
 	}
 	stratum_names<-get_stratum_names(x)
 	l<-any(unlist(sapply(paste("Detection Fct/",stratum_names,"/Parameter Estimates",sep=""),function(i){grep(i,x,fixed=TRUE)})))

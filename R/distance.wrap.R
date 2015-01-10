@@ -325,24 +325,23 @@ function(dataset,
 	if(!is.null(rare)){		
 		if(!names(rare)%in%names(dataset)){stop(paste("The column",names(rare)[1],"not in dataset"))}
 		if(length(rare)>1 || length(rare[[1]])>1){stop("Only a list and an element of length 1 is accepted for argument rare")}
-		arguments[["dataset"]]<-dataset[dataset[,names(rare)[1]]!=rare[[1]],]
-		arguments[["lsub"]]<-lsub # here I could use the lsub argument instead of subsetting in the previous line
+		
+    #arguments[["dataset"]]<-dataset[dataset[,names(rare)[1]]!=rare[[1]],]
+		arguments[["dataset"]]<-dataset
+    arguments[["lsub"]]<-lsub # here I could use the lsub argument instead of subsetting in the previous line
 		arguments[["split"]]<-FALSE
 		arguments[["stratum"]]<-NULL
 		arguments[["detection"]]<-"All"
 		arguments[["rare"]]<-NULL
 		arguments[["verbose"]]<-FALSE
 		premod<-do.call("distance.wrap",arguments)
-		pdetect<-premod[["parameter_estimates"]][["Global"]]
-		pdetect<-pdetect[pdetect[,"Parameters"]=="p","Estimates"]
-		multiplier<-multiplier*(1/as.numeric(pdetect))
-		warning(paste("Detection probability (","p =",pdetect,")","from a global model was combined to the multiplier","(",multiplier,")"),call.=FALSE)
-	}
-	
-	if(!is.null(rare)){
-		dataset<-dataset[dataset[,names(rare)[1]]==rare[[1]],]
-	}
-	
+		detect_table<-premod[["parameter_estimates"]][["Global"]]
+		pdetect<-detect_table[detect_table[,"Parameters"]=="p","Estimates"]
+    sedetect<- detect_table[detect_table[,"Parameters"]=="p","SE"]
+		dfdetect<- detect_table[detect_table[,"Parameters"]=="p","df"]
+		warning(paste("Rare species detecion modified by a factor of ", round(1/pdetect,3), " with a ", round(sedetect/pdetect^2,3), " standard error and ",dfdetect," degrees of freedom based on estimation of the global model", sep=""), call. = FALSE)
+  	}
+		
 	if(!any("STR_AREA"==names(dataset)) && STR_AREA=="STR_AREA"){
 		dataset<-cbind(STR_AREA=rep(1,nrow(dataset)),dataset,stringsAsFactors=F)
 	}	
@@ -364,62 +363,28 @@ function(dataset,
 		}
 	}
 	
-	#get the list of all transect done to get empty transects
-	#m<-match(c(STR_LABEL,STR_AREA),names(dataset))
-	#transects<-unique(dataset[,unique(c(c(STR_LABEL,STR_AREA)[!is.na(m)],SMP_LABEL,SMP_EFFORT,factor,covariates,stratum))])
 	if(!is.null(empty) && !is.null(lsub)){
 	 if(!all(empty%in%names(lsub))){stop("Names in empty do not correspond to names in lsub")}
 	}
-	#browser()
-	transects<-dataset
-	#subsets the dataset
-	if(!is.null(lsub)){  
-		for(i in 1:length(lsub)){
-			if(is.null(lsub[[i]])){next}
-			dataset<-dataset[dataset[,names(lsub)[i]]%in%lsub[[i]],]			 
-			if(names(lsub)[i]%in%empty){
-				transects<-transects[transects[,names(lsub)[i]]%in%lsub[[i]],]
-			}			
-		}
-	}
-	#transects<-transects[!duplicated(transects[,SMP_LABEL]),]
+  transects<-dataset
+	if(!is.null(rare)){
+	  dataset<-dataset[dataset[,names(rare)[1]]==rare[[1]],]
+	}else{
+  	if(!is.null(lsub)){  
+  		for(i in 1:length(lsub)){
+  			if(is.null(lsub[[i]])){next}
+  			dataset<-dataset[dataset[,names(lsub)[i]]%in%lsub[[i]],]			 
+  			if(names(lsub)[i]%in%empty){
+  				transects<-transects[transects[,names(lsub)[i]]%in%lsub[[i]],]
+  			}			
+  		}
+  	}
+  }
 	transects[,DISTANCE]<-""
-	
-	#this implies that transects without observations are noted with "" in the Alpha species names column
-	#if(!is.null(lsub) && split){
-	#	dataset<-dlply(dataset,names(lsub))
-	#	w<-which(names(dataset)=="") #to add transects without observations to all cases
-	#	if(any(w)){
-	#		dataset<-lapply(dataset[-w],function(i){rbind(i,dataset[[w]])})
-	#	}
-	##}else{
-	#	dataset<-list(dataset)
-	#}
-	#1111111111111111
-	#browser()
-	
-	#if(!is.null(lsub) && split){
-	#	dataset<-dlply(dataset,names(lsub))
-	#	w<-which(names(dataset)=="") #to add transects without observations to all cases (so without species names)
-	#	if(any(w)){
-	#		dataset<-lapply(dataset[-w],function(i){rbind(i,dataset[[w]])})
-	#	}
-	#	names.dataset<-names(dataset)
-	#	if(!is.null(empty)){ #verify
- #			transects<-dlply(transects,empty)
- #			dataset<-lapply(1:length(dataset),function(i){rbind(dataset[[i]],transects[[i]])})
-	#	}else{
-	#		dataset<-lapply(1:length(dataset),function(i){rbind(dataset[[i]],transects)})
-	#	}
-	#	names(dataset)<-names.dataset
-	#}else{
-	#	dataset<-list(dataset)
-	#}
 	
 	######################## add-on
 	if(!is.null(lsub) && split){
 		if(!is.null(empty)){			
-			#browser()
 			transects<-dlply(transects,empty)
 			dataset<-dlply(dataset,empty)			
 			transects<-transects[names(dataset)]
@@ -448,17 +413,11 @@ function(dataset,
 		dataset<-list(rbind(dataset,transects))
 	}
 	#########################
-	
-	#browser()
-	
-	#clear multiple lines due to empty transects and set values for DISTANCE and SIZE
+
 	dataset<-lapply(dataset,function(i){
-		#1sample.label<-unique(i[!is.na(i[,DISTANCE]),SMP_LABEL]) # cause DISTANCE has been turned to NA in empty transects earlier
-		#2res<-i[!((duplicated(i[,SMP_LABEL]) & is.na(i[,DISTANCE])) | (is.na(i[,DISTANCE]) & i[,SMP_LABEL]%in%sample.label)),]
-		
+	
 		res<-i[!is.na(i[,DISTANCE]),] #add1
 		good.label<-unique(res[res[,DISTANCE]!="",SMP_LABEL])#add2
-		#browser()
 		res<-res[(res[,DISTANCE]!="") | (res[,DISTANCE]=="" & !res[,SMP_LABEL]%in%good.label & !duplicated(res[,SMP_LABEL])),]#add3
 		res[,DISTANCE]<-ifelse(is.na(res[,DISTANCE]),"",res[,DISTANCE])
 		res[,SIZE]<-ifelse(res[,DISTANCE]=="","",res[,SIZE])
@@ -487,7 +446,6 @@ function(dataset,
 	#browser()
 	for(i in seq_along(dataset)){
 		dat<-dataset[[i]]
-		#browser()
 		dat<-dat[!(is.na(dat[,DISTANCE]) | is.na(dat[,SIZE])),]
 		#dat<-dat[!(duplicated(dat[,SMP_LABEL]) & dat[,DISTANCE]==""),]
 		#######################################################
@@ -515,17 +473,13 @@ function(dataset,
 		opts["Confidence="]<-"95;"
 		opts["Print="]<-"Selection;"
 		opts["End1;"]<-""
-		#whatever
 		opts["Data /Structure="]<-"Flat;"
-		#opts["Fields="]<-paste(paste(fields,collapse=", "),";",sep="")
-		#dat<-dataset
 		opts["Factor"]<-if(!is.null(factor)){labels<-sort(unique(dat[,factor]))
 		labels<-labels[!is.na(labels)]
 		paste(paste(paste(c(" /Name="," /Levels="," /Labels="),c(factor,length(labels),paste(labels,collapse=",")),sep=""),collapse=""),";",sep="")
 		}else{
 			NULL
 		}
-		#browser()
 		dat<-dat[,unique(c(STR_LABEL,STR_AREA,SMP_LABEL,SMP_EFFORT,DISTANCE,SIZE,factor,covariates))] #the stratum part used to be ifelse(stratum=="STR_LABEL",STR_LABEL,stratum)
 		names(dat)[1:6]<-c("STR_LABEL","STR_AREA","SMP_LABEL","SMP_EFFORT","DISTANCE","SIZE")
 		
@@ -534,7 +488,6 @@ function(dataset,
 		opts["End2;"]<-""
 		opts["Estimate;"]<-""
 		opts["Distance /Intervals="]<-paste(paste(breaks,collapse=",")," /Width=",max(breaks)," /Left=",min(breaks),";",sep="")
-		#opts["Distance;"]<-""
 		
 		if(is.null(stratum)){
 			opts["Density="]<-"All;"
@@ -586,28 +539,21 @@ function(dataset,
 		opts["GOF;"]<-""
 		opts["Cluster /Bias="]<-"GXLOG;"
 		opts["VarN="]<-"Empirical;"
-		opts["Multiplier="]<-paste(multiplier," /Label='Sampling fraction';",sep="")
+		opts["Multiplier1="]<-paste(multiplier," /Label='Sampling fraction';",sep="")
+    if(!is.null(rare)){
+    opts["Multiplier2="]<-paste(1/pdetect," /Label='Rare'"," /SE=",sedetect/pdetect^2," /DF=",dfdetect,";",sep="")  
+    }
 		opts["End3;"]<-""
-		#if(!is.null(estimator) && is.null(rare)){
-		# opts<-opts[-which(names(opts)%in%paste("Estimator",setdiff(1:5,estimator),sep=""))] #removes unwanted estimators
-		#}
-		#browser()
+    
 		names(opts)[grep("Estimator",names(opts))]<-"Estimator" #to get the nb out which are used to prevent overwriting previously
 		names(opts)[grep("End",names(opts))]<-"End;"
+    names(opts)[grep("Multiplier",names(opts))]<-"Multiplier="
 		opts<-lapply(opts,paste,collapse="")
 		input<-paste(names(opts),unlist(opts),sep="")
 		if(verbose){cat(input,fill=1)}  #prints the input file
 		write.table(input,file.path(path,inp.file[i]),row.names=FALSE,quote=FALSE,col.names=FALSE)
 		dat$SMP_LABEL<-paste(as.numeric(factor(dat$SMP_LABEL)),dat$SMP_LABEL,sep=".")
-		#browser()
-		#if(!is.null(stratum) && stratum!="STR_LABEL"){
-		#	 dat[,"STR_LABEL"]<-dat[,stratum]			
-		#  dat<-dat[,names(dat)[names(dat)!=stratum]]	
-		#	 opts["Fields="]<-paste(paste(names(dat),collapse=", "),";",sep="")		
-		#}
-		#dat<-dat[order(dat[,1]),] 
 		dat<-dat[order(dat[,"STR_LABEL"],dat[,"SMP_LABEL"]),] #always order according to the first column/ str_label, otherwise MCDS creates too many stratum or samples
-		#browser()
 		w<-which(is.na(dat[,"DISTANCE"]) | dat[,"DISTANCE"]=="")
 		if(any(w)){
 			dat[w,"SIZE"]<-"" #previously NA was given, but gives status 3 with distance
@@ -618,7 +564,6 @@ function(dataset,
 		
 		####################################################
 		### running distance
-		#browser()
 		
 		cmd<-paste(shQuote(file.path(pathMCDS,"MCDS"))," 0, ",shQuote(file.path(path,inp.file[i])),sep="")
 		system(cmd,wait=TRUE,ignore.stdout=FALSE,ignore.stderr=FALSE,invisible=TRUE)
@@ -650,7 +595,7 @@ function(dataset,
 		#browser()
 		ans[[6]]<-detection_probabilityMCDS(y)
 		ans[[7]]<-path
-		names(ans)<-c("input data","model_fitting","parameter_estimates","chi_square_test","density_estimate","detection","path")
+		names(ans)<-c("input_data","model_fitting","parameter_estimates","chi_square_test","density_estimate","detection","path")
 		class(ans)<-"distanceFit"
 		#ans
 		lans[[i]]<-ans
