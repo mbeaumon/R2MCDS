@@ -1,4 +1,4 @@
-resume.plot.list <-
+resume.plot.distanceList <-
 function(model,subset=NULL,stratum=FALSE,title=NULL,subtitle=NULL,
         file="tempo", directory="C:/temp/distance", PDF=T)
 {

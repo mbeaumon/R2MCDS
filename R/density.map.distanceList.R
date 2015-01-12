@@ -1,4 +1,4 @@
-density.map.list <-
+density.map.distanceList <-
 function(x,shp=NULL,shp.lab,by.stratum=TRUE,subset=NULL,background.shp=NULL,background.shp.lab=NULL,Title="Density"){
 	if(class(x)=="distanceFit"){
 		if(is.null(x$density_estimate$Stratum)){

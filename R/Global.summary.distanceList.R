@@ -1,4 +1,4 @@
-Global.summary.list <- function(model, file="tempo", directory="C:/temp/distance"){
+Global.summary.distanceList <- function(model, file="tempo", directory="C:/temp/distance"){
   
   
   nloop <- length(model)
