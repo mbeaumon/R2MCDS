@@ -92,7 +92,7 @@
 #'surveys for estimating population size.} Journal of Applied Ecology 47: 5-14.
 #'DOI: 10.1111/j.1365-2664.2009.01737.x
 
-#'@section Author:Francois Rousseu, Fran?ois Bolduc
+#'@section Author:Francois Rousseu, Christian Roy, François Bolduc
 
 #'@examples
 #'########################################
@@ -602,5 +602,6 @@ function(dataset,
 	}
 	if(!is.null(notrun)){warning(paste("No models for the following combinations: ",paste(notrun,collapse=" "),". See log files." ,sep=""),immediate.=TRUE)}
 	lans<-lans[!sapply(lans,is.null)]
-	if(length(lans)==1){lans[[1]]}else{lans}
+	class(lans) <- "distanceList"
+  if(length(lans)==1){lans[[1]]}else{lans}
 }
