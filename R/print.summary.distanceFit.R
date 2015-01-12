@@ -1,10 +1,10 @@
 print.summary.distanceFit <- function(x, ...){
   cat("Summary of a distance sampling object fitted via the MCDS endgine:\n")
   print(x$Parameters,row.names = FALSE)
-  cat("\n\nParameters of the detection function:\n")
+  cat(paste("\n\nDetection function used : ",x$Type, sep=""))
+  cat("\nParameters of the detection function:\n")
   print(x$Detection[,-1],row.names = FALSE)
-  cat(paste("Detection function used : ",x$Type, sep=""))
-  cat("\n\nDensity Estimates:\n")
+  cat("\n\nDensity estimates for the entire survey area:\n")
   print(x$Density[,-1], row.names = FALSE)
 }
 
