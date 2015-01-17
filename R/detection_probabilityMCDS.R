@@ -1,5 +1,4 @@
-detection_probabilityMCDS <-
-function(x){
+detection_probabilityMCDS <- function(x, covariates=covariates){
 	res<-vector("list",length=2)
 	names(res)<-c("Global","Stratum")
 	ans<-sandwich.table(val="Detection Fct",vec=x,offset=c(5,0))
@@ -16,7 +15,8 @@ function(x){
 	w<-grep("Detection Fct",x)
 	g<-grep("Pooled data",x[w+1])
 	if(any(g)){
-		names(ans)[w[g]]<-"Global"
+		names(ans)[1] <-"Global"
+		if(!is.null(covariates)){for(j in 1:length(covariates)){names(ans)[j+1]<-covariates[j]}}
 	}
 	gg<-setdiff(seq_along(w),g)
 	if(any(gg)){

@@ -97,7 +97,7 @@ through the \code{\link{system}} function. The results are then extracted from t
 list object.
 }
 \section{Author}{
-Francois Rousseu, Fran?ois Bolduc
+Francois Rousseu, Christian Roy, François Bolduc
 }
 \examples{
 ########################################

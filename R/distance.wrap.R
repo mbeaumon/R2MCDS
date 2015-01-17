@@ -25,8 +25,10 @@
 #'@param breaks A vector giving the distance intervals in meters to be used in the analysis.
 
 #'@param covariates A vector giving the name of covariates.
-#'factor A vector giving the name of factors to be used in the analysis.
-#'lsub A named list giving the subsets to be used in the analysis. The names of the list are the names of columns used to subset the dataset.
+
+#'@param#'factor A vector giving the name of factors to be used in the analysis.
+
+#'@param 'lsub A named list giving the subsets to be used in the analysis. The names of the list are the names of columns used to subset the dataset.
 #'Each element of the list is a vector giving the values to keep in the analysis for a given column. When a vector is \code{NULL},
 #'all values are kept for this column. Default value \code{lsub = NULL}. See examples for further details.
 
@@ -92,7 +94,7 @@
 #'surveys for estimating population size.} Journal of Applied Ecology 47: 5-14.
 #'DOI: 10.1111/j.1365-2664.2009.01737.x
 
-#'@section Author:Francois Rousseu, Christian Roy, François Bolduc
+#'@section Author:Francois Rousseu, Christian Roy, Francois Bolduc
 
 #'@examples
 #'########################################
@@ -506,8 +508,6 @@ function(dataset,
 				opts["Encounter="]<-"Stratum;"
 				opts["Detection="]<-paste(detection,";",sep="")
 				opts["Size="]<-"All;"
-				#dat[,"STR_LABEL"]<-dat[,stratum]			
-				#dat<-dat[,names(dat)[names(dat)!=stratum]]	
 				opts["Fields="]<-paste(paste(names(dat),collapse=", "),";",sep="")
 				
 			}
@@ -519,12 +519,12 @@ function(dataset,
 		if(is.null(rare)){  #fits a uniform model when rare is not NULL
 			#browser()
 			if(is.null(estimator)){
-        opts[["Estimator1"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("UN","CO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
-				opts[["Estimator2"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("UN","PO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+        #opts[["Estimator1"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("UN","CO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+				#opts[["Estimator2"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("UN","PO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
 				opts[["Estimator3"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HN","CO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
-				opts[["Estimator4"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HN","HE","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
-				opts[["Estimator5"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HA","CO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
-				opts[["Estimator6"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HA","PO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+				#opts[["Estimator4"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HN","HE","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+				#opts[["Estimator5"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HA","CO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+				#opts[["Estimator6"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HA","PO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
 			}else{
 				if(!is.list(estimator) | !all(sapply(estimator,length)==2)){stop("Wrong list format for argument estimator")}
 				for(j in 1:length(estimator)){
@@ -558,6 +558,7 @@ function(dataset,
 		if(any(w)){
 			dat[w,"SIZE"]<-"" #previously NA was given, but gives status 3 with distance
 			dat[w,"DISTANCE"]<-"" #previously not here but don't know why
+			if(!is.null(covariates)){for(j in 1:length(covariates)){dat[w,covariates[j]]<-""}}
 		}
 		dat<-dat[dat[,"STR_LABEL"]!="",]#temporary to get rid of stratum when it is species and it is an empty transect, has to be clarified what to do
 		write.table(dat,file.path(path,dat.file[i]),na="",sep="\t",row.names=FALSE,col.names=FALSE,quote=FALSE)
@@ -593,7 +594,7 @@ function(dataset,
 		ans[[4]]<-chi_square_testMCDS(x)
 		ans[[5]]<-density_estimateMCDS(x)
 		ans[[6]]<-ifelse(is.null(rare)==TRUE,cluster_sizeMCDS(x),"No cluster size evaluation are made for rare species")
-		ans[[7]]<-detection_probabilityMCDS(y)
+		ans[[7]]<-detection_probabilityMCDS(y, covariates=covariates)
 		ans[[8]]<-path
 		names(ans)<-c("input_data","model_fitting","parameter_estimates","chi_square_test","density_estimate","cluster_size","detection","path")
 		class(ans)<-"distanceFit"
