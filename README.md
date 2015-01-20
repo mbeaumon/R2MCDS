@@ -9,6 +9,7 @@ Version 0.7.1
 * Improved the print and summary functions for the distanceFit objects
 * Created distanceList class
 * Added print and summary function for the distanceList objects
+* This is a test
 
 Version 0.7.0
 =======
