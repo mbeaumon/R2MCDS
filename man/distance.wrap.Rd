@@ -32,9 +32,11 @@ distance.wrap(dataset, path, pathMCDS, SMP_LABEL = "SMP_LABEL",
 
 \item{breaks}{A vector giving the distance intervals in meters to be used in the analysis.}
 
-\item{covariates}{A vector giving the name of covariates.
-factor A vector giving the name of factors to be used in the analysis.
-lsub A named list giving the subsets to be used in the analysis. The names of the list are the names of columns used to subset the dataset.
+\item{covariates}{A vector giving the name of covariates.}
+
+\item{factor}{A vector giving the name of factors to be used in the analysis.}
+
+\item{lsub}{A named list giving the subsets to be used in the analysis. The names of the list are the names of columns used to subset the dataset.
 Each element of the list is a vector giving the values to keep in the analysis for a given column. When a vector is \code{NULL},
 all values are kept for this column. Default value \code{lsub = NULL}. See examples for further details.}
 
@@ -97,7 +99,7 @@ through the \code{\link{system}} function. The results are then extracted from t
 list object.
 }
 \section{Author}{
-Francois Rousseu, Christian Roy, François Bolduc
+Francois Rousseu, Christian Roy, Francois Bolduc
 }
 \examples{
 ########################################
