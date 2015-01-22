@@ -26,9 +26,9 @@
 
 #'@param covariates A vector giving the name of covariates.
 
-#'@param#'factor A vector giving the name of factors to be used in the analysis.
+#'@param factor A vector giving the name of factors to be used in the analysis.
 
-#'@param 'lsub A named list giving the subsets to be used in the analysis. The names of the list are the names of columns used to subset the dataset.
+#'@param lsub A named list giving the subsets to be used in the analysis. The names of the list are the names of columns used to subset the dataset.
 #'Each element of the list is a vector giving the values to keep in the analysis for a given column. When a vector is \code{NULL},
 #'all values are kept for this column. Default value \code{lsub = NULL}. See examples for further details.
 
@@ -323,6 +323,15 @@ function(dataset,
   #Make sure the directory exist to save output
 	dir.create(path, recursive = TRUE, showWarnings = FALSE)
   
+  
+  #Make the factor characters for the function
+	if(!is.null(factor)){
+    for(i in 1:length(factor)){
+      dataset[,factor[i]] <- as.character(dataset[,factor[i]])
+    }   
+	}
+  
+  
 	# this recursively fits a model to get an estimate of p for a rarer species
 	if(!is.null(rare)){		
 		if(!names(rare)%in%names(dataset)){stop(paste("The column",names(rare)[1],"not in dataset"))}
@@ -476,16 +485,20 @@ function(dataset,
 		opts["Print="]<-"Selection;"
 		opts["End1;"]<-""
 		opts["Data /Structure="]<-"Flat;"
-		opts["Factor"]<-if(!is.null(factor)){labels<-sort(unique(dat[,factor]))
-		labels<-labels[!is.na(labels)]
-		paste(paste(paste(c(" /Name="," /Levels="," /Labels="),c(factor,length(labels),paste(labels,collapse=",")),sep=""),collapse=""),";",sep="")
-		}else{
-			NULL
-		}
 		dat<-dat[,unique(c(STR_LABEL,STR_AREA,SMP_LABEL,SMP_EFFORT,DISTANCE,SIZE,factor,covariates))] #the stratum part used to be ifelse(stratum=="STR_LABEL",STR_LABEL,stratum)
 		names(dat)[1:6]<-c("STR_LABEL","STR_AREA","SMP_LABEL","SMP_EFFORT","DISTANCE","SIZE")
 		
 		opts["Fields="]<-paste(paste(names(dat),collapse=", "),";",sep="")
+		if(!is.null(factor)){
+		  for(j in 1:length(factor)){
+		    labels<-sort(unique(dat[,factor[j]]))
+		    labels<-labels[!is.na(labels)]
+		    opts[[length(opts)+1]] <- paste(paste(paste(c(" /Name="," /Levels="," /Labels="),c(factor[j],length(labels),paste(labels,collapse=",")),sep=""),collapse=""),";",sep="") 
+		  }
+		  names(opts)[(which(names(opts)=="Fields=")+1):length(opts)] <- "FACTOR="
+		}else{
+		  NULL
+		}
 		opts["Infile="]<-paste(paste(gsub("/","\\\\\\\\",path),"\\\\",dat.file[i],sep="")," /NoEcho;",sep="")
 		opts["End2;"]<-""
 		opts["Estimate;"]<-""
@@ -561,6 +574,7 @@ function(dataset,
 			dat[w,"SIZE"]<-"" #previously NA was given, but gives status 3 with distance
 			dat[w,"DISTANCE"]<-"" #previously not here but don't know why
 			if(!is.null(covariates)){for(j in 1:length(covariates)){dat[w,covariates[j]]<-""}}
+			if(!is.null(factor)){for(j in 1:length(factor)){dat[w,factor[j]]<-""}}
 		}
 		dat<-dat[dat[,"STR_LABEL"]!="",]#temporary to get rid of stratum when it is species and it is an empty transect, has to be clarified what to do
 		write.table(dat,file.path(path,dat.file[i]),na="",sep="\t",row.names=FALSE,col.names=FALSE,quote=FALSE)
