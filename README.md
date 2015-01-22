@@ -4,7 +4,8 @@ The package allows the user to create spatial grids, plot the observed animal de
 Version 0.7.1
 =======
 * Created the strip.wrap function to perform strip.transects
-* Made extensive change to distance.wrap to improve rare species estimation
+* Made modifications to distance.wrap to allow the user to use explanatory variable in the analysis
+* Made extensive modifications to distance.wrap to improve rare species estimation
 * Added a function to extract information about the cluster size estimaton for distance.wrap
 * Improved the print and summary functions for the distanceFit objects
 * Created distanceList class
