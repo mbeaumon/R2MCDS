@@ -3,13 +3,13 @@ GeoAviR
 The package allows the user to create spatial grids, plot the observed animal density and run some basic distance analysis via the MCDS engine of Distance 6.2.
 Version 0.7.1
 =======
-* Created the strip.wrap function to perform strip.transects
-* Made modifications to distance.wrap to allow the user to use explanatory variable in the analysis
+* Created the strip.wrap function to perform strip.transects analysis
+* Made modifications to distance.wrap to allow the usage of explanatory variables to compute detection functions
 * Made extensive modifications to distance.wrap to improve rare species estimation
-* Added a function to extract information about the cluster size estimaton for distance.wrap
+* Added a function to extract information about the cluster size estimaton by distance.wrap
 * Improved the print and summary functions for the distanceFit objects
 * Created distanceList class
-* Added print and summary function for the distanceList objects
+* Added print and summary functions for the distanceList objects
 
 Version 0.7.0
 =======
