@@ -18,8 +18,6 @@
 
 #'@param SMP_EFFORT Length in km of the transect or the transect/watch unit.
 
-#'@param DISTANCE Distance of the observation in meters.
-
 #'@param SIZE Number of individuals in the observation.
 
 #'@param breaks A vector giving the distance intervals in meters to be used in the analysis.
@@ -35,8 +33,7 @@
 #'should be restricted. Dates have to be in the "yyyy-mm-dd" format.
 
 #'@param multiplier Value by which the estimates of density or abundance are multiplied. Default value \code{multiplier = 2} meaning
-#'only one-half of the transect is surveyed. When \code{rare != NULL}, the multiplier will be modified to account
-#'for the probability of detection.
+#'only one-half of the transect is surveyed.
 
 #'@param empty Determine how empty transects are to be selected in the analysis. When \code{empty = NULL}, all
 #'empty transects are included for every element of \code{lsub}. For example, when models are splitted according
@@ -71,7 +68,7 @@
 #'surveys for estimating population size.} Journal of Applied Ecology 47: 5-14.
 #'DOI: 10.1111/j.1365-2664.2009.01737.x
 
-#'@section Author:Francois Rousseu, Christian Roy, François Bolduc
+#'@section Author:Christian Roy,Francois Rousseu, François Bolduc
 
 
 strip.wrap <-
@@ -80,7 +77,6 @@ strip.wrap <-
            pathMCDS,
            SMP_LABEL="SMP_LABEL",
            SMP_EFFORT="SMP_EFFORT",
-           DISTANCE="DISTANCE",
            SIZE="SIZE",																				
            STR_LABEL="STR_LABEL",
            STR_AREA="STR_AREA",												
@@ -139,7 +135,7 @@ strip.wrap <-
       }
     }
   
-    transects[,DISTANCE]<-""
+    transects$DISTANCE <-""
     
     ######################## add-on
     if(!is.null(lsub) && split){
