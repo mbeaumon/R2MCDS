@@ -4,10 +4,10 @@
 \title{Fit the distance sampling model provided by the Distance software.}
 \usage{
 strip.wrap(dataset, path, pathMCDS, SMP_LABEL = "SMP_LABEL",
-  SMP_EFFORT = "SMP_EFFORT", DISTANCE = "DISTANCE", SIZE = "SIZE",
-  STR_LABEL = "STR_LABEL", STR_AREA = "STR_AREA", breaks = c(0, 50, 100,
-  200, 300), lsub = NULL, stratum = NULL, split = TRUE, period = NULL,
-  detection = "All", multiplier = 2, empty = NULL, verbose = FALSE)
+  SMP_EFFORT = "SMP_EFFORT", SIZE = "SIZE", STR_LABEL = "STR_LABEL",
+  STR_AREA = "STR_AREA", breaks = c(0, 50, 100, 200, 300), lsub = NULL,
+  stratum = NULL, split = TRUE, period = NULL, detection = "All",
+  multiplier = 2, empty = NULL, verbose = FALSE)
 }
 \arguments{
 \item{dataset}{A \code{\link{data.frame}} with observations.}
@@ -19,8 +19,6 @@ strip.wrap(dataset, path, pathMCDS, SMP_LABEL = "SMP_LABEL",
 \item{SMP_LABEL}{Name of the column to use for the transect/watch label.}
 
 \item{SMP_EFFORT}{Length in km of the transect or the transect/watch unit.}
-
-\item{DISTANCE}{Distance of the observation in meters.}
 
 \item{SIZE}{Number of individuals in the observation.}
 
@@ -41,8 +39,7 @@ is \code{NULL}.}
 should be restricted. Dates have to be in the "yyyy-mm-dd" format.}
 
 \item{multiplier}{Value by which the estimates of density or abundance are multiplied. Default value \code{multiplier = 2} meaning
-only one-half of the transect is surveyed. When \code{rare != NULL}, the multiplier will be modified to account
-for the probability of detection.}
+only one-half of the transect is surveyed.}
 
 \item{empty}{Determine how empty transects are to be selected in the analysis. When \code{empty = NULL}, all
 empty transects are included for every element of \code{lsub}. For example, when models are splitted according
@@ -74,7 +71,7 @@ through the \code{\link{system}} function. The results are then extracted from t
 list object.
 }
 \section{Author}{
-Francois Rousseu, Christian Roy, François Bolduc
+Christian Roy,Francois Rousseu, François Bolduc
 }
 \references{
 Thomas, L., S.T. Buckland, E.A. Rexstad, J. L. Laake, S. Strindberg, S. L. Hedley, J. R.B. Bishop,
