@@ -25,9 +25,9 @@ print(xtable(nmodel$chi_square_test$Global, digits =3, caption ='Chi-sqaured tes
 print(xtable(nmodel$density_estimate$Global, digits =3, caption='Density Estimates'), size='\\\\small')
 print(xtable(nmodel$model_fitting$Global$Parameters, digits =3, caption='Model description'), size='\\\\small')
 ##Make the histogram
-p <- hist.wrap(nmodel[['input data']][['observations']], Count='SIZE', Dist.class='DISTANCE',
-Keep.class=as.character(unique(sort(as.numeric(nmodel[['input data']][['observations']]$DISTANCE)))),
-Breaks=nmodel[['input data']][['breaks']], color='powderblue') +
+p <- hist.wrap(nmodel[['input_data']][['observations']], Count='SIZE', Dist.class='DISTANCE',
+Keep.class=as.character(unique(sort(as.numeric(nmodel[['input_data']][['observations']]$DISTANCE)))),
+Breaks=nmodel[['input_data']][['breaks']], color='powderblue') +
 labs(title = 'Detection probability vs. distance', x = 'Distance', y = 'Detection probability')
 
 pred.df <- data.frame(x=nmodel$detection[['Global']][,'distance'],y=nmodel$detection[['Global']][,'predicted'])
