@@ -4,7 +4,7 @@
 \title{Plot a detection histogram of apparent density.}
 \usage{
 \method{hist}{wrap}(Dataset, Count, Dist.class, Keep.class, Breaks,
-  color = "white")
+  color = "white", rescale = 1)
 }
 \arguments{
 \item{Dataset}{A \code{\link{data.frame}} containing observations.}
@@ -18,6 +18,8 @@
 \item{Breaks}{what are the intervals for the distance analysis.}
 
 \item{color}{fill color for the bars}
+
+\item{rescale}{set the height of the first bin}
 }
 \description{
 This function will allow the user to visualise the histogram of observations in function of distance class and re-bin his observations if necessary before the analysis.
