@@ -22,7 +22,8 @@ print(xtable(model$model_fitting$Global$Parameters, digits =3, caption='Model de
 ##Make the histogram
 p <- hist.wrap(model[['input_data']][['observations']], Count='SIZE', Dist.class='DISTANCE',
 Keep.class=as.character(unique(sort(as.numeric(model[['input_data']][['observations']]$DISTANCE)))),
-Breaks=model[['input_data']][['breaks']], color='powderblue') +
+Breaks=model[['input_data']][['breaks']], color='powderblue',
+rescale=model$detection[['Global']][,'predicted'][1]) +
 labs(title = 'Detection probability vs. distance', x = 'Distance', y = 'Detection probability')
 
 pred.df <- data.frame(x=model$detection[['Global']][,'distance'],y=model$detection[['Global']][,'predicted'])

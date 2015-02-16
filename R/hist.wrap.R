@@ -9,6 +9,7 @@
 #'@param Keep.class which class of observations should be used for the analysis.
 #'@param Breaks what are the intervals for the distance analysis.
 #'@param color fill color for the bars
+#'@param rescale set the height of the first bin
 #'@details
 #' Make a histogram of the observations in function of the distance class
 #'@section Author:Christian Roy
@@ -22,7 +23,7 @@
 
 
 hist.wrap <-
-  function(Dataset, Count, Dist.class, Keep.class, Breaks, color="white"){
+  function(Dataset, Count, Dist.class, Keep.class, Breaks, color="white", rescale=1){
 
     ##Keep only the distance class desired
     Dataset <- droplevels(Dataset[Dataset[,Dist.class]%in%Keep.class,])
@@ -32,12 +33,14 @@ hist.wrap <-
     ##Make histogram df
     d <- as.numeric(as.character(Observations))
     h <- hist(d, breaks = Breaks, plot =FALSE)
-    h$density <-  h$density/sum(h$density, na.rm=T)
+    if( !is.na(rescale)==T){
+      h$density <- h$density*rescale/h$density[1]
+    }
     r <- data.frame(h[2:4], xmin = head(h$breaks, -1), xmax = h$breaks[-1])
     #Make graph
     ggplot(r, aes(xmin = xmin, xmax = xmax, ymin = 0, ymax = density)) +
       geom_rect(colour="black", fill=color) +
-      scale_y_continuous(limits=c(0,1)) +
+      scale_y_continuous(limits=c(0,max(h$density))) +
       theme_bw() +
       theme(axis.line = element_line(colour = "black"),
             panel.grid.major = element_blank(),
