@@ -1,4 +1,4 @@
-Global.summary.distanceFit <- function(model, file="tempo", directory="C:/temp/distance"){
+global.summary.distanceFit <- function(model, species, file="tempo", directory="C:/temp/distance"){
 
 dir.create(directory, recursive = TRUE, showWarnings = FALSE)
 sink(paste(directory,paste(file,".Rnw",sep=""),sep="/"))
@@ -11,14 +11,19 @@ cat("
 \\begin{document}
 \\setkeys{Gin}{height=0.45\\textwidth}
 \\setkeys{Gin}{width=0.45\\textwidth}
-\\title{GeoAvir output}
+\\title{GeoAviR output for \\Sexpr{species}}
+\\author{Detection function:\\Sexpr{model$model_fitting$Global$Type}}
 \\date{}
 \\maketitle
 <<tables_code, echo=FALSE,fig=TRUE, results=tex>>=
-print(xtable(model$parameter_estimates$Global, digits =3, caption ='Parameters estimates'), size='\\\\small')
-print(xtable(model$chi_square_test$Global, digits =3, caption ='Chi-sqaured test on model fit'), size='\\\\small')
-print(xtable(model$density_estimate$Global, digits =3, caption='Density Estimates'), size='\\\\small')
-print(xtable(model$model_fitting$Global$Parameters, digits =3, caption='Model description'), size='\\\\small')
+print(xtable(model$parameter_estimates$Global, digits =3, caption ='Parameters estimates'), size='\\\\small', 
+      caption.placement = getOption('xtable.caption.placement','top'))
+print(xtable(model$chi_square_test$Global, digits =3, caption ='Chi-sqaured test on model fit'), size='\\\\small',
+      caption.placement = getOption('xtable.caption.placement','top'))
+print(xtable(model$density_estimate$Global, digits =3, caption='Density Estimates'), size='\\\\small',
+      caption.placement = getOption('xtable.caption.placement','top'))
+print(xtable(model$model_fitting$Global$Parameters, digits =3, caption='Model description'), size='\\\\small',
+      caption.placement = getOption('xtable.caption.placement','top'))
 ##Make the histogram
 p <- hist.wrap(model[['input_data']][['observations']], Count='SIZE', Dist.class='DISTANCE',
 Keep.class=as.character(unique(sort(as.numeric(model[['input_data']][['observations']]$DISTANCE)))),

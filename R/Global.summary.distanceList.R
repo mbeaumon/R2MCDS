@@ -1,4 +1,4 @@
-Global.summary.distanceList <- function(model, file="tempo", directory="C:/temp/distance"){
+global.summary.distanceList <- function(model, species, file="tempo", directory="C:/temp/distance"){
   
   
   nloop <- length(model)
@@ -16,14 +16,20 @@ Global.summary.distanceList <- function(model, file="tempo", directory="C:/temp/
 \\begin{document}
 \\setkeys{Gin}{height=0.45\\textwidth}
 \\setkeys{Gin}{width=0.45\\textwidth}
-\\title{GeoAvir output}
+\\title{GeoAviR output for \\Sexpr{species[i]}}
+\\author{Detection function:\\Sexpr{nmodel$model_fitting$Global$Type}}
 \\date{}
 \\maketitle
 <<tables_code, echo=FALSE,fig=TRUE, results=tex>>=
-print(xtable(nmodel$parameter_estimates$Global, digits =3, caption ='Parameters estimates'), size='\\\\small')
-print(xtable(nmodel$chi_square_test$Global, digits =3, caption ='Chi-sqaured test on model fit'), size='\\\\small')
-print(xtable(nmodel$density_estimate$Global, digits =3, caption='Density Estimates'), size='\\\\small')
-print(xtable(nmodel$model_fitting$Global$Parameters, digits =3, caption='Model description'), size='\\\\small')
+print(xtable(nmodel$parameter_estimates$Global, digits =3, caption ='Parameters estimates'), size='\\\\small',
+             caption.placement = getOption('xtable.caption.placement','top'))
+print(xtable(nmodel$chi_square_test$Global, digits =3, caption ='Chi-sqaured test on model fit'), size='\\\\small',
+             caption.placement = getOption('xtable.caption.placement','top'))
+print(xtable(nmodel$density_estimate$Global, digits =3, caption='Density Estimates'), size='\\\\small',
+             caption.placement = getOption('xtable.caption.placement','top'))
+print(xtable(nmodel$model_fitting$Global$Parameters, digits =3, caption='Model description'), size='\\\\small',
+             caption.placement = getOption('xtable.caption.placement','top'))
+
 ##Make the histogram
 p <- hist.wrap(nmodel[['input_data']][['observations']], Count='SIZE', Dist.class='DISTANCE',
 Keep.class=as.character(unique(sort(as.numeric(nmodel[['input_data']][['observations']]$DISTANCE)))),
