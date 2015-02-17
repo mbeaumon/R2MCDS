@@ -5,7 +5,7 @@
 \usage{
 strip.wrap(dataset, path, pathMCDS, SMP_LABEL = "SMP_LABEL",
   SMP_EFFORT = "SMP_EFFORT", SIZE = "SIZE", STR_LABEL = "STR_LABEL",
-  STR_AREA = "STR_AREA", breaks = c(0, 50, 100, 200, 300), lsub = NULL,
+  STR_AREA = "STR_AREA", breaks = c(0, 300), lsub = NULL,
   stratum = NULL, split = TRUE, period = NULL, detection = "All",
   multiplier = 2, empty = NULL, verbose = FALSE)
 }
@@ -26,7 +26,11 @@ strip.wrap(dataset, path, pathMCDS, SMP_LABEL = "SMP_LABEL",
 
 \item{STR_AREA}{Name of the column to use for the stratum area.}
 
-\item{breaks}{A vector giving the distance intervals in meters to be used in the analysis.}
+\item{breaks}{Interval in meters to be used in the analysis.}
+
+\item{lsub}{A named list giving the subsets to be used in the analysis. The names of the list are the names of columns used to subset the dataset.
+Each element of the list is a vector giving the values to keep in the analysis for a given column. When a vector is \code{NULL},
+all values are kept for this column. Default value \code{lsub = NULL}. See examples for further details.}
 
 \item{stratum}{When \code{stratum = "STR_LABEL"}, the model will be stratified with the label.
 When \code{stratum} is the name of a column in the data, the model will be
@@ -37,6 +41,8 @@ is \code{NULL}.}
 
 \item{period}{A vector of characters of length 2 containing the extreme dates for which the analysis
 should be restricted. Dates have to be in the "yyyy-mm-dd" format.}
+
+\item{detection}{Currently, set to \code{detection = "All"}. Can also be \code{detection = "Stratum"}.}
 
 \item{multiplier}{Value by which the estimates of density or abundance are multiplied. Default value \code{multiplier = 2} meaning
 only one-half of the transect is surveyed.}
@@ -63,7 +69,7 @@ component "\code{Global}" and "\code{Stratum}". Depending on the analysis chosen
 one of these component will be empty (\code{NULL}).
 }
 \description{
-This function use the  MCDS engine of the Distance program to fit a uniform detection function.
+This function fits the distance sampling model provided by the Distance program using its MCDS engine.
 }
 \details{
 Uses the MCDS engine from program Distance. The function produces an input file and submits it to the MCDS engine
@@ -71,7 +77,33 @@ through the \code{\link{system}} function. The results are then extracted from t
 list object.
 }
 \section{Author}{
-Christian Roy,Francois Rousseu, François Bolduc
+Francois Rousseu, Christian Roy, Francois Bolduc
+}
+\examples{
+########################################
+### Simple models without stratification
+
+### Import and filter data
+data(alcidae)
+alcids<-filterECSAS(alcidae)
+
+### Set arguments and parameters
+path<-("c:/temp/distance")
+pathMCDS<-"C:/Program Files (x86)/Distance 6"
+breaks<-c(0,50,100,200,300)
+STR_LABEL<-"STR_LABEL"
+STR_AREA<-"STR_AREA"
+SMP_LABEL<-"WatchID"
+SMP_EFFORT<-"WatchLenKm"
+DISTANCE<-"Distance"
+SIZE<-"Count"
+
+### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
+x<-distance.wrap(alcids,path=path,pathMCDS=pathMCDS,breaks=breaks,STR_LABEL=STR_LABEL,STR_AREA=STR_AREA,SMP_LABEL=SMP_LABEL,SMP_EFFORT=SMP_EFFORT,DISTANCE=DISTANCE,SIZE=SIZE,verbose=FALSE)
+
+### Plot results
+Global.summary(model=x, file="alcidae_global", directory="C:/temp/distance")
+#END
 }
 \references{
 Thomas, L., S.T. Buckland, E.A. Rexstad, J. L. Laake, S. Strindberg, S. L. Hedley, J. R.B. Bishop,

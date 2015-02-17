@@ -102,7 +102,7 @@
 #'Global.summary(model=x, file="alcidae_global", directory="C:/temp/distance")
 #'#END
 
-foobar2 <-
+strip.wrap <-
 function(dataset,
 																								path,
 																								pathMCDS,
