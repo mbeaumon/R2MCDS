@@ -129,7 +129,7 @@
 #'
 #'### Get the names of the different models produced and plot results for the first model
 #'names(x)
-#'Global.summary(model=x, file="alcidae", directory="C:/temp/distance")
+#'global.summary(model=x, file="alcidae", directory="C:/temp/distance")
 #'
 #'### Plot all results in a single line
 #'lapply(x,resume.plot)
