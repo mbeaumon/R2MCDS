@@ -4,7 +4,11 @@ print.summary.distanceFit <- function(x, ...){
   cat(paste("\n\nDetection function used : ",x$Type, sep=""))
   cat("\nParameters of the detection function:\n")
   print(x$Detection[,-1],row.names = FALSE)
-  cat("\n\nDensity estimates for the entire survey area:\n")
+  cat("\n")
+  if(class(x$Key)=="list"){
+    for(j in 1:length(x$Key[[1]])){ cat(paste(paste(x$Key[[1]][j,!is.na(x$Key[[1]][j,])], collapse=" "),"\n", sep=""))} 
+  }
+  cat("Density estimates for the entire survey area:\n")
   print(x$Density[,-1], row.names = FALSE)
 }
 
