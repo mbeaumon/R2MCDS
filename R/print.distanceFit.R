@@ -1,6 +1,6 @@
 print.distanceFit <- function(x, ...){
   
-  cat("Distance sampling object fitted via the MCDS endgine:\n")
+  cat("Distance sampling object fitted via the MCDS engine:\n")
   cat("\n")
   cat(paste("Detection function: ", unlist(strsplit(x$model_fitting$Global$Type, ","))[1],sep=""))
   cat("\n")

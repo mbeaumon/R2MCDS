@@ -1,5 +1,5 @@
 print.summary.distanceList <- function(x, ...){
-  cat("Summary of a list of distance sampling object fitted via the MCDS endgine:\n")
+  cat("Summary of a list of distance sampling object fitted via the MCDS engine:\n")
   print(x[[1]]$Parameters[-5,],row.names = FALSE)
   for(i in 1:length(x)){
     cat(paste("\nResults for ",names(x)[i], sep=""))

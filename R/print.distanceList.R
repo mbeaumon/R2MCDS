@@ -1,6 +1,6 @@
 print.distanceList <- function(x, ...){
   
-  cat("List of Distance sampling object fitted via the MCDS endgine:\n")
+  cat("List of Distance sampling object fitted via the MCDS engine:\n")
   cat("\n")
   for(i in 1:length(x)){
     cat(paste("Results for ", names(x[i]),":", sep=""))
