@@ -119,7 +119,7 @@
 #'x<-distance.wrap(alcids,path=path,pathMCDS=pathMCDS,breaks=breaks,STR_LABEL=STR_LABEL,STR_AREA=STR_AREA,SMP_LABEL=SMP_LABEL,SMP_EFFORT=SMP_EFFORT,DISTANCE=DISTANCE,SIZE=SIZE,verbose=FALSE)
 #'
 #'### Plot results
-#'Global.summary(model=x, file="alcidae_global", directory="C:/temp/distance")
+#'global.summary(model=x, species="alcidae",file="alcidae_global", directory="C:/temp/distance")
 #'
 #'### Run separate analysis for years 2008-2009
 #'lsub<-list(Year=c(2008,2009))
@@ -129,7 +129,7 @@
 #'
 #'### Get the names of the different models produced and plot results for the first model
 #'names(x)
-#'global.summary(model=x, file="alcidae", directory="C:/temp/distance")
+#'global.summary(model=x, species="alcidae", file="alcidae", directory="C:/temp/distance")
 #'
 #'### Plot all results in a single line
 #'lapply(x,resume.plot)
@@ -449,16 +449,17 @@ function(dataset,
 		
 		x<-readLines(file.path(path,res.file[i]))
 		y<-readLines(file.path(path,det.file[i]))
-		ans<-vector(mode="list",length=8)
+		ans<-vector(mode="list",length=9)
 		ans[[1]]<-input.data
     ans[[2]]<-model_fittingMCDS(x)
 		ans[[3]]<-parameter_estimatesMCDS(x)
-		ans[[4]]<-chi_square_testMCDS(x)
-		ans[[5]]<-density_estimateMCDS(x)
-		ans[[6]]<-ifelse(is.null(rare)==TRUE,cluster_sizeMCDS(x),"No cluster size evaluation are made for rare species")
-		ans[[7]]<-detection_probabilityMCDS(y, covariates=covariates)
-		ans[[8]]<-path
-		names(ans)<-c("input_data","model_fitting","parameter_estimates","chi_square_test","density_estimate","cluster_size","detection","path")
+    ans[[4]] <-ifelse(!is.null(factor) | !is.null(covariates)==T,param_namesMCDS(x),"No covariates in the model") 
+		ans[[5]]<-chi_square_testMCDS(x)
+		ans[[6]]<-density_estimateMCDS(x)
+		ans[[7]]<-ifelse(is.null(rare)==TRUE,cluster_sizeMCDS(x),"No cluster size evaluation are made for rare species")
+		ans[[8]]<-detection_probabilityMCDS(y, covariates=covariates)
+		ans[[9]]<-path
+		names(ans)<-c("input_data","model_fitting","parameter_estimates","covar_key","chi_square_test","density_estimate","cluster_size","detection","path")
 		class(ans)<-"distanceFit"
 		#ans
 		lans[[i]]<-ans
