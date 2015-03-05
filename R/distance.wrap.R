@@ -456,7 +456,6 @@ function(dataset,
     ans[[4]] <-ifelse(!is.null(factor) | !is.null(covariates)==T,param_namesMCDS(x),"No covariates in the model") 
 		ans[[5]]<-chi_square_testMCDS(x)
 		ans[[6]]<-density_estimateMCDS(x)
-		#ans[[7]]<-ifelse(is.null(rare)==TRUE,cluster_sizeMCDS(x),"No cluster size evaluation are made for rare species")
 		ans[[7]]<-ifelse(is.na(grep("Uniform",ans[[2]]$Global$Type)), cluster_sizeMCDS(x),"No cluster size evaluation are made for uniform detection function")
     ans[[8]]<-detection_probabilityMCDS(y, covariates=covariates)
 		ans[[9]]<-path
