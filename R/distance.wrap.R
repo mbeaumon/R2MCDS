@@ -372,13 +372,15 @@ function(dataset,
 			}
 		}	
 		va<-if(!is.null(factor) | !is.null(covariates)){TRUE}else{FALSE}
-		factor_list<-paste(factor,collapse=", ")
-		covariates_list<-paste(covariates,collapse=", ")
-		covariates_list<-paste(factor_list,covariates_list,sep=", ")
-		if(is.null(rare)){  #fits a uniform model when rare is not NULL
+		if(!is.null(covariates) | !is.null(factor)){ 
+      factor_list<-paste(factor,collapse=", ")
+		  covariates_list<-paste(covariates,collapse=", ")
+		  covariates_list<-paste(factor_list,covariates_list,sep=", ")
+		}
+    if(is.null(rare)){  #fits a uniform model when rare is not NULL
 			#browser()
 			if(is.null(estimator)){
-			  if(is.null(covariates)){
+			  if(is.null(covariates) & is.null(factor)){
           opts[["Estimator1"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("UN","CO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
 				  opts[["Estimator2"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("UN","PO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
 			  }

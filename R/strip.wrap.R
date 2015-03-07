@@ -168,7 +168,8 @@ function(dataset,
   		}
   	}
 
-	dataset[,DISTANCE]<- mean(breaks) 
+	DISTANCE <-"Distance" 
+  dataset[,DISTANCE]<- mean(breaks) 
 	transects[,DISTANCE]<-""
 	
 	######################## add-on
