@@ -136,338 +136,350 @@
 #'#END
 
 distance.wrap <-
-function(dataset,
-																								path,
-																								pathMCDS,
-																								SMP_LABEL="SMP_LABEL",
-																								SMP_EFFORT="SMP_EFFORT",
-																								DISTANCE="DISTANCE",
-																								SIZE="SIZE",																				
-																								STR_LABEL="STR_LABEL",
-																								STR_AREA="STR_AREA",												
-																								breaks=c(0,50,100,200,300),
-																								covariates=NULL,
-																								factor=NULL,
-																								lsub=NULL,
-																								stratum=NULL, #new
-																								split=TRUE,
-																								rare=NULL,  #testing
-																								period=NULL,
-																								detection="All", #or "stratum" is possible
-																								monotone="Strict",
-																								estimator=NULL,
-																								multiplier=2, #new
-																								empty=NULL,
-																								verbose=FALSE
-){
-	#get the list of arguments
-	arguments<-as.list(environment())
-	if(!is.null(period)){
-		dataset<-dataset[dataset$Date>=min(period) & dataset$Date<=max(period),]
-	}
-	
-  #Make sure the directory exist to save output
-	dir.create(path, recursive = TRUE, showWarnings = FALSE)
-  
-  
-  #Make the factor characters for the function
-	if(!is.null(factor)){
-    for(i in 1:length(factor)){
-      dataset[,factor[i]] <- as.character(dataset[,factor[i]])
-    }   
-	}
-  
-  
-	# this recursively fits a model to get an estimate of p for a rarer species
-	if(!is.null(rare)){		
-		if(!names(rare)%in%names(dataset)){stop(paste("The column",names(rare)[1],"not in dataset"))}
-		if(length(rare)>1 || length(rare[[1]])>1){stop("Only a list and an element of length 1 is accepted for argument rare")}
-		
-    #arguments[["dataset"]]<-dataset[dataset[,names(rare)[1]]!=rare[[1]],]
-		arguments[["dataset"]]<-dataset
-    arguments[["lsub"]]<-lsub # here I could use the lsub argument instead of subsetting in the previous line
-		arguments[["split"]]<-FALSE
-		arguments[["stratum"]]<-NULL
-		arguments[["detection"]]<-"All"
-		arguments[["rare"]]<-NULL
-		arguments[["verbose"]]<-FALSE
-		premod<-do.call("distance.wrap",arguments)
-		detect_table<-premod[["parameter_estimates"]][["Global"]]
-		pdetect<-detect_table[detect_table[,"Parameters"]=="p","Estimates"]
-    sedetect<- detect_table[detect_table[,"Parameters"]=="p","SE"]
-		dfdetect<- detect_table[detect_table[,"Parameters"]=="p","df"]
-		warning(paste("Rare species detecion modified by a factor of ", round(1/pdetect,3), " with a ", round(sedetect/pdetect^2,3), " standard error and ",dfdetect," degrees of freedom based on estimation of the global model", sep=""), call. = FALSE)
-  	}
-		
-	if(!any("STR_AREA"==names(dataset)) && STR_AREA=="STR_AREA"){
-		dataset<-cbind(STR_AREA=rep(1,nrow(dataset)),dataset,stringsAsFactors=F)
-	}	
-	if(!any("STR_LABEL"==names(dataset)) && STR_LABEL=="STR_LABEL"){
-		dataset<-cbind(STR_LABEL=rep(1,nrow(dataset)),dataset,stringsAsFactors=F)
-	}	
-	if(!is.null(stratum)){
-		if(STR_LABEL!="STR_LABEL"){
-			dataset[,"STR_LABEL"]<-dataset[,STR_LABEL]	
-		}
-		dataset[,"STR_LABEL"]<-dataset[,stratum] # stratum as predominance over STR_LABEL
-		STR_LABEL<-stratum	
-	}
-	if(!is.null(stratum) && stratum=="STR_LABEL"){
-		if(is.null(STR_AREA)){
-			stop("No area given (STR_AREA = NULL) and stratum = \"STR_LABEL\"")
-		}else{	
-			dataset[,"STR_AREA"]<-dataset[,STR_AREA]
-		}
-	}
-	
-	if(!is.null(empty) && !is.null(lsub)){
-	 if(!all(empty%in%names(lsub))){stop("Names in empty do not correspond to names in lsub")}
-	}
-  transects<-dataset
-	if(!is.null(rare)){
-	  dataset<-dataset[dataset[,names(rare)[1]]==rare[[1]],]
-	}else{
-  	if(!is.null(lsub)){  
-  		for(i in 1:length(lsub)){
-  			if(is.null(lsub[[i]])){next}
-  			dataset<-dataset[dataset[,names(lsub)[i]]%in%lsub[[i]],]			 
-  			if(names(lsub)[i]%in%empty){
-  				transects<-transects[transects[,names(lsub)[i]]%in%lsub[[i]],]
-  			}			
-  		}
-  	}
-  }
-	transects[,DISTANCE]<-""
-	
-	######################## add-on
-	if(!is.null(lsub) && split){
-		if(!is.null(empty)){			
-			transects<-dlply(transects,empty)
-			dataset<-dlply(dataset,empty)			
-			transects<-transects[names(dataset)]
-			l<-1:length(dataset)
-			names(l)<-names(transects)
-			dataset<-llply(l,function(i){
-				ans<-dlply(dataset[[i]],setdiff(names(lsub),empty))
-			 empty.transects<-transects[[i]]
-				n<-names(ans)
-				ans<-lapply(ans,function(j){rbind(j,empty.transects)})
-			 names(ans)<-n
-				ans
-			})
-		 if(all(names(lsub)%in%empty)){
-		 	name<-names(dataset)
-		 	dataset<-unlist(dataset,recursive=FALSE,use.names=FALSE)
-		  names(dataset)<-name
-		 }else{
-		 	dataset<-unlist(dataset,recursive=FALSE,use.names=TRUE)
-		 }
-		}else{
-		 dataset<-dlply(dataset,names(lsub))
-		 dataset<-llply(dataset,function(i){rbind(i,transects)})
-		}
-	}else{		
-		dataset<-list(rbind(dataset,transects))
-	}
-	#########################
-
-	dataset<-lapply(dataset,function(i){
-	
-		res<-i[!is.na(i[,DISTANCE]),] #add1
-		good.label<-unique(res[res[,DISTANCE]!="",SMP_LABEL])#add2
-		res<-res[(res[,DISTANCE]!="") | (res[,DISTANCE]=="" & !res[,SMP_LABEL]%in%good.label & !duplicated(res[,SMP_LABEL])),]#add3
-		res[,DISTANCE]<-ifelse(is.na(res[,DISTANCE]),"",res[,DISTANCE])
-		res[,SIZE]<-ifelse(res[,DISTANCE]=="","",res[,SIZE])
-		if(all(res[,DISTANCE]=="")){
-			res<-NULL
-		}
-		res
-	})
-	dataset<-dataset[!sapply(dataset,is.null)] #removes emptys transects when they are marked with "" for the species name
-
-	if(!is.null(names(dataset))){
-		names(dataset)<-gsub("\\.","\\_",names(dataset))
-		names(dataset)<-gsub("'","",names(dataset))	# this was put for gyre d'anticosti #########
-	}
-	
-	res.file<-paste(paste("results",names(dataset),sep="_"),".tmp",sep="")
-	log.file<-paste(paste("log",names(dataset),sep="_"),".tmp",sep="")
-	det.file<-paste(paste("detections",names(dataset),sep="_"),".tmp",sep="")
-	dat.file<-paste(paste("data",names(dataset),sep="_"),".tmp",sep="")
-	inp.file<-paste(paste("input",names(dataset),sep="_"),".tmp",sep="")
-	#browser()
-	lans<-vector(mode="list",length=length(dataset))
-	names(lans)<-names(dataset)
-	
-	notrun<-NULL
-	#browser()
-	for(i in seq_along(dataset)){
-		dat<-dataset[[i]]
-		dat<-dat[!(is.na(dat[,DISTANCE]) | is.na(dat[,SIZE])),]
-		#dat<-dat[!(duplicated(dat[,SMP_LABEL]) & dat[,DISTANCE]==""),]
-		#######################################################
-		### input
-		opts<-list()
-		opts[""]<-paste(gsub("/","\\\\\\\\",path),"\\\\",res.file[i],sep="")
-		opts[""]<-paste(gsub("/","\\\\\\\\",path),"\\\\",log.file[i],sep="")
-		opts[""]<-"None"
-		opts[""]<-paste(gsub("/","\\\\\\\\",path),"\\\\",det.file[i],sep="")
-		opts[""]<-"None"
-		opts[""]<-"None"
-		opts["Options;"]<-""
-		opts["Type="]<-"Line;"
-		opts["Length /Measure="]<-"'Kilometer';"
-		opts["Distance=Perp /Measure="]<-"'Meter';"
-		opts["Area /Units="]<-"'Square kilometer';"
-		opts["Object="]<-"Cluster;"
-		opts["SF="]<-"1;"
-		opts["Selection="]<-"Specify;"
-		if(is.null(rare)){
-			opts["Selection="]<-"Sequential;"
-			opts["Lookahead="]<-"1;"
-			opts["Maxterms="]<-"5;"
-		}
-		opts["Confidence="]<-"95;"
-		opts["Print="]<-"Selection;"
-		opts["End1;"]<-""
-		opts["Data /Structure="]<-"Flat;"
-		dat<-dat[,unique(c(STR_LABEL,STR_AREA,SMP_LABEL,SMP_EFFORT,DISTANCE,SIZE,factor,covariates))] #the stratum part used to be ifelse(stratum=="STR_LABEL",STR_LABEL,stratum)
-		names(dat)[1:6]<-c("STR_LABEL","STR_AREA","SMP_LABEL","SMP_EFFORT","DISTANCE","SIZE")
-		
-		opts["Fields="]<-paste(paste(names(dat),collapse=", "),";",sep="")
-		if(!is.null(factor)){
-		  for(j in 1:length(factor)){
-		    labels<-sort(unique(dat[,factor[j]]))
-		    labels<-labels[!is.na(labels)]
-		    opts[[length(opts)+1]] <- paste(paste(paste(c(" /Name="," /Levels="," /Labels="),c(factor[j],length(labels),paste(labels,collapse=",")),sep=""),collapse=""),";",sep="") 
-		  }
-		  names(opts)[(which(names(opts)=="Fields=")+1):length(opts)] <- "FACTOR="
-		}else{
-		  NULL
-		}
-		opts["Infile="]<-paste(paste(gsub("/","\\\\\\\\",path),"\\\\",dat.file[i],sep="")," /NoEcho;",sep="")
-		opts["End2;"]<-""
-		opts["Estimate;"]<-""
-		opts["Distance /Intervals="]<-paste(paste(breaks,collapse=",")," /Width=",max(breaks)," /Left=",min(breaks),";",sep="")
-		
-		if(is.null(stratum)){
-			opts["Density="]<-"All;"
-			opts["Encounter="]<-"All;"
-			opts["Detection="]<-"All;"
-			opts["Size="]<-"All;"
-		}else{
-			if(stratum=="STR_LABEL"){
-				
-				opts["Density="]<-"Stratum /DESIGN=strata /WEIGHT=area;" # in post stratify and stratify only, both lines are the same
-				opts["Encounter="]<-"Stratum;"
-				opts["Detection="]<-paste(detection,";",sep="")
-				opts["Size="]<-"All;"
-			}else{
-				opts["Density="]<-"Stratum /DESIGN=strata /WEIGHT=area;"
-				opts["Encounter="]<-"Stratum;"
-				opts["Detection="]<-paste(detection,";",sep="")
-				opts["Size="]<-"All;"
-				opts["Fields="]<-paste(paste(names(dat),collapse=", "),";",sep="")
-				
-			}
-		}	
-		va<-if(!is.null(factor) | !is.null(covariates)){TRUE}else{FALSE}
-		if(!is.null(covariates) | !is.null(factor)){ 
-      factor_list<-paste(factor,collapse=", ")
-		  covariates_list<-paste(covariates,collapse=", ")
-		  covariates_list<-paste(factor_list,covariates_list,sep=", ")
-		}
-    if(is.null(rare)){  #fits a uniform model when rare is not NULL
-			#browser()
-			if(is.null(estimator)){
-			  if(is.null(covariates) & is.null(factor)){
-          opts[["Estimator1"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("UN","CO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
-				  opts[["Estimator2"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("UN","PO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
-			  }
-        opts[["Estimator3"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HN","CO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
-				opts[["Estimator4"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HN","HE","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
-				opts[["Estimator5"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HA","CO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
-				opts[["Estimator6"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HA","PO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
-			}else{
-				if(!is.list(estimator) | !all(sapply(estimator,length)==2)){stop("Wrong list format for argument estimator")}
-				for(j in 1:length(estimator)){
-					opts[[paste("Estimator",j,sep="")]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c(estimator[[j]][1],estimator[[j]][2],"AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
-				}
-			}	
-		}else{
-			opts[["Estimator1"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion="," /NAP=",if(va){" /Covariates="}else{NULL}),c("UN","CO","AIC","0",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
-		}
-		opts["Monotone="]<-paste(monotone,";",sep="")
-		opts["Pick="]<-"AICC;"
-		opts["GOF;"]<-""
-		opts["Cluster /Bias="]<-"GXLOG;"
-		opts["VarN="]<-"Empirical;"
-		opts["Multiplier1="]<-paste(multiplier," /Label='Sampling fraction';",sep="")
-    if(!is.null(rare)){
-    opts["Multiplier2="]<-paste(1/pdetect," /Label='Rare'"," /SE=",sedetect/pdetect^2," /DF=",dfdetect,";",sep="")  
+  function(dataset,
+           path,
+           pathMCDS,
+           SMP_LABEL="SMP_LABEL",
+           SMP_EFFORT="SMP_EFFORT",
+           DISTANCE="DISTANCE",
+           SIZE="SIZE",  																			
+           STR_LABEL="STR_LABEL",
+           STR_AREA="STR_AREA",												
+           breaks=c(0,50,100,200,300),
+           covariates=NULL,
+           factor=NULL,
+           lsub=NULL,
+           stratum=NULL, #new
+           split=TRUE,
+           rare=NULL,  #testing
+           period=NULL,
+           detection="All", #or "stratum" is possible
+           monotone="Strict",
+           estimator=NULL,
+           multiplier=2, #new
+           empty=NULL,
+           verbose=FALSE
+  ){
+    #get the list of arguments
+    arguments<-as.list(environment())
+    if(!is.null(period)){
+      dataset<-dataset[dataset$Date>=min(period) & dataset$Date<=max(period),]
     }
-		opts["End3;"]<-""
     
-		names(opts)[grep("Estimator",names(opts))]<-"Estimator" #to get the nb out which are used to prevent overwriting previously
-		names(opts)[grep("End",names(opts))]<-"End;"
-    names(opts)[grep("Multiplier",names(opts))]<-"Multiplier="
-		opts<-lapply(opts,paste,collapse="")
-		input<-paste(names(opts),unlist(opts),sep="")
-		if(verbose){cat(input,fill=1)}  #prints the input file
-		write.table(input,file.path(path,inp.file[i]),row.names=FALSE,quote=FALSE,col.names=FALSE)
-		dat$SMP_LABEL<-paste(as.numeric(factor(dat$SMP_LABEL)),dat$SMP_LABEL,sep=".")
-		dat<-dat[order(dat[,"STR_LABEL"],dat[,"SMP_LABEL"]),] #always order according to the first column/ str_label, otherwise MCDS creates too many stratum or samples
-		w<-which(is.na(dat[,"DISTANCE"]) | dat[,"DISTANCE"]=="")
-		if(any(w)){
-			dat[w,"SIZE"]<-"" #previously NA was given, but gives status 3 with distance
-			dat[w,"DISTANCE"]<-"" #previously not here but don't know why
-			if(!is.null(covariates)){for(j in 1:length(covariates)){dat[w,covariates[j]]<-""}}
-			if(!is.null(factor)){for(j in 1:length(factor)){dat[w,factor[j]]<-""}}
-		}
-		dat<-dat[dat[,"STR_LABEL"]!="",]#temporary to get rid of stratum when it is species and it is an empty transect, has to be clarified what to do
-		write.table(dat,file.path(path,dat.file[i]),na="",sep="\t",row.names=FALSE,col.names=FALSE,quote=FALSE)
-		
-		####################################################
-		### running distance
-		
-		cmd<-paste(shQuote(file.path(pathMCDS,"MCDS"))," 0, ",shQuote(file.path(path,inp.file[i])),sep="")
-		system(cmd,wait=TRUE,ignore.stdout=FALSE,ignore.stderr=FALSE,invisible=TRUE)
-		
-		####################################################
-		### output
-		
-    ### subset original observations
-		input.data <- list()
-    input.data[[1]] <- dat
-		input.data[[2]] <- breaks
-		names(input.data)<-c("observations","breaks")
+    #Make sure the directory exist to save output
+    dir.create(path, recursive = TRUE, showWarnings = FALSE)
     
-		log<-readLines(file.path(path,log.file[i]))
-		res<-readLines(file.path(path,res.file[i]))
-		if(any(grep("No fit possible",log)) || length(res)<1L){
-			notrun<-c(notrun,names(lans)[i])
-			next
-		}
-		
-		x<-readLines(file.path(path,res.file[i]))
-		y<-readLines(file.path(path,det.file[i]))
-		ans<-vector(mode="list",length=9)
-		ans[[1]]<-input.data
-    ans[[2]]<-model_fittingMCDS(x)
-		ans[[3]]<-parameter_estimatesMCDS(x)
-    ans[[4]] <-ifelse(!is.null(factor) | !is.null(covariates)==T,param_namesMCDS(x),"No covariates in the model") 
-		ans[[5]]<-chi_square_testMCDS(x)
-		ans[[6]]<-density_estimateMCDS(x)
-		ans[[7]]<-ifelse(is.na(grep("Uniform",ans[[2]]$Global$Type)), cluster_sizeMCDS(x),"No cluster size evaluation are made for uniform detection function")
-    ans[[8]]<-detection_probabilityMCDS(y, covariates=covariates)
-		ans[[9]]<-path
-		names(ans)<-c("input_data","model_fitting","parameter_estimates","covar_key","chi_square_test","density_estimate","cluster_size","detection","path")
-		class(ans)<-"distanceFit"
-		#ans
-		lans[[i]]<-ans
-	}
-	if(!is.null(notrun)){warning(paste("No models for the following combinations: ",paste(notrun,collapse=" "),". See log files." ,sep=""),immediate.=TRUE)}
-	lans<-lans[!sapply(lans,is.null)]
-	class(lans) <- "distanceList"
-  if(length(lans)==1){lans[[1]]}else{lans}
-}
+    
+    #Make the factor characters for the function
+    if(!is.null(factor)){
+      for(i in 1:length(factor)){
+        dataset[,factor[i]] <- as.character(dataset[,factor[i]])
+      }   
+    }
+    
+    
+    # this recursively fits a model to get an estimate of p for a rarer species
+    if(!is.null(rare)){		
+      if(!names(rare)%in%names(dataset)){stop(paste("The column",names(rare)[1],"not in dataset"))}
+      if(length(rare)>1 || length(rare[[1]])>1){stop("Only a list and an element of length 1 is accepted for argument rare")}
+      
+      #arguments[["dataset"]]<-dataset[dataset[,names(rare)[1]]!=rare[[1]],]
+      arguments[["dataset"]]<-dataset
+      arguments[["lsub"]]<-lsub # here I could use the lsub argument instead of subsetting in the previous line
+      arguments[["split"]]<-FALSE
+      arguments[["stratum"]]<-NULL
+      arguments[["detection"]]<-"All"
+      arguments[["rare"]]<-NULL
+      arguments[["verbose"]]<-FALSE
+      premod<-do.call("distance.wrap",arguments)
+      detect_table<-premod[["parameter_estimates"]][["Global"]]
+      pdetect<-detect_table[detect_table[,"Parameters"]=="p","Estimates"]
+      sedetect<- detect_table[detect_table[,"Parameters"]=="p","SE"]
+      dfdetect<- detect_table[detect_table[,"Parameters"]=="p","df"]
+      warning(paste("Rare species detecion modified by a factor of ", round(1/pdetect,3), " with a ", round(sedetect/pdetect^2,3), " standard error and ",dfdetect," degrees of freedom based on estimation of the global model", sep=""), call. = FALSE)
+    }
+    
+    if(!any("STR_AREA"==names(dataset)) && STR_AREA=="STR_AREA"){
+      dataset<-cbind(STR_AREA=rep(1,nrow(dataset)),dataset,stringsAsFactors=F)
+    }	
+    if(!any("STR_LABEL"==names(dataset)) && STR_LABEL=="STR_LABEL"){
+      dataset<-cbind(STR_LABEL=rep(1,nrow(dataset)),dataset,stringsAsFactors=F)
+    }	
+    if(!is.null(stratum)){
+      if(STR_LABEL!="STR_LABEL"){
+        dataset[,"STR_LABEL"]<-dataset[,STR_LABEL]	
+      }
+      dataset[,"STR_LABEL"]<-dataset[,stratum] # stratum as predominance over STR_LABEL
+      STR_LABEL<-stratum	
+    }
+    if(!is.null(stratum) && stratum=="STR_LABEL"){
+      if(is.null(STR_AREA)){
+        stop("No area given (STR_AREA = NULL) and stratum = \"STR_LABEL\"")
+      }else{	
+        dataset[,"STR_AREA"]<-dataset[,STR_AREA]
+      }
+    }
+    
+    if(!is.null(empty) && !is.null(lsub)){
+      if(!all(empty%in%names(lsub))){stop("Names in empty do not correspond to names in lsub")}
+    }
+    transects<-dataset
+    if(!is.null(rare)){
+      dataset<-dataset[dataset[,names(rare)[1]]==rare[[1]],]
+    }else{
+      if(!is.null(lsub)){  
+        for(i in 1:length(lsub)){
+          if(is.null(lsub[[i]])){next}
+          dataset<-dataset[dataset[,names(lsub)[i]]%in%lsub[[i]],]			 
+          if(names(lsub)[i]%in%empty){
+            transects<-transects[transects[,names(lsub)[i]]%in%lsub[[i]],]
+          }			
+        }
+      }
+    }
+    transects[,DISTANCE]<-""
+    
+    ######################## add-on
+    if(!is.null(lsub) && split){
+      if(!is.null(empty)){			
+        transects<-dlply(transects,empty)
+        dataset<-dlply(dataset,empty)			
+        transects<-transects[names(dataset)]
+        l<-1:length(dataset)
+        names(l)<-names(transects)
+        dataset<-llply(l,function(i){
+          ans<-dlply(dataset[[i]],setdiff(names(lsub),empty))
+          empty.transects<-transects[[i]]
+          n<-names(ans)
+          ans<-lapply(ans,function(j){rbind(j,empty.transects)})
+          names(ans)<-n
+          ans
+        })
+        if(all(names(lsub)%in%empty)){
+          name<-names(dataset)
+          dataset<-unlist(dataset,recursive=FALSE,use.names=FALSE)
+          names(dataset)<-name
+        }else{
+          dataset<-unlist(dataset,recursive=FALSE,use.names=TRUE)
+        }
+      }else{
+        dataset<-dlply(dataset,names(lsub))
+        dataset<-llply(dataset,function(i){rbind(i,transects)})
+      }
+    }else{		
+      dataset<-list(rbind(dataset,transects))
+    }
+    #########################
+    
+    dataset<-lapply(dataset,function(i){
+      
+      res<-i[!is.na(i[,DISTANCE]),] #add1
+      good.label<-unique(res[res[,DISTANCE]!="",SMP_LABEL])#add2
+      res<-res[(res[,DISTANCE]!="") | (res[,DISTANCE]=="" & !res[,SMP_LABEL]%in%good.label & !duplicated(res[,SMP_LABEL])),]#add3
+      res[,DISTANCE]<-ifelse(is.na(res[,DISTANCE]),"",res[,DISTANCE])
+      res[,SIZE]<-ifelse(res[,DISTANCE]=="","",res[,SIZE])
+      if(all(res[,DISTANCE]=="")){
+        res<-NULL
+      }
+      res
+    })
+    dataset<-dataset[!sapply(dataset,is.null)] #removes emptys transects when they are marked with "" for the species name
+    
+    if(!is.null(names(dataset))){
+      names(dataset)<-gsub("\\.","\\_",names(dataset))
+      names(dataset)<-gsub("'","",names(dataset))	# this was put for gyre d'anticosti #########
+    }
+    
+    res.file<-paste(paste("results",names(dataset),sep="_"),".tmp",sep="")
+    log.file<-paste(paste("log",names(dataset),sep="_"),".tmp",sep="")
+    det.file<-paste(paste("detections",names(dataset),sep="_"),".tmp",sep="")
+    dat.file<-paste(paste("data",names(dataset),sep="_"),".tmp",sep="")
+    
+    #browser()
+    lans<-vector(mode="list",length=length(dataset))
+    names(lans)<-names(dataset)
+    
+    notrun<-NULL
+    #browser()
+    for(i in seq_along(dataset)){
+      dat<-dataset[[i]]
+      dat<-dat[!(is.na(dat[,DISTANCE]) | is.na(dat[,SIZE])),]
+      #dat<-dat[!(duplicated(dat[,SMP_LABEL]) & dat[,DISTANCE]==""),]
+      #######################################################
+      ### input
+      opts<-list()
+      opts[""]<-paste(gsub("/","\\\\\\\\",path),"\\\\",res.file[i],sep="")
+      opts[""]<-paste(gsub("/","\\\\\\\\",path),"\\\\",log.file[i],sep="")
+      opts[""]<-"None"
+      opts[""]<-paste(gsub("/","\\\\\\\\",path),"\\\\",det.file[i],sep="")
+      opts[""]<-"None"
+      opts[""]<-"None"
+      opts["Options;"]<-""
+      opts["Type="]<-"Line;"
+      opts["Length /Measure="]<-"'Kilometer';"
+      opts["Distance=Perp /Measure="]<-"'Meter';"
+      opts["Area /Units="]<-"'Square kilometer';"
+      opts["Object="]<-"Cluster;"
+      opts["SF="]<-"1;"
+      opts["Selection="]<-"Specify;"
+      if(is.null(rare)){
+        opts["Selection="]<-"Sequential;"
+        opts["Lookahead="]<-"1;"
+        opts["Maxterms="]<-"5;"
+      }
+      opts["Confidence="]<-"95;"
+      opts["Print="]<-"Selection;"
+      opts["End1;"]<-""
+      opts["Data /Structure="]<-"Flat;"
+      dat<-dat[,unique(c(STR_LABEL,STR_AREA,SMP_LABEL,SMP_EFFORT,DISTANCE,SIZE,factor,covariates))] #the stratum part used to be ifelse(stratum=="STR_LABEL",STR_LABEL,stratum)
+      names(dat)[1:6]<-c("STR_LABEL","STR_AREA","SMP_LABEL","SMP_EFFORT","DISTANCE","SIZE")
+      
+      opts["Fields="]<-paste(paste(names(dat),collapse=", "),";",sep="")
+      if(!is.null(factor)){
+        for(j in 1:length(factor)){
+          labels<-sort(unique(dat[,factor[j]]))
+          labels<-labels[!is.na(labels)]
+          opts[[length(opts)+1]] <- paste(paste(paste(c(" /Name="," /Levels="," /Labels="),c(factor[j],length(labels),paste(labels,collapse=",")),sep=""),collapse=""),";",sep="") 
+        }
+        names(opts)[(which(names(opts)=="Fields=")+1):length(opts)] <- "FACTOR="
+      }else{
+        NULL
+      }
+      opts["Infile="]<-paste(paste(gsub("/","\\\\\\\\",path),"\\\\",dat.file[i],sep="")," /NoEcho;",sep="")
+      opts["End2;"]<-""
+      opts["Estimate;"]<-""
+      opts["Distance /Intervals="]<-paste(paste(breaks,collapse=",")," /Width=",max(breaks)," /Left=",min(breaks),";",sep="")
+      
+      if(is.null(stratum)){
+        opts["Density="]<-"All;"
+        opts["Encounter="]<-"All;"
+        opts["Detection="]<-"All;"
+        opts["Size="]<-"All;"
+      }else{
+        if(stratum=="STR_LABEL"){
+          
+          opts["Density="]<-"Stratum /DESIGN=strata /WEIGHT=area;" # in post stratify and stratify only, both lines are the same
+          opts["Encounter="]<-"Stratum;"
+          opts["Detection="]<-paste(detection,";",sep="")
+          opts["Size="]<-"All;"
+        }else{
+          opts["Density="]<-"Stratum /DESIGN=strata /WEIGHT=area;"
+          opts["Encounter="]<-"Stratum;"
+          opts["Detection="]<-paste(detection,";",sep="")
+          opts["Size="]<-"All;"
+          opts["Fields="]<-paste(paste(names(dat),collapse=", "),";",sep="")
+          
+        }
+      }	
+      va<-if(!is.null(factor) | !is.null(covariates)){TRUE}else{FALSE}
+      if(!is.null(covariates) | !is.null(factor)){ 
+        factor_list<-paste(factor,collapse=", ")
+        covariates_list<-paste(covariates,collapse=", ")
+        covariates_list<-paste(factor_list,covariates_list,sep=", ")
+      }
+      if(is.null(rare)){  #fits a uniform model when rare is not NULL
+        #browser()
+        if(is.null(estimator)){
+          if(is.null(covariates) & is.null(factor)){
+            opts[["Estimator1"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("UN","CO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+            opts[["Estimator2"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("UN","PO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+          }
+          opts[["Estimator3"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HN","CO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+          opts[["Estimator4"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HN","HE","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+          opts[["Estimator5"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HA","CO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+          opts[["Estimator6"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HA","PO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+        }else{
+          if(!is.list(estimator) | !all(sapply(estimator,length)==2)){stop("Wrong list format for argument estimator")}
+          for(j in 1:length(estimator)){
+            opts[[paste("Estimator",j,sep="")]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c(estimator[[j]][1],estimator[[j]][2],"AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+          }
+        }	
+      }else{
+        opts[["Estimator1"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion="," /NAP=",if(va){" /Covariates="}else{NULL}),c("UN","CO","AIC","0",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+      }
+      opts["Monotone="]<-paste(monotone,";",sep="")
+      opts["Pick="]<-"AICC;"
+      opts["GOF;"]<-""
+      opts["Cluster /Bias="]<-"GXLOG;"
+      opts["VarN="]<-"Empirical;"
+      opts["Multiplier1="]<-paste(multiplier," /Label='Sampling fraction';",sep="")
+      if(!is.null(rare)){
+        opts["Multiplier2="]<-paste(1/pdetect," /Label='Rare'"," /SE=",sedetect/pdetect^2," /DF=",dfdetect,";",sep="")  
+      }
+      opts["End3;"]<-""
+      
+      names(opts)[grep("Estimator",names(opts))]<-"Estimator" #to get the nb out which are used to prevent overwriting previously
+      names(opts)[grep("End",names(opts))]<-"End;"
+      names(opts)[grep("Multiplier",names(opts))]<-"Multiplier="
+      opts<-lapply(opts,paste,collapse="")
+      
+      
+      n.model <- sum(names(opts)=="Estimator")
+      inp.file<- sapply(1:n.model, function(j){paste(paste("input",names(dataset)[i],
+                                                           substr(opts[names(opts)=="Estimator"][j][[1]],7,8),
+                                                           substr(opts[names(opts)=="Estimator"][j][[1]],18,19),
+                                                           sep="_"),".tmp",sep="")})
+      model.lines <- which(names(opts)=="Estimator")   
+      input<-lapply(1:n.model, function(i){paste(names(opts)[-model.lines[-i]],unlist(opts)[-model.lines[-i]],sep="")})
+      
+      if(verbose){cat(input,fill=1)}  #prints the input file
+      for(j in 1:n.model){
+        write.table(input[[j]],file.path(path,inp.file[i]),row.names=FALSE,quote=FALSE,col.names=FALSE)   
+      }
+      
+      dat$SMP_LABEL<-paste(as.numeric(factor(dat$SMP_LABEL)),dat$SMP_LABEL,sep=".")
+      dat<-dat[order(dat[,"STR_LABEL"],dat[,"SMP_LABEL"]),] #always order according to the first column/ str_label, otherwise MCDS creates too many stratum or samples
+      w<-which(is.na(dat[,"DISTANCE"]) | dat[,"DISTANCE"]=="")
+      if(any(w)){
+        dat[w,"SIZE"]<-"" #previously NA was given, but gives status 3 with distance
+        dat[w,"DISTANCE"]<-"" #previously not here but don't know why
+        if(!is.null(covariates)){for(j in 1:length(covariates)){dat[w,covariates[j]]<-""}}
+        if(!is.null(factor)){for(j in 1:length(factor)){dat[w,factor[j]]<-""}}
+      }
+      dat<-dat[dat[,"STR_LABEL"]!="",]#temporary to get rid of stratum when it is species and it is an empty transect, has to be clarified what to do
+      write.table(dat,file.path(path,dat.file[i]),na="",sep="\t",row.names=FALSE,col.names=FALSE,quote=FALSE)
+      
+      ####################################################
+      ### running distance
+      
+      cmd<-paste(shQuote(file.path(pathMCDS,"MCDS"))," 0, ",shQuote(file.path(path,inp.file[i])),sep="")
+      system(cmd,wait=TRUE,ignore.stdout=FALSE,ignore.stderr=FALSE,invisible=TRUE)
+      
+      ####################################################
+      ### output
+      
+      ### subset original observations
+      input.data <- list()
+      input.data[[1]] <- dat
+      input.data[[2]] <- breaks
+      names(input.data)<-c("observations","breaks")
+      
+      log<-readLines(file.path(path,log.file[i]))
+      res<-readLines(file.path(path,res.file[i]))
+      if(any(grep("No fit possible",log)) || length(res)<1L){
+        notrun<-c(notrun,names(lans)[i])
+        next
+      }
+      
+      x<-readLines(file.path(path,res.file[i]))
+      y<-readLines(file.path(path,det.file[i]))
+      ans<-vector(mode="list",length=9)
+      ans[[1]]<-input.data
+      ans[[2]]<-model_fittingMCDS(x)
+      ans[[3]]<-parameter_estimatesMCDS(x)
+      ans[[4]] <-ifelse(!is.null(factor) | !is.null(covariates)==T,param_namesMCDS(x),"No covariates in the model") 
+      ans[[5]]<-chi_square_testMCDS(x)
+      ans[[6]]<-density_estimateMCDS(x)
+      ans[[7]]<-ifelse(is.na(grep("Uniform",ans[[2]]$Global$Type)), cluster_sizeMCDS(x),"No cluster size evaluation are made for uniform detection function")
+      ans[[8]]<-detection_probabilityMCDS(y, covariates=covariates)
+      ans[[9]]<-path
+      names(ans)<-c("input_data","model_fitting","parameter_estimates","covar_key","chi_square_test","density_estimate","cluster_size","detection","path")
+      class(ans)<-"distanceFit"
+      #ans
+      lans[[i]]<-ans
+    }
+    if(!is.null(notrun)){warning(paste("No models for the following combinations: ",paste(notrun,collapse=" "),". See log files." ,sep=""),immediate.=TRUE)}
+    lans<-lans[!sapply(lans,is.null)]
+    class(lans) <- "distanceList"
+    if(length(lans)==1){lans[[1]]}else{lans}
+  }
