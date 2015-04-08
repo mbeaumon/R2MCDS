@@ -495,12 +495,12 @@ distance.wrap <-
         class(ans)<-"distanceFit"
         #list of model
         mans[[j]] <- ans
+        class(mans) <- "distanceList"
       }   
       #list of species
       lans[[i]]<-mans
     }
     if(!is.null(notrun)){warning(paste("No models for the following combinations: ",paste(notrun,collapse=" "),". See log files." ,sep=""),immediate.=TRUE)}
     lans<-lans[!sapply(lans,is.null)]
-    class(lans) <- "distanceList"
     if(length(lans)==1){lans[[1]]}else{lans}
   }
