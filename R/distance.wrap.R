@@ -294,7 +294,7 @@ distance.wrap <-
     log.file<-paste(paste("log",names(dataset),sep="_"),".tmp",sep="")
     det.file<-paste(paste("detections",names(dataset),sep="_"),".tmp",sep="")
     dat.file<-paste(paste("data",names(dataset),sep="_"),".tmp",sep="")
-    
+    inp.file<-paste(paste("input",names(dataset),sep="_"),".tmp",sep="")
     #browser()
     lans<-vector(mode="list",length=length(dataset))
     names(lans)<-names(dataset)
@@ -412,21 +412,9 @@ distance.wrap <-
       names(opts)[grep("End",names(opts))]<-"End;"
       names(opts)[grep("Multiplier",names(opts))]<-"Multiplier="
       opts<-lapply(opts,paste,collapse="")
-      
-      
-      n.model <- sum(names(opts)=="Estimator")
-      inp.file<- sapply(1:n.model, function(j){paste(paste("input",names(dataset)[i],
-                                                           substr(opts[names(opts)=="Estimator"][j][[1]],7,8),
-                                                           substr(opts[names(opts)=="Estimator"][j][[1]],18,19),
-                                                           sep="_"),".tmp",sep="")})
-      model.lines <- which(names(opts)=="Estimator")   
-      input<-lapply(1:n.model, function(i){paste(names(opts)[-model.lines[-i]],unlist(opts)[-model.lines[-i]],sep="")})
-      
+      input<-paste(names(opts),unlist(opts),sep="")
       if(verbose){cat(input,fill=1)}  #prints the input file
-      for(j in 1:n.model){
-        write.table(input[[j]],file.path(path,inp.file[i]),row.names=FALSE,quote=FALSE,col.names=FALSE)   
-      }
-      
+      write.table(input,file.path(path,inp.file[i]),row.names=FALSE,quote=FALSE,col.names=FALSE)
       dat$SMP_LABEL<-paste(as.numeric(factor(dat$SMP_LABEL)),dat$SMP_LABEL,sep=".")
       dat<-dat[order(dat[,"STR_LABEL"],dat[,"SMP_LABEL"]),] #always order according to the first column/ str_label, otherwise MCDS creates too many stratum or samples
       w<-which(is.na(dat[,"DISTANCE"]) | dat[,"DISTANCE"]=="")
