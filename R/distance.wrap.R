@@ -469,30 +469,35 @@ distance.wrap <-
       input.data[[1]] <- dat
       input.data[[2]] <- breaks
       names(input.data)<-c("observations","breaks")
-      
-      log<-readLines(file.path(path,log.file[i]))
-      res<-readLines(file.path(path,res.file[i]))
-      if(any(grep("No fit possible",log)) || length(res)<1L){
-        notrun<-c(notrun,names(lans)[i])
-        next
-      }
-      
-      x<-readLines(file.path(path,res.file[i]))
-      y<-readLines(file.path(path,det.file[i]))
-      ans<-vector(mode="list",length=9)
-      ans[[1]]<-input.data
-      ans[[2]]<-model_fittingMCDS(x)
-      ans[[3]]<-parameter_estimatesMCDS(x)
-      ans[[4]] <-ifelse(!is.null(factor) | !is.null(covariates)==T,param_namesMCDS(x),"No covariates in the model") 
-      ans[[5]]<-chi_square_testMCDS(x)
-      ans[[6]]<-density_estimateMCDS(x)
-      ans[[7]]<-ifelse(is.na(grep("Uniform",ans[[2]]$Global$Type)), cluster_sizeMCDS(x),"No cluster size evaluation are made for uniform detection function")
-      ans[[8]]<-detection_probabilityMCDS(y, covariates=covariates)
-      ans[[9]]<-path
-      names(ans)<-c("input_data","model_fitting","parameter_estimates","covar_key","chi_square_test","density_estimate","cluster_size","detection","path")
-      class(ans)<-"distanceFit"
-      #ans
-      lans[[i]]<-ans
+      mans <-vector(mode="list",length=n.model)
+  
+      #list of model
+      for(j in 1:n.model){
+        log<-readLines(file.path(path,log.file[j]))
+        res<-readLines(file.path(path,res.file[j]))
+        if(any(grep("No fit possible",log)) || length(res)<1L){
+          notrun<-c(notrun,names(lans)[j])
+          next
+        }
+        x<-readLines(file.path(path,res.file[j]))
+        y<-readLines(file.path(path,det.file[j]))
+        ans<-vector(mode="list",length=9)
+        ans[[1]]<-input.data
+        ans[[2]]<-model_fittingMCDS(x)
+        ans[[3]]<-parameter_estimatesMCDS(x)
+        ans[[4]] <-ifelse(!is.null(factor) | !is.null(covariates)==T,param_namesMCDS(x),"No covariates in the model") 
+        ans[[5]]<-chi_square_testMCDS(x)
+        ans[[6]]<-density_estimateMCDS(x)
+        ans[[7]]<-ifelse(is.na(grep("Uniform",ans[[2]]$Global$Type)), cluster_sizeMCDS(x),"No cluster size evaluation are made for uniform detection function")
+        ans[[8]]<-detection_probabilityMCDS(y, covariates=covariates)
+        ans[[9]]<-path
+        names(ans)<-c("input_data","model_fitting","parameter_estimates","covar_key","chi_square_test","density_estimate","cluster_size","detection","path")
+        class(ans)<-"distanceFit"
+        #list of model
+        mans[[j]] <- ans
+      }   
+      #list of species
+      lans[[i]]<-mans
     }
     if(!is.null(notrun)){warning(paste("No models for the following combinations: ",paste(notrun,collapse=" "),". See log files." ,sep=""),immediate.=TRUE)}
     lans<-lans[!sapply(lans,is.null)]
