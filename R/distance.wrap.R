@@ -470,7 +470,10 @@ distance.wrap <-
       input.data[[2]] <- breaks
       names(input.data)<-c("observations","breaks")
       mans <-vector(mode="list",length=n.model)
-  
+      names(mans) <-  sapply(1:n.model, function(j){paste(names(dataset)[i],
+                                                    substr(opts2[names(opts2)=="Estimator"][j][[1]],7,8),
+                                                    substr(opts2[names(opts2)=="Estimator"][j][[1]],18,19), sep="_")})
+      
       #list of model
       for(j in 1:n.model){
         log<-readLines(file.path(path,log.file[j]))
@@ -482,21 +485,25 @@ distance.wrap <-
         x<-readLines(file.path(path,res.file[j]))
         y<-readLines(file.path(path,det.file[j]))
         ans<-vector(mode="list",length=9)
-        ans[[1]]<-input.data
-        ans[[2]]<-model_fittingMCDS(x)
-        ans[[3]]<-parameter_estimatesMCDS(x)
-        ans[[4]] <-ifelse(!is.null(factor) | !is.null(covariates)==T,param_namesMCDS(x),"No covariates in the model") 
-        ans[[5]]<-chi_square_testMCDS(x)
-        ans[[6]]<-density_estimateMCDS(x)
-        ans[[7]]<-ifelse(is.na(grep("Uniform",ans[[2]]$Global$Type)), cluster_sizeMCDS(x),"No cluster size evaluation are made for uniform detection function")
-        ans[[8]]<-detection_probabilityMCDS(y, covariates=covariates)
-        ans[[9]]<-path
+        ans[[1]]<- input.data
+        ans[[2]]<- model_fittingMCDS(x)
+        ans[[3]]<- parameter_estimatesMCDS(x)
+        ans[[4]]<- ifelse(!is.null(factor) | !is.null(covariates)==T,param_namesMCDS(x),"No covariates in the model") 
+        ans[[5]]<- chi_square_testMCDS(x)
+        ans[[6]]<- density_estimateMCDS(x)
+        ans[[7]]<- cluster_sizeMCDS(x)
+        ans[[8]]<- detection_probabilityMCDS(y, covariates=covariates)
+        ans[[9]]<- path
         names(ans)<-c("input_data","model_fitting","parameter_estimates","covar_key","chi_square_test","density_estimate","cluster_size","detection","path")
         class(ans)<-"distanceFit"
         #list of model
         mans[[j]] <- ans
-        class(mans) <- "distanceList"
-      }   
+      } 
+      if(length(mans)==1){
+        mans <- mans[[1]]
+      }else{
+        class(mans) <- "distanceList" 
+      }
       #list of species
       lans[[i]]<-mans
     }
