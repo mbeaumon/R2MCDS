@@ -10,6 +10,8 @@ print.summary.distanceFit <- function(x, ...){
   }
   cat("Density estimates for the entire survey area:\n")
   print(x$Density[,-1], row.names = FALSE)
+  cat("\n")
+  cat(paste("Model AICc = ",x$AICc,sep=""))
 }
 
 
