@@ -484,7 +484,7 @@ distance.wrap <-
         }
         x<-readLines(file.path(path,res.file[j]))
         y<-readLines(file.path(path,det.file[j]))
-        ans<-vector(mode="list",length=9)
+        ans<-vector(mode="list",length=10)
         ans[[1]]<- input.data
         ans[[2]]<- model_fittingMCDS(x)
         ans[[3]]<- parameter_estimatesMCDS(x)
@@ -493,8 +493,9 @@ distance.wrap <-
         ans[[6]]<- density_estimateMCDS(x)
         ans[[7]]<- cluster_sizeMCDS(x)
         ans[[8]]<- detection_probabilityMCDS(y, covariates=covariates)
-        ans[[9]]<- path
-        names(ans)<-c("input_data","model_fitting","parameter_estimates","covar_key","chi_square_test","density_estimate","cluster_size","detection","path")
+        ans[[9]]<- AIC_MCDS(x)
+        ans[[10]]<- path
+        names(ans)<-c("input_data","model_fitting","parameter_estimates","covar_key","chi_square_test","density_estimate","cluster_size","detection","AIC","path")
         class(ans)<-"distanceFit"
         #list of model
         mans[[j]] <- ans
