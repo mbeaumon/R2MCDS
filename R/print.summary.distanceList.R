@@ -7,7 +7,10 @@ print.summary.distanceList <- function(x, ...){
     cat(paste("\n\nDetection function used for ",names(x)[i]," :",x[[i]]$Type, sep=""))
     cat("\nParameters of the detection function for",names(x)[i],":\n")
     print(x[[i]]$Detection[,-1],row.names = FALSE)
-    cat("\n\n",names(x)[i],"density estimates for the entire survey area:\n")
+    cat("\n\n",names(x)[i],"Density estimates for the entire survey area:\n")
     print(x[[i]]$Density[,-1], row.names = FALSE)
+    cat("\n")
+    cat(paste("Model AICc = ",x[[i]]$AICc,sep=""))
+    cat("\n\n")
   }
 }
