@@ -27,7 +27,7 @@ keep_best_model <- function(x){
   best.model <- which(delta_aic==0)
   if(length(best.model)==1){
     out <- x[[best.model]]  
-    mes <- "Best model selected via AiCc ranking\n"
+    mes <- "Best model selected via AICc ranking\n"
   }else{
     ans <- sapply(1:length(best.model), function(i){charmatch("Uniform", x[[best.model[i]]]$model_fitting$Global$Type, nomatch = 0)})  
     best.model <- best.model[which(ans==0)]
