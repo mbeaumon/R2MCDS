@@ -496,7 +496,7 @@ distance.wrap <-
         ans[[4]]<- ifelse(!is.null(factor) | !is.null(covariates)==T,param_namesMCDS(x),"No covariates in the model") 
         ans[[5]]<- chi_square_testMCDS(x)
         ans[[6]]<- density_estimateMCDS(x)
-        ans[[7]]<- cluster_sizeMCDS(x)
+        ans[[7]]<- ifelse(is.null(rare)==T,cluster_sizeMCDS(x),"No cluster estimation for the rare species model")
         ans[[8]]<- detection_probabilityMCDS(y, covariates=covariates)
         ans[[9]]<- AIC_MCDS(x)
         ans[[10]]<- path
