@@ -434,8 +434,12 @@ distance.wrap <-
         opts1[""]<-"None"
         opts1[""]<-"None"
         opts <- c(opts1,opts2)
-        model.lines <- which(names(opts)=="Estimator")  
-        out <- paste(names(opts)[-model.lines[-j]],unlist(opts)[-model.lines[-j]],sep="")
+        model.lines <- which(names(opts)=="Estimator")
+        if(length(model.lines)==1){
+          out <- paste(names(opts),unlist(opts),sep="") 
+        }else{
+          out <- paste(names(opts)[-model.lines[-j]],unlist(opts)[-model.lines[-j]],sep="")  
+        }
         return(out)
       })
       
