@@ -16,7 +16,7 @@
 #'@section Author:Christian Roy
 
 
-keep_best_model <- function(x){
+keep.best.model <- function(x){
   
   if(class(x)!="distanceList")
   stop("the function can only be applied on distanceList object")  
