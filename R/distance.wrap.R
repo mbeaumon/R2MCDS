@@ -482,7 +482,7 @@ distance.wrap <-
       
       #list of model
       for(j in 1:n.model){
-        if(class(run.cmd[j])!="try-error"){
+        if(class(run.cmd[[j]])!="try-error"){
           log<-readLines(file.path(path,log.file[j]))
           res<-readLines(file.path(path,res.file[j]))
           if(any(grep("No fit possible",log)) || length(res)<1L){
