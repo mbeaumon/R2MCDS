@@ -462,9 +462,10 @@ distance.wrap <-
       
       ####################################################
       ### running distance
+      run.cmd <- vector(mode="list",length=n.model)
       for(j in 1:n.model){
         cmd<-paste(shQuote(file.path(pathMCDS,"MCDS"))," 0, ",shQuote(file.path(path,inp.file[j])),sep="")
-        system(cmd,wait=TRUE,ignore.stdout=FALSE,ignore.stderr=FALSE,invisible=TRUE)  
+        run.cmd[i] <- try(system(cmd,wait=TRUE,ignore.stdout=FALSE,ignore.stderr=FALSE,invisible=TRUE), silent = TRUE)
       }
       
       ####################################################
@@ -481,29 +482,33 @@ distance.wrap <-
       
       #list of model
       for(j in 1:n.model){
-        log<-readLines(file.path(path,log.file[j]))
-        res<-readLines(file.path(path,res.file[j]))
-        if(any(grep("No fit possible",log)) || length(res)<1L){
-          notrun<-c(notrun,names(lans)[j])
-          next
+        if(class(run.cmd[j])!="try-error"){
+          log<-readLines(file.path(path,log.file[j]))
+          res<-readLines(file.path(path,res.file[j]))
+          if(any(grep("No fit possible",log)) || length(res)<1L){
+            notrun<-c(notrun,names(lans)[j])
+            next
+          }
+          x<-readLines(file.path(path,res.file[j]))
+          y<-readLines(file.path(path,det.file[j]))
+          ans<-vector(mode="list",length=10)
+          ans[[1]]<- input.data
+          ans[[2]]<- model_fittingMCDS(x)
+          ans[[3]]<- parameter_estimatesMCDS(x)
+          ans[[4]]<- ifelse(!is.null(factor) | !is.null(covariates)==T,param_namesMCDS(x),"No covariates in the model") 
+          ans[[5]]<- chi_square_testMCDS(x)
+          ans[[6]]<- density_estimateMCDS(x)
+          ans[[7]]<- ifelse(is.null(rare)==T,cluster_sizeMCDS(x),"No cluster estimation for the rare species model")
+          ans[[8]]<- detection_probabilityMCDS(y, covariates=covariates)
+          ans[[9]]<- AIC_MCDS(x)
+          ans[[10]]<- path
+          names(ans)<-c("input_data","model_fitting","parameter_estimates","covar_key","chi_square_test","density_estimate","cluster_size","detection","AIC","path")
+          class(ans)<-"distanceFit"
+          #list of model
+          mans[[j]] <- ans
+        }else{
+          mans[[j]] <- "Model failed to converge" 
         }
-        x<-readLines(file.path(path,res.file[j]))
-        y<-readLines(file.path(path,det.file[j]))
-        ans<-vector(mode="list",length=10)
-        ans[[1]]<- input.data
-        ans[[2]]<- model_fittingMCDS(x)
-        ans[[3]]<- parameter_estimatesMCDS(x)
-        ans[[4]]<- ifelse(!is.null(factor) | !is.null(covariates)==T,param_namesMCDS(x),"No covariates in the model") 
-        ans[[5]]<- chi_square_testMCDS(x)
-        ans[[6]]<- density_estimateMCDS(x)
-        ans[[7]]<- ifelse(is.null(rare)==T,cluster_sizeMCDS(x),"No cluster estimation for the rare species model")
-        ans[[8]]<- detection_probabilityMCDS(y, covariates=covariates)
-        ans[[9]]<- AIC_MCDS(x)
-        ans[[10]]<- path
-        names(ans)<-c("input_data","model_fitting","parameter_estimates","covar_key","chi_square_test","density_estimate","cluster_size","detection","AIC","path")
-        class(ans)<-"distanceFit"
-        #list of model
-        mans[[j]] <- ans
       } 
       if(length(mans)==1){
         mans <- mans[[1]]
