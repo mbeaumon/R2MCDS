@@ -465,7 +465,7 @@ distance.wrap <-
       run.cmd <- vector(mode="list",length=n.model)
       for(j in 1:n.model){
         cmd<-paste(shQuote(file.path(pathMCDS,"MCDS"))," 0, ",shQuote(file.path(path,inp.file[j])),sep="")
-        run.cmd[i] <- try(system(cmd,wait=TRUE,ignore.stdout=FALSE,ignore.stderr=FALSE,invisible=TRUE), silent = TRUE)
+        run.cmd[j] <- try(system(cmd,wait=TRUE,ignore.stdout=FALSE,ignore.stderr=FALSE,invisible=TRUE), silent = TRUE)
       }
       
       ####################################################
@@ -482,7 +482,7 @@ distance.wrap <-
       
       #list of model
       for(j in 1:n.model){
-        if(class(run.cmd[[j]])!="try-error"){
+        if(run.cmd[[j]]%in%c(1,2,3)){
           log<-readLines(file.path(path,log.file[j]))
           res<-readLines(file.path(path,res.file[j]))
           if(any(grep("No fit possible",log)) || length(res)<1L){
