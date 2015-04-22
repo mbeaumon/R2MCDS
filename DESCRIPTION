@@ -8,7 +8,7 @@ Maintainer: Francois Bolduc <francois.Bolduc@ec.gc.ca>
 Description: This package will allow the user to plot abundance and correct
     densities for data collected within a distance sampling framework if
     needed.
-Depends:
+Depends: 
     colorspace,
     geosphere,
     gplots,
@@ -18,9 +18,11 @@ Depends:
     rgeos,
     xtable,
     sp,
-Suggests:
-    rgdal
+Suggests: 
+    rgdal,
+    knitr
 License: GPL-2
 Encoding: latin1
 LazyLoad: yes
 LazyDataCompression: xz
+VignetteBuilder: knitr
