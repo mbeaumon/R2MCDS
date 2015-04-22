@@ -54,8 +54,7 @@
 #'@param estimator When set to \code{NULL}, the following key functions and expansion terms will be used: UN-CO, UN-PO, HN-CO, HN-HE, HA-CO and HA-PO.
 #'If the user wants to choose the key functions and the expansion terms used, a list has to be given with each element a vector of
 #'length 2 with the first element the key function and the second element the expansion term (ex: \code{list(c("HN","CO"),c("HA","PO")}).
-#'When \code{rare != NULL}, only one set is used (UN-CO) for the final specific model. In all cases, the best model is chosen by AIC.
-#'See details for further explanations.
+#'When \code{rare != NULL}, only one set is used (UN-CO) for the final specific model. 
 
 #'@param multiplier Value by which the estimates of density or abundance are multiplied. Default value \code{multiplier = 2} meaning
 #'only one-half of the transect is surveyed. When \code{rare != NULL}, the multiplier will be modified to account
