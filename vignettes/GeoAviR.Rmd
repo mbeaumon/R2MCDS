@@ -31,9 +31,11 @@ data(alcidae)
 alcids<-filterECSAS(alcidae)
 
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-x<-distance.wrap(alcids,path="c:/temp/distance",pathMCDS="C:/Program Files (x86)/Distance 6",
-                 breaks=c(0,50,100,200,300),STR_LABEL="STR_LABEL",STR_AREA="STR_AREA",SMP_LABEL="WatchID",
-                 SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",verbose=FALSE)
+x<-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
+                 breaks=c(0,50,100,200,300), STR_LABEL="STR_LABEL", 
+                 STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
+                 path="c:/temp/distance",
+                 pathMCDS="C:/Program Files (x86)/Distance 6",verbose=FALSE)
 ```
 The distance.warp function will return a warning after fitting each model (not shown in the example above). These warning will incliude a "status" number that is associated with the status of the model by the MCDS engine. The numbers should be intrepreted as:
 
@@ -62,7 +64,7 @@ summary(x.best)
 
 ##Selecting the key function and adjustement with distance.wrap
 
-It posssible for the user to select the key function and ajustement. For example, instead of running the 6 models by default the user want to restrict his  analysis to the half-normal key function with a cosine adjustement and the hazard rate key funciton with a polynomial adjutement he can do so via the 'estimator' option. The estimator option conists of a list where each element is a vector of length 2 with the first element consist of the two letters of the key function and the second element is the first two letters of the expansion term. 
+It posssible for the user to select the key function and ajustement. For example, instead of running the 6 models by default the user may want to restrict his analysis to the half-normal key function with a cosine adjustement and the hazard rate key funciton with a polynomial adjutement he can do so via the 'estimator' option. The estimator option conists of a list where each element is a vector of length 2 with the first element consist of the two letters of the key function and the second element is the first two letters of the expansion term. 
 
 ```{r,warning=FALSE,message=FALSE}
 library(GeoAviR)
@@ -71,12 +73,39 @@ data(alcidae)
 alcids<-filterECSAS(alcidae)
 
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-x<-distance.wrap(alcids,path="c:/temp/distance",pathMCDS="C:/Program Files (x86)/Distance 6",
-                 breaks=c(0,50,100,200,300), estimator=list(c("HN","CO"),c("HA","PO")),
-                 STR_LABEL="STR_LABEL",STR_AREA="STR_AREA",SMP_LABEL="WatchID",
-                 SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",verbose=FALSE)
+x<-distance.wrap(alcids,SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
+                 breaks=c(0,50,100,200,300), SMP_LABEL="WatchID",
+                 STR_LABEL="STR_LABEL",STR_AREA="STR_AREA",
+                 estimator=list(c("HN","CO"),c("HA","PO")),
+                 path="c:/temp/distance",
+                 pathMCDS="C:/Program Files (x86)/Distance 6",verbose=FALSE)
 x
 summary(x[[2]])
+```
+
+##Running the analysis for more than one species at once.
+If the user has collected the same data for many species and is interested in running the same model for many species it is possible to do so via the lsub and split option. The lsub option consist of a list of the subset that need to be analysed and the split option indicate wheter the susbet should be analysed together or separetely. 
+
+```{r,warning=FALSE,message=FALSE}
+library(GeoAviR)
+library(rgdal)
+library(sp)
+library(plyr)
+### Import and filter data
+data(quebec)
+d<-filterECSAS(quebec)
+
+### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
+x<-distance.wrap(d,SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
+                 breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
+                 lsub=list(Alpha=c("BLKI","GBBG", "HERG")), split=TRUE,
+                 STR_LABEL="STR_LABEL",STR_AREA="STR_AREA",SMP_LABEL="WatchID",
+                 path="c:/temp/distance",
+                 pathMCDS="C:/Program Files (x86)/Distance 6",verbose=FALSE)
+x
+##output for the Herring gull
+summary(x[[3]])
+
 ```
 
 ##More complex models with stratification
@@ -104,8 +133,11 @@ x<-sapply(unique(zonegulf$id),function(i){
   Polygons(temp,ID=i)
 })
 x<-SpatialPolygons(x,proj4string=CRS("+proj=longlat +datum=NAD83 +ellps=GRS80"))
-zonegulf<-SpatialPolygonsDataFrame(x,data=data.frame(id=zonegulf$id[match(names(x),zonegulf$id)]),match.ID=FALSE)
-temp<-spTransform(zonegulf,CRS("+proj=utm +zone=17 +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))  #project to calculate area with package rgeos
+zonegulf<-SpatialPolygonsDataFrame(x,
+                                   data=data.frame(id=zonegulf$id[match(names(x),zonegulf$id)]),
+                                   match.ID=FALSE)
+temp<-spTransform(zonegulf,
+                  CRS("+proj=utm +zone=17 +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0"))
 temp<-gArea(temp,byid=T)/(1000*1000)
 zonegulf$area<-temp[match(zonegulf$id,names(temp))]
 zonegulf<-spTransform(zonegulf,CRS(proj4string(transect)))
@@ -120,22 +152,34 @@ d<-d[!is.na(d$zone),]
 ### Build labels for samples.
 d$SMP_LABEL<-paste(d$zone,d$Date,sep="_")
 
-### Here, every day is made of several WatchID (bouts) and the sample used will be the day (or date). Consequently, the lengths of every WatchID is summed to calculate the effort for the day.
+### Here, every day is made of several WatchID (bouts) and the sample used will 
+#be the day (or date). Consequently, the lengths of every WatchID is summed 
+#to calculate the effort for the day.
 temp<-aggregate(WatchLenKm~SMP_LABEL,data=unique(d[,c("SMP_LABEL","WatchID","WatchLenKm")]),sum)
 names(temp)[2]<-"SMP_EFFORT"
 d<-merge(d,temp,sort=FALSE)
-d<-d[,c("zone","zone_area","Date","SMP_LABEL","SMP_EFFORT","Distance","Count","Alpha","LatStart","LongStart")]
-dd<-ddply(d,.(SMP_LABEL),function(i){sum(i$Count,na.rm=TRUE)}) #eliminate duplicate lines for transect without observations
-dd<-dd[dd$V1==0,] #get the label name for transect without observations
-d<-d[(d$SMP_LABEL%in%dd$SMP_LABEL & !duplicated(d$SMP_LABEL)) | (!d$SMP_LABEL%in%dd$SMP_LABEL & !(d$Alpha=="")),] #keep only lines for empty transects or non-empty lines for non-empty transects
+d<-d[,c("zone","zone_area","Date","SMP_LABEL","SMP_EFFORT",
+        "Distance","Count","Alpha","LatStart","LongStart")]
+#eliminate duplicate lines for transect without observations
+dd<-ddply(d,.(SMP_LABEL),function(i){sum(i$Count,na.rm=TRUE)}) 
+#get the label name for transect without observations
+dd<-dd[dd$V1==0,] 
+#keep only lines for empty transects or non-empty lines for non-empty transects
+d<-d[(d$SMP_LABEL%in%dd$SMP_LABEL & !duplicated(d$SMP_LABEL)) | 
+    (!d$SMP_LABEL%in%dd$SMP_LABEL & !(d$Alpha=="")),] 
+
 d<-d[order(d$zone),]
 
 
 ###Run the analysis for the Gull species only
-m<-distance.wrap(d,stratum="STR_LABEL",empty=NULL, detection="All",lsub=list(Alpha=c("BLKI","HERG","GBBG")),split=TRUE,
-                 path="c:/temp/distance",pathMCDS="C:/Program Files (x86)/Distance 6",
-                 breaks=c(0,50,100,200,300),STR_LABEL="SMP_LABEL",STR_AREA="zone_area",
-                 SMP_LABEL="SMP_LABEL",SMP_EFFORT="SMP_EFFORT",DISTANCE="Distance",SIZE="Count",verbose=FALSE)
+m <- distance.wrap(d,SMP_LABEL="SMP_LABEL",SMP_EFFORT="SMP_EFFORT",
+                   DISTANCE="Distance",SIZE="Count",breaks=c(0,50,100,200,300),
+                   detection="All",lsub=list(Alpha=c("BLKI")),split=TRUE,empty=NULL,  
+                   STR_LABEL="SMP_LABEL",STR_AREA="zone_area",stratum="STR_LABEL",
+                   path="c:/temp/distance",
+                   pathMCDS="C:/Program Files (x86)/Distance 6",verbose=FALSE)
 ```
+
+
 
 
