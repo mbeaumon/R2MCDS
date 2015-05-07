@@ -1,5 +1,5 @@
 ---
-title: "Vignette Title"
+title: "GeoAviR spatial models"
 author: "Christian Roy"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -9,50 +9,61 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-Vignettes are long form documentation commonly included in packages. Because they are part of the distribution of the package, they need to be as compact as possible. The `html_vignette` output type provides a custom style sheet (and tweaks some options) to ensure that the resulting html is as small as possible. The `html_vignette` format:
+##Startified models with distance.wrap
 
-- Never uses retina figures
-- Has a smaller default figure size
-- Uses a custom CSS stylesheet instead of the default Twitter Bootstrap style
 
-## Vignette Info
+```{r,warning=FALSE,message=FALSE}
+library(GeoAviR)
+library(rgdal)
+library(sp)
+library(plyr)
+### Import and filter data
+data(quebec)
+d<-filterECSAS(quebec)
+### Build a shapefile with transect starts
+transect <- data.frame(lat=d$LatStart,lon=d$LongStart)
+coordinates(transect) <- ~lon + lat
+transect<-SpatialPointsDataFrame(transect,data=d[,"Count",drop=FALSE])
+proj4string(transect)<-CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
 
-Note the various macros within the `vignette` setion of the metadata block above. These are required in order to instruct R how to build the vignette. Note that you should change the `title` field and the `\VignetteIndexEntry` to match the title of your vignette.
+### Import a spatial polygon
+data(zonegulf)
 
-## Styles
+### Overlay transects with gulf zones
+zonegulf<-spTransform(zonegulf,CRS(proj4string(transect)))
+x<-over(transect,zonegulf)
+d$zone<-x$id
+d$zone_area<-x$area
+d<-d[!is.na(d$zone),]
 
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
+### Build labels for samples.
+d$SMP_LABEL<-paste(d$zone,d$Date,sep="_")
 
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
+### Here, every day is made of several WatchID (bouts) and the sample used will
+#be the day (or date). Consequently, the lengths of every WatchID is summed
+#to calculate the effort for the day.
+temp<-aggregate(WatchLenKm~SMP_LABEL,data=unique(d[,c("SMP_LABEL","WatchID","WatchLenKm")]),sum)
+names(temp)[2]<-"SMP_EFFORT"
+d<-merge(d,temp,sort=FALSE)
+d<-d[,c("zone","zone_area","Date","SMP_LABEL","SMP_EFFORT",
+        "Distance","Count","Alpha","LatStart","LongStart")]
+#eliminate duplicate lines for transect without observations
+dd<-ddply(d,.(SMP_LABEL),function(i){sum(i$Count,na.rm=TRUE)})
+#get the label name for transect without observations
+dd<-dd[dd$V1==0,]
+#keep only lines for empty transects or non-empty lines for non-empty transects
+d<-d[(d$SMP_LABEL%in%dd$SMP_LABEL & !duplicated(d$SMP_LABEL)) |
+       (!d$SMP_LABEL%in%dd$SMP_LABEL & !(d$Alpha=="")),]
 
-## Figures
+d<-d[order(d$zone),]
 
-The figure sizes have been customised so that you can easily put two images side-by-side. 
 
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
+###Run the analysis for the Gull species only
+m <- distance.wrap(d,SMP_LABEL="SMP_LABEL",SMP_EFFORT="SMP_EFFORT",
+                   DISTANCE="Distance",SIZE="Count",breaks=c(0,50,100,200,300),
+                   detection="All",lsub=list(Alpha=c("BLKI")),split=TRUE,empty=NULL,
+                   STR_LABEL="SMP_LABEL",STR_AREA="zone_area",stratum="STR_LABEL",
+                   path="c:/temp/distance",
+                   pathMCDS="C:/Program Files (x86)/Distance 6",verbose=FALSE)
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
-
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
-
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
-
-## More Examples
-
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
-```
-
-Also a quote using `>`:
-
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
