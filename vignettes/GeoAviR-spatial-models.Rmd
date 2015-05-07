@@ -11,7 +11,6 @@ vignette: >
 
 ##Startified models with distance.wrap
 
-
 ```{r,warning=FALSE,message=FALSE}
 library(GeoAviR)
 library(rgdal)
