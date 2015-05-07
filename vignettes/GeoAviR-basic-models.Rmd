@@ -23,7 +23,6 @@ By default the function will fit a total of 6 different model to the data:
 - Hazard rate key function with Cosine adjustement
 - Hazard rate key function with Simple polynomial adjustement
 
-A basic example without stratification:
 ```{r,warning=FALSE,message=FALSE}
 library(GeoAviR)
 ### Import and filter data
