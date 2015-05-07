@@ -28,7 +28,4 @@
 \description{
 A simulated sample dataset based on the observation made in the Eastern Canada Seabirds At Sea (ECSAS) program in the Gulf of St-Lawrence.
 }
-\details{
-This dataset has been simualted from the original data.
-}
 

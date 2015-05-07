@@ -3,30 +3,12 @@
 \name{zonegulf}
 \alias{zonegulf}
 \title{Zones in the Gulf of St-Lawrence.}
-\format{A data frame with 13251 observations on the following 7 variables.
+\format{A SpatialPolygonsDataFrame.
  \describe{
-   \item{\code{long}}{longitude}
-   \item{\code{lat}}{latitude}
-   \item{\code{order}}{order for plotting}
-   \item{\code{hole}}{is the polygon an hole or not}
-   \item{\code{piece}}{piece of a multiple polygon}
-   \item{\code{group}}{group id}
    \item{\code{id}}{the global polygon to which the point is}
+   \item{\code{area}}{size of the fishing zone in km}
  }}
 \description{
-This file gives the boundaries of the zones in the Gulf of St-Lawrence.
-}
-\examples{
-data(zonegulf)
-
-### Build a SpatialPolygonsDataFrame from the zonegulf file
-require(plyr)
-require(sp)
-x<-dlply(zonegulf,.(group),function(i){Polygon(i[c(nrow(i),1:nrow(i)),1:2],hole=i$hole[1])})
-x<-sapply(unique(zonegulf$id),function(i){
-	temp<-x[names(x)\\\%in\\\%zonegulf$group[which(zonegulf$id==i)]]
-	Polygons(temp,ID=i)
- })
-#End
+This file gives the boundaries of fishing zones in the Gulf of St-Lawrence.
 }
 
