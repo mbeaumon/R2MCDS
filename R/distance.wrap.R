@@ -191,7 +191,11 @@ distance.wrap <-
       arguments[["rare"]]<-NULL
       arguments[["verbose"]]<-FALSE
       premod<-do.call("distance.wrap",arguments)
-      best.premod <- keep.best.model(premod)
+      if(class(premod)=="distanceFit"){
+        best.premod <- premod
+      }else{
+        best.premod <- keep.best.model(premod)
+      }      
       detect_table<-best.premod [["parameter_estimates"]][["Global"]]
       pdetect<-detect_table[detect_table[,"Parameters"]=="p","Estimates"]
       sedetect<- detect_table[detect_table[,"Parameters"]=="p","SE"]
