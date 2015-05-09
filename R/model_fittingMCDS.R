@@ -1,5 +1,5 @@
 model_fittingMCDS <-
-function(x){
+function(x,units){
 	#browser()
 	res<-vector("list",length=2)
 	names(res)<-c("Global","Stratum")
@@ -18,7 +18,8 @@ function(x){
 	  	i<-paste(i[i!=""],collapse=" ")
 	  })[1]
 	  descrip <- c("effort","samples","width","left","observations")
-	  ans<-data.frame(Parameters=descrip,Values=ans)
+    units <- c(units$Length_units, units$Type, units$Distance_units, Units$Distance_units, "clusters")
+	  ans<-data.frame(Parameters=descrip,Values=ans, units=units)
 	  res$Global<-list()
 	  res$Global[[1]]<-ans
 	  res$Global[[2]]<-l

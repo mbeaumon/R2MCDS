@@ -506,7 +506,7 @@ distance.wrap <-
           y<-readLines(file.path(path,det.file[j]))
           ans<-vector(mode="list",length=10)
           ans[[1]]<- input.data
-          ans[[2]]<- model_fittingMCDS(x)
+          ans[[2]]<- model_fittingMCDS(x=x, units=units)
           ans[[3]]<- parameter_estimatesMCDS(x)
           ans[[4]]<- ifelse(!is.null(factor) | !is.null(covariates)==T,param_namesMCDS(x),"No covariates in the model") 
           ans[[5]]<- chi_square_testMCDS(x)
