@@ -16,9 +16,12 @@
 
 #'@param SMP_LABEL Name of the column to use for the transect/watch label.
 
-#'@param SMP_EFFORT Length in km of the transect or the transect/watch unit.
+#'@param units list of th units used for the analysis. Contains the Type of analysis (Line or Point), the Distance enfine to use (Perp or Radial), 
+#'the Length units, the Distance units, and the Area_units.For the possible units of distance and area see Distance 6.2 documentation.     
 
-#'@param DISTANCE Distance of the observation in meters.
+#'@param SMP_EFFORT Length in of the transect or the transect/watch unit.
+
+#'@param DISTANCE Distance of the observation.
 
 #'@param SIZE Number of individuals in the observation.
 
@@ -54,8 +57,7 @@
 #'@param estimator When set to \code{NULL}, the following key functions and expansion terms will be used: UN-CO, UN-PO, HN-CO, HN-HE, HA-CO and HA-PO.
 #'If the user wants to choose the key functions and the expansion terms used, a list has to be given with each element a vector of
 #'length 2 with the first element the key function and the second element the expansion term (ex: \code{list(c("HN","CO"),c("HA","PO")}).
-#'When \code{rare != NULL}, only one set is used (UN-CO) for the final specific model. In all cases, the best model is chosen by AIC.
-#'See details for further explanations.
+#'When \code{rare != NULL}, only one set is used (UN-CO) for the final specific model. 
 
 #'@param multiplier Value by which the estimates of density or abundance are multiplied. Default value \code{multiplier = 2} meaning
 #'only one-half of the transect is surveyed. When \code{rare != NULL}, the multiplier will be modified to account
@@ -142,9 +144,11 @@ distance.wrap <-
            SMP_LABEL="SMP_LABEL",
            SMP_EFFORT="SMP_EFFORT",
            DISTANCE="DISTANCE",
-           SIZE="SIZE",  																			
+           SIZE="SIZE",            														
            STR_LABEL="STR_LABEL",
            STR_AREA="STR_AREA",												
+           units=list(Type="Line",Distance="Perp",Length_units="Kilometer",
+                      Distance_units="Meter",Area_units="Square kilometer"),
            breaks=c(0,50,100,200,300),
            covariates=NULL,
            factor=NULL,
@@ -192,7 +196,12 @@ distance.wrap <-
       arguments[["rare"]]<-NULL
       arguments[["verbose"]]<-FALSE
       premod<-do.call("distance.wrap",arguments)
-      detect_table<-premod[["parameter_estimates"]][["Global"]]
+      if(class(premod)=="distanceFit"){
+        best.premod <- premod
+      }else{
+        best.premod <- keep.best.model(premod)
+      }      
+      detect_table<-best.premod [["parameter_estimates"]][["Global"]]
       pdetect<-detect_table[detect_table[,"Parameters"]=="p","Estimates"]
       sedetect<- detect_table[detect_table[,"Parameters"]=="p","SE"]
       dfdetect<- detect_table[detect_table[,"Parameters"]=="p","df"]
@@ -290,11 +299,8 @@ distance.wrap <-
       names(dataset)<-gsub("'","",names(dataset))	# this was put for gyre d'anticosti #########
     }
     
-    res.file<-paste(paste("results",names(dataset),sep="_"),".tmp",sep="")
-    log.file<-paste(paste("log",names(dataset),sep="_"),".tmp",sep="")
-    det.file<-paste(paste("detections",names(dataset),sep="_"),".tmp",sep="")
     dat.file<-paste(paste("data",names(dataset),sep="_"),".tmp",sep="")
-    inp.file<-paste(paste("input",names(dataset),sep="_"),".tmp",sep="")
+    
     #browser()
     lans<-vector(mode="list",length=length(dataset))
     names(lans)<-names(dataset)
@@ -307,67 +313,66 @@ distance.wrap <-
       #dat<-dat[!(duplicated(dat[,SMP_LABEL]) & dat[,DISTANCE]==""),]
       #######################################################
       ### input
-      opts<-list()
-      opts[""]<-paste(gsub("/","\\\\\\\\",path),"\\\\",res.file[i],sep="")
-      opts[""]<-paste(gsub("/","\\\\\\\\",path),"\\\\",log.file[i],sep="")
-      opts[""]<-"None"
-      opts[""]<-paste(gsub("/","\\\\\\\\",path),"\\\\",det.file[i],sep="")
-      opts[""]<-"None"
-      opts[""]<-"None"
-      opts["Options;"]<-""
-      opts["Type="]<-"Line;"
-      opts["Length /Measure="]<-"'Kilometer';"
-      opts["Distance=Perp /Measure="]<-"'Meter';"
-      opts["Area /Units="]<-"'Square kilometer';"
-      opts["Object="]<-"Cluster;"
-      opts["SF="]<-"1;"
-      opts["Selection="]<-"Specify;"
-      if(is.null(rare)){
-        opts["Selection="]<-"Sequential;"
-        opts["Lookahead="]<-"1;"
-        opts["Maxterms="]<-"5;"
+    
+      opts2<-list()
+      opts2["Options;"]<-""
+      opts2["Type="] <- paste(units$Type,";",sep="")
+      opts2["Length /Measure="] <- paste("'",units$Length_units,"';",sep="")
+      if(units$Distance=="Perp"){
+      opts2["Distance=Perp /Measure="] <- paste("'",units$Distance_units,"';",sep="")    
+      }else{
+      opts2["Distance=Radial /Measure="] <- paste("'",units$Distance_units,"';",sep="")    
       }
-      opts["Confidence="]<-"95;"
-      opts["Print="]<-"Selection;"
-      opts["End1;"]<-""
-      opts["Data /Structure="]<-"Flat;"
-      dat<-dat[,unique(c(STR_LABEL,STR_AREA,SMP_LABEL,SMP_EFFORT,DISTANCE,SIZE,factor,covariates))] #the stratum part used to be ifelse(stratum=="STR_LABEL",STR_LABEL,stratum)
+      opts2["Area /Units="] <- paste("'",units$Area_units,"';",sep="")
+      opts2["Object="]<-"Cluster;"
+      opts2["SF="]<-"1;"
+      opts2["Selection="]<-"Specify;"
+      if(is.null(rare)){
+        opts2["Selection="]<-"Sequential;"
+        opts2["Lookahead="]<-"1;"
+        opts2["Maxterms="]<-"5;"
+      }
+      opts2["Confidence="]<-"95;"
+      opts2["Print="]<-"Selection;"
+      opts2["End1;"]<-""
+      opts2["Data /Structure="]<-"Flat;"
+      dat<-dat[,unique(c(STR_LABEL,STR_AREA,SMP_LABEL,SMP_EFFORT,DISTANCE,SIZE,factor,covariates))]
       names(dat)[1:6]<-c("STR_LABEL","STR_AREA","SMP_LABEL","SMP_EFFORT","DISTANCE","SIZE")
       
-      opts["Fields="]<-paste(paste(names(dat),collapse=", "),";",sep="")
+      opts2["Fields="]<-paste(paste(names(dat),collapse=", "),";",sep="")
       if(!is.null(factor)){
         for(j in 1:length(factor)){
           labels<-sort(unique(dat[,factor[j]]))
           labels<-labels[!is.na(labels)]
-          opts[[length(opts)+1]] <- paste(paste(paste(c(" /Name="," /Levels="," /Labels="),c(factor[j],length(labels),paste(labels,collapse=",")),sep=""),collapse=""),";",sep="") 
+          opts2[[length(opts2)+1]] <- paste(paste(paste(c(" /Name="," /Levels="," /Labels="),c(factor[j],length(labels),paste(labels,collapse=",")),sep=""),collapse=""),";",sep="") 
         }
-        names(opts)[(which(names(opts)=="Fields=")+1):length(opts)] <- "FACTOR="
+        names(opts2)[(which(names(opts2)=="Fields=")+1):length(opts2)] <- "FACTOR="
       }else{
         NULL
       }
-      opts["Infile="]<-paste(paste(gsub("/","\\\\\\\\",path),"\\\\",dat.file[i],sep="")," /NoEcho;",sep="")
-      opts["End2;"]<-""
-      opts["Estimate;"]<-""
-      opts["Distance /Intervals="]<-paste(paste(breaks,collapse=",")," /Width=",max(breaks)," /Left=",min(breaks),";",sep="")
+      opts2["Infile="]<-paste(paste(gsub("/","\\\\\\\\",path),"\\\\",dat.file[i],sep="")," /NoEcho;",sep="")
+      opts2["End2;"]<-""
+      opts2["Estimate;"]<-""
+      opts2["Distance /Intervals="]<-paste(paste(breaks,collapse=",")," /Width=",max(breaks)," /Left=",min(breaks),";",sep="")
       
       if(is.null(stratum)){
-        opts["Density="]<-"All;"
-        opts["Encounter="]<-"All;"
-        opts["Detection="]<-"All;"
-        opts["Size="]<-"All;"
+        opts2["Density="]<-"All;"
+        opts2["Encounter="]<-"All;"
+        opts2["Detection="]<-"All;"
+        opts2["Size="]<-"All;"
       }else{
         if(stratum=="STR_LABEL"){
           
-          opts["Density="]<-"Stratum /DESIGN=strata /WEIGHT=area;" # in post stratify and stratify only, both lines are the same
-          opts["Encounter="]<-"Stratum;"
-          opts["Detection="]<-paste(detection,";",sep="")
-          opts["Size="]<-"All;"
+          opts2["Density="]<-"Stratum /DESIGN=strata /WEIGHT=area;" # in post stratify and stratify only, both lines are the same
+          opts2["Encounter="]<-"Stratum;"
+          opts2["Detection="]<-paste(detection,";",sep="")
+          opts2["Size="]<-"All;"
         }else{
-          opts["Density="]<-"Stratum /DESIGN=strata /WEIGHT=area;"
-          opts["Encounter="]<-"Stratum;"
-          opts["Detection="]<-paste(detection,";",sep="")
-          opts["Size="]<-"All;"
-          opts["Fields="]<-paste(paste(names(dat),collapse=", "),";",sep="")
+          opts2["Density="]<-"Stratum /DESIGN=strata /WEIGHT=area;"
+          opts2["Encounter="]<-"Stratum;"
+          opts2["Detection="]<-paste(detection,";",sep="")
+          opts2["Size="]<-"All;"
+          opts2["Fields="]<-paste(paste(names(dat),collapse=", "),";",sep="")
           
         }
       }	
@@ -381,40 +386,81 @@ distance.wrap <-
         #browser()
         if(is.null(estimator)){
           if(is.null(covariates) & is.null(factor)){
-            opts[["Estimator1"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("UN","CO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
-            opts[["Estimator2"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("UN","PO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+            opts2[["Estimator1"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("UN","CO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+            opts2[["Estimator2"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("UN","PO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
           }
-          opts[["Estimator3"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HN","CO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
-          opts[["Estimator4"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HN","HE","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
-          opts[["Estimator5"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HA","CO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
-          opts[["Estimator6"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HA","PO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+          opts2[["Estimator3"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HN","CO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+          opts2[["Estimator4"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HN","HE","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+          opts2[["Estimator5"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HA","CO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+          opts2[["Estimator6"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c("HA","PO","AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
         }else{
           if(!is.list(estimator) | !all(sapply(estimator,length)==2)){stop("Wrong list format for argument estimator")}
           for(j in 1:length(estimator)){
-            opts[[paste("Estimator",j,sep="")]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c(estimator[[j]][1],estimator[[j]][2],"AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+            opts2[[paste("Estimator",j,sep="")]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion=",if(va){" /Covariates="}else{NULL}),c(estimator[[j]][1],estimator[[j]][2],"AIC",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
           }
         }	
       }else{
-        opts[["Estimator1"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion="," /NAP=",if(va){" /Covariates="}else{NULL}),c("UN","CO","AIC","0",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
+        opts2[["Estimator1"]]<-gsub(", ;",";",gsub("=, ","=",paste(paste(paste(c(" /Key="," /Adjust="," /Criterion="," /NAP=",if(va){" /Covariates="}else{NULL}),c("UN","CO","AIC","0",if(va){covariates_list}else{NULL}),sep=""),collapse=""),";",sep="")))
       }
-      opts["Monotone="]<-paste(monotone,";",sep="")
-      opts["Pick="]<-"AICC;"
-      opts["GOF;"]<-""
-      opts["Cluster /Bias="]<-"GXLOG;"
-      opts["VarN="]<-"Empirical;"
-      opts["Multiplier1="]<-paste(multiplier," /Label='Sampling fraction';",sep="")
+      opts2["Monotone="]<-paste(monotone,";",sep="")
+      opts2["Pick="]<-"AICC;"
+      opts2["GOF;"]<-""
+      opts2["Cluster /Bias="]<-"GXLOG;"
+      opts2["VarN="]<-"Empirical;"
+      opts2["Multiplier1="]<-paste(multiplier," /Label='Sampling fraction';",sep="")
       if(!is.null(rare)){
-        opts["Multiplier2="]<-paste(1/pdetect," /Label='Rare'"," /SE=",sedetect/pdetect^2," /DF=",dfdetect,";",sep="")  
+        opts2["Multiplier2="]<-paste(1/pdetect," /Label='Rare'"," /SE=",sedetect/pdetect^2," /DF=",dfdetect,";",sep="")  
       }
-      opts["End3;"]<-""
+      opts2["End3;"]<-""
       
-      names(opts)[grep("Estimator",names(opts))]<-"Estimator" #to get the nb out which are used to prevent overwriting previously
-      names(opts)[grep("End",names(opts))]<-"End;"
-      names(opts)[grep("Multiplier",names(opts))]<-"Multiplier="
-      opts<-lapply(opts,paste,collapse="")
-      input<-paste(names(opts),unlist(opts),sep="")
+      names(opts2)[grep("Estimator",names(opts2))]<-"Estimator" #to get the nb out which are used to prevent overwriting previously
+      names(opts2)[grep("End",names(opts2))]<-"End;"
+      names(opts2)[grep("Multiplier",names(opts2))]<-"Multiplier="
+      opts2<-lapply(opts2,paste,collapse="")
+      
+      
+      n.model <- sum(names(opts2)=="Estimator")
+      inp.file<- sapply(1:n.model, function(j){paste(paste("input",names(dataset)[i],
+                                                           substr(opts2[names(opts2)=="Estimator"][j][[1]],7,8),
+                                                           substr(opts2[names(opts2)=="Estimator"][j][[1]],18,19),
+                                                           sep="_"),".tmp",sep="")})
+      res.file<- sapply(1:n.model, function(j){paste(paste("results",names(dataset)[i],
+                                                           substr(opts2[names(opts2)=="Estimator"][j][[1]],7,8),
+                                                           substr(opts2[names(opts2)=="Estimator"][j][[1]],18,19),
+                                                           sep="_"),".tmp",sep="")})
+      log.file<- sapply(1:n.model, function(j){paste(paste("log",names(dataset)[i],
+                                                           substr(opts2[names(opts2)=="Estimator"][j][[1]],7,8),
+                                                           substr(opts2[names(opts2)=="Estimator"][j][[1]],18,19),
+                                                           sep="_"),".tmp",sep="")})
+      det.file<- sapply(1:n.model, function(j){paste(paste("detections",names(dataset)[i],
+                                                           substr(opts2[names(opts2)=="Estimator"][j][[1]],7,8),
+                                                           substr(opts2[names(opts2)=="Estimator"][j][[1]],18,19),
+                                                           sep="_"),".tmp",sep="")})
+      
+      
+      input<-lapply(1:n.model, function(j){
+        opts1<-list()
+        opts1[""]<-paste(gsub("/","\\\\\\\\",path),"\\\\",res.file[j],sep="")
+        opts1[""]<-paste(gsub("/","\\\\\\\\",path),"\\\\",log.file[j],sep="")
+        opts1[""]<-"None"
+        opts1[""]<-paste(gsub("/","\\\\\\\\",path),"\\\\",det.file[j],sep="")
+        opts1[""]<-"None"
+        opts1[""]<-"None"
+        opts <- c(opts1,opts2)
+        model.lines <- which(names(opts)=="Estimator")
+        if(length(model.lines)==1){
+          out <- paste(names(opts),unlist(opts),sep="") 
+        }else{
+          out <- paste(names(opts)[-model.lines[-j]],unlist(opts)[-model.lines[-j]],sep="")  
+        }
+        return(out)
+      })
+      
       if(verbose){cat(input,fill=1)}  #prints the input file
-      write.table(input,file.path(path,inp.file[i]),row.names=FALSE,quote=FALSE,col.names=FALSE)
+      for(j in 1:n.model){
+        write.table(input[[j]],file.path(path,inp.file[j]),row.names=FALSE,quote=FALSE,col.names=FALSE)   
+      }
+      
       dat$SMP_LABEL<-paste(as.numeric(factor(dat$SMP_LABEL)),dat$SMP_LABEL,sep=".")
       dat<-dat[order(dat[,"STR_LABEL"],dat[,"SMP_LABEL"]),] #always order according to the first column/ str_label, otherwise MCDS creates too many stratum or samples
       w<-which(is.na(dat[,"DISTANCE"]) | dat[,"DISTANCE"]=="")
@@ -429,45 +475,64 @@ distance.wrap <-
       
       ####################################################
       ### running distance
-      
-      cmd<-paste(shQuote(file.path(pathMCDS,"MCDS"))," 0, ",shQuote(file.path(path,inp.file[i])),sep="")
-      system(cmd,wait=TRUE,ignore.stdout=FALSE,ignore.stderr=FALSE,invisible=TRUE)
+      run.cmd <- vector(mode="list",length=n.model)
+      for(j in 1:n.model){
+        cmd<-paste(shQuote(file.path(pathMCDS,"MCDS"))," 0, ",shQuote(file.path(path,inp.file[j])),sep="")
+        run.cmd[j] <- try(system(cmd,wait=TRUE,ignore.stdout=FALSE,ignore.stderr=FALSE,invisible=TRUE), silent = TRUE)
+      }
       
       ####################################################
-      ### output
-      
+      ### output  
       ### subset original observations
       input.data <- list()
       input.data[[1]] <- dat
       input.data[[2]] <- breaks
       names(input.data)<-c("observations","breaks")
+      mans <-vector(mode="list",length=n.model)
+      names(mans) <-  sapply(1:n.model, function(j){paste(names(dataset)[i],
+                                                    substr(opts2[names(opts2)=="Estimator"][j][[1]],7,8),
+                                                    substr(opts2[names(opts2)=="Estimator"][j][[1]],18,19), sep="_")})
       
-      log<-readLines(file.path(path,log.file[i]))
-      res<-readLines(file.path(path,res.file[i]))
-      if(any(grep("No fit possible",log)) || length(res)<1L){
-        notrun<-c(notrun,names(lans)[i])
-        next
+      #list of model
+      for(j in 1:n.model){
+        if(run.cmd[[j]]%in%c(1,2,3)){
+          log<-readLines(file.path(path,log.file[j]))
+          res<-readLines(file.path(path,res.file[j]))
+          if(any(grep("No fit possible",log)) || length(res)<1L){
+            notrun<-c(notrun,names(lans)[j])
+            next
+          }
+          x<-readLines(file.path(path,res.file[j]))
+          y<-readLines(file.path(path,det.file[j]))
+          ans<-vector(mode="list",length=10)
+          ans[[1]]<- input.data
+          ans[[2]]<- model_fittingMCDS(x=x, units=units)
+          ans[[3]]<- parameter_estimatesMCDS(x)
+          ans[[4]]<- ifelse(!is.null(factor) | !is.null(covariates)==T,param_namesMCDS(x),"No covariates in the model") 
+          ans[[5]]<- chi_square_testMCDS(x)
+          ans[[6]]<- density_estimateMCDS(x)
+          ans[[7]]<- ifelse(is.null(rare)==T,cluster_sizeMCDS(x),"No cluster estimation for the rare species model")
+          ans[[8]]<- detection_probabilityMCDS(y, covariates=covariates)
+          ans[[9]]<- AIC_MCDS(x)
+          ans[[10]]<- path
+          names(ans)<-c("input_data","model_fitting","parameter_estimates","covar_key","chi_square_test","density_estimate","cluster_size","detection","AIC","path")
+          class(ans)<-"distanceFit"
+          #list of model
+          mans[[j]] <- ans
+        }else{
+          mans[[j]] <- "Model failed to converge" 
+        }
+      } 
+      if(length(mans)==1){
+        mans <- mans[[1]]
+      }else{
+        class(mans) <- "distanceList" 
       }
-      
-      x<-readLines(file.path(path,res.file[i]))
-      y<-readLines(file.path(path,det.file[i]))
-      ans<-vector(mode="list",length=9)
-      ans[[1]]<-input.data
-      ans[[2]]<-model_fittingMCDS(x)
-      ans[[3]]<-parameter_estimatesMCDS(x)
-      ans[[4]] <-ifelse(!is.null(factor) | !is.null(covariates)==T,param_namesMCDS(x),"No covariates in the model") 
-      ans[[5]]<-chi_square_testMCDS(x)
-      ans[[6]]<-density_estimateMCDS(x)
-      ans[[7]]<-ifelse(is.na(grep("Uniform",ans[[2]]$Global$Type)), cluster_sizeMCDS(x),"No cluster size evaluation are made for uniform detection function")
-      ans[[8]]<-detection_probabilityMCDS(y, covariates=covariates)
-      ans[[9]]<-path
-      names(ans)<-c("input_data","model_fitting","parameter_estimates","covar_key","chi_square_test","density_estimate","cluster_size","detection","path")
-      class(ans)<-"distanceFit"
-      #ans
-      lans[[i]]<-ans
+      #list of species
+      lans[[i]]<-mans
     }
     if(!is.null(notrun)){warning(paste("No models for the following combinations: ",paste(notrun,collapse=" "),". See log files." ,sep=""),immediate.=TRUE)}
     lans<-lans[!sapply(lans,is.null)]
-    class(lans) <- "distanceList"
+    class(lans) <- "SpeciesList"
     if(length(lans)==1){lans[[1]]}else{lans}
   }

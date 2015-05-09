@@ -8,8 +8,8 @@
 #'\tabular{ll}{
 #'Package: \tab GeoAviR\cr
 #'Type: \tab Package\cr
-#'Version: \tab 0.7.2\cr
-#'Date: \tab 2015-02-17\cr
+#'Version: \tab 0.7.3\cr
+#'Date: \tab 2015-05-07\cr
 #'License: \tab GPL-2\cr
 #'LazyLoad: \tab yes\cr
 #'}
@@ -51,7 +51,6 @@ NULL
 #'    \item{\code{Year}}{Year the observations were made.}
 #'  }
 #'
-#'@details This dataset has been simualted from the original data.
 #'@seealso \code{\link{filterECSAS}}
 #'@docType data
 #'@name alcidae
@@ -88,7 +87,6 @@ NULL
 #'    \item{\code{Count}}{number of individuals.}
 #'    \item{\code{Year}}{Year the observations were made.}
 #'  }
-#'@details This dataset has been simualted from the original data.
 #'@docType data
 #'@name quebec
 NULL
@@ -96,30 +94,12 @@ NULL
 
 #'@title Zones in the Gulf of St-Lawrence.
 #'
-#'@description This file gives the boundaries of the zones in the Gulf of St-Lawrence.
-#'@format  A data frame with 13251 observations on the following 7 variables.
+#'@description This file gives the boundaries of fishing zones in the Gulf of St-Lawrence.
+#'@format  A SpatialPolygonsDataFrame.
 #'  \describe{
-#'    \item{\code{long}}{longitude}
-#'    \item{\code{lat}}{latitude}
-#'    \item{\code{order}}{order for plotting}
-#'    \item{\code{hole}}{is the polygon an hole or not}
-#'    \item{\code{piece}}{piece of a multiple polygon}
-#'    \item{\code{group}}{group id}
 #'    \item{\code{id}}{the global polygon to which the point is}
+#'    \item{\code{area}}{size of the fishing zone in km}
 #'  }
 #'@docType data
 #'@name zonegulf
-#'@examples
-### Import data
-#'data(zonegulf)
-#'
-#'### Build a SpatialPolygonsDataFrame from the zonegulf file
-#'require(plyr)
-#'require(sp)
-#'x<-dlply(zonegulf,.(group),function(i){Polygon(i[c(nrow(i),1:nrow(i)),1:2],hole=i$hole[1])})
-#'x<-sapply(unique(zonegulf$id),function(i){
-#'	temp<-x[names(x)\%in\%zonegulf$group[which(zonegulf$id==i)]]
-#'	Polygons(temp,ID=i)
-#'  })
-#'#End
 NULL

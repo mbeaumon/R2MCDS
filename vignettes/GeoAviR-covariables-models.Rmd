@@ -1,0 +1,36 @@
+---
+title: "GeoAviR models with covariables"
+author: "Christian Roy"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+##Including explanatory varible in the analysis
+
+By default the function will fit a total of 6 different model to the data:
+
+- Uniform key function with Cosine adjustement
+- Uniform key function with Hermine polynomial adjustement
+- Half-normal key function with Cosine adjustement
+- Half-normal key function with Hermine polynomial adjustement
+- Hazard rate key function with Cosine adjustement
+- Hazard rate key function with Simple polynomial adjustement
+
+
+```{r,warning=FALSE,message=FALSE}
+library(GeoAviR)
+### Import and filter data
+data(alcidae)
+alcids<-filterECSAS(alcidae)
+
+### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
+x<-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
+                 units=list(Type="Line",Length="Kilometer",Distance="Meter",Area="Square kilometer"),
+                 breaks=c(0,50,100,200,300), STR_LABEL="STR_LABEL", 
+                 STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
+                 path="c:/temp/distance",
+                 pathMCDS="C:/Program Files (x86)/Distance 6",verbose=FALSE)
+```

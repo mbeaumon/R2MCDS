@@ -340,21 +340,23 @@ function(dataset,
 		x<-readLines(file.path(path,res.file[i]))
 		y<-readLines(file.path(path,det.file[i]))
 		ans<-vector(mode="list",length=8)
-		ans[[1]]<-input.data
-    ans[[2]]<-model_fittingMCDS(x)
-		ans[[3]]<-parameter_estimatesMCDS(x)
-		ans[[4]]<-chi_square_testMCDS(x)
-		ans[[5]]<-density_estimateMCDS(x)
-		ans[[6]]<-"No cluster size evaluation are made for stript transects species"
-		ans[[7]]<-detection_probabilityMCDS(y, covariates=NULL)
-		ans[[8]]<-path
-		names(ans)<-c("input_data","model_fitting","parameter_estimates","chi_square_test","density_estimate","cluster_size","detection","path")
+		ans[[1]] <-input.data
+    ans[[2]] <-model_fittingMCDS(x)
+		ans[[3]] <-parameter_estimatesMCDS(x)
+		ans[[4]] <- "No covariates in strip transect models"
+		ans[[5]] <-chi_square_testMCDS(x)
+		ans[[6]] <-density_estimateMCDS(x)
+		ans[[7]] <-"No cluster size evaluation are made for stript transects models"
+		ans[[8]] <-detection_probabilityMCDS(y, covariates=NULL)
+		ans[[9]]<- AIC_MCDS(x)
+		ans[[10]] <-path
+		names(ans)<-c("input_data","model_fitting","parameter_estimates","covar_key","chi_square_test","density_estimate","cluster_size","detection","AIC","path")
 		class(ans)<-"distanceFit"
 		#ans
 		lans[[i]]<-ans
 	}
 	if(!is.null(notrun)){warning(paste("No models for the following combinations: ",paste(notrun,collapse=" "),". See log files." ,sep=""),immediate.=TRUE)}
 	lans<-lans[!sapply(lans,is.null)]
-	class(lans) <- "distanceList"
+	class(lans) <- "SpeciesList"
   if(length(lans)==1){lans[[1]]}else{lans}
 }

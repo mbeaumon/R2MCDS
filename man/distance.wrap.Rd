@@ -5,11 +5,13 @@
 \usage{
 distance.wrap(dataset, path, pathMCDS, SMP_LABEL = "SMP_LABEL",
   SMP_EFFORT = "SMP_EFFORT", DISTANCE = "DISTANCE", SIZE = "SIZE",
-  STR_LABEL = "STR_LABEL", STR_AREA = "STR_AREA", breaks = c(0, 50, 100,
-  200, 300), covariates = NULL, factor = NULL, lsub = NULL,
-  stratum = NULL, split = TRUE, rare = NULL, period = NULL,
-  detection = "All", monotone = "Strict", estimator = NULL,
-  multiplier = 2, empty = NULL, verbose = FALSE)
+  STR_LABEL = "STR_LABEL", STR_AREA = "STR_AREA", units = list(Type =
+  "Line", Distance = "Perp", Length_units = "Kilometer", Distance_units =
+  "Meter", Area_units = "Square kilometer"), breaks = c(0, 50, 100, 200, 300),
+  covariates = NULL, factor = NULL, lsub = NULL, stratum = NULL,
+  split = TRUE, rare = NULL, period = NULL, detection = "All",
+  monotone = "Strict", estimator = NULL, multiplier = 2, empty = NULL,
+  verbose = FALSE)
 }
 \arguments{
 \item{dataset}{A \code{\link{data.frame}} with observations.}
@@ -20,15 +22,18 @@ distance.wrap(dataset, path, pathMCDS, SMP_LABEL = "SMP_LABEL",
 
 \item{SMP_LABEL}{Name of the column to use for the transect/watch label.}
 
-\item{SMP_EFFORT}{Length in km of the transect or the transect/watch unit.}
+\item{SMP_EFFORT}{Length in of the transect or the transect/watch unit.}
 
-\item{DISTANCE}{Distance of the observation in meters.}
+\item{DISTANCE}{Distance of the observation.}
 
 \item{SIZE}{Number of individuals in the observation.}
 
 \item{STR_LABEL}{Name of the column to use as a stratum label.}
 
 \item{STR_AREA}{Name of the column to use for the stratum area.}
+
+\item{units}{list of th units used for the analysis. Contains the Type of analysis (Line or Point), the Distance enfine to use (Perp or Radial),
+the Length units, the Distance units, and the Area_units.For the possible units of distance and area see Distance 6.2 documentation.}
 
 \item{breaks}{A vector giving the distance intervals in meters to be used in the analysis.}
 
@@ -62,8 +67,7 @@ should be restricted. Dates have to be in the "yyyy-mm-dd" format.}
 \item{estimator}{When set to \code{NULL}, the following key functions and expansion terms will be used: UN-CO, UN-PO, HN-CO, HN-HE, HA-CO and HA-PO.
 If the user wants to choose the key functions and the expansion terms used, a list has to be given with each element a vector of
 length 2 with the first element the key function and the second element the expansion term (ex: \code{list(c("HN","CO"),c("HA","PO")}).
-When \code{rare != NULL}, only one set is used (UN-CO) for the final specific model. In all cases, the best model is chosen by AIC.
-See details for further explanations.}
+When \code{rare != NULL}, only one set is used (UN-CO) for the final specific model.}
 
 \item{multiplier}{Value by which the estimates of density or abundance are multiplied. Default value \code{multiplier = 2} meaning
 only one-half of the transect is surveyed. When \code{rare != NULL}, the multiplier will be modified to account

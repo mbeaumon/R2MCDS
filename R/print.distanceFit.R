@@ -12,6 +12,8 @@ print.distanceFit <- function(x, ...){
             x$density_estimate$Global[x$density_estimate$Global[,"Parameters"]=="N",c("95% Upper")],
             ") 95% CI",
             sep=""))
+  cat("\n\n")
+  cat(paste("Model AICc = ",as.numeric(x$AIC[3]),sep=""))
   cat("\n")
   cat("\nFiles created by the MCDS engine are saved in the diectory:\n")
   cat(x$path)
