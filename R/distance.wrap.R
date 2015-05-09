@@ -144,6 +144,7 @@ distance.wrap <-
            SIZE="SIZE",            														
            STR_LABEL="STR_LABEL",
            STR_AREA="STR_AREA",												
+           units=list(Type="Line",Length="Kilometer",Distance="Meter",Area="Square kilometer"),
            breaks=c(0,50,100,200,300),
            covariates=NULL,
            factor=NULL,
@@ -308,12 +309,13 @@ distance.wrap <-
       #dat<-dat[!(duplicated(dat[,SMP_LABEL]) & dat[,DISTANCE]==""),]
       #######################################################
       ### input
+      
       opts2<-list()
       opts2["Options;"]<-""
-      opts2["Type="]<-"Line;"
-      opts2["Length /Measure="]<-"'Kilometer';"
-      opts2["Distance=Perp /Measure="]<-"'Meter';"
-      opts2["Area /Units="]<-"'Square kilometer';"
+      opts2["Type="]<-paste(units$Type,";",sep="")
+      opts2["Length /Measure="]<-paste("'",units$Length,"';",sep="")
+      opts2["Distance=Perp /Measure="]<-paste("'",units$Distance,"';",sep="")
+      opts2["Area /Units="]<-paste("'",units$Area,"';",sep="")
       opts2["Object="]<-"Cluster;"
       opts2["SF="]<-"1;"
       opts2["Selection="]<-"Specify;"
