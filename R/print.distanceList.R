@@ -3,7 +3,7 @@ print.distanceList <- function(x, ...){
   cat("List of Distance sampling object fitted via the MCDS engine:\n")
   cat("\n")
   for(i in 1:length(x)){
-    cat(paste("Results for ", names(x[i]),":", sep=""))
+    cat(paste("Results for model", names(x[i]),":", sep=""))
     cat(paste("\nDetection function: ", unlist(strsplit(x[[i]]$model_fitting$Global$Type, ","))[1],sep=""))
     cat("\nEstimated abundance in covered region: ")
     cat(paste(x[[i]]$density_estimate$Global[x[[i]]$density_estimate$Global[,"Parameters"]=="N",c("Estimates")],

@@ -18,8 +18,8 @@ function(x,units){
 	  	i<-paste(i[i!=""],collapse=" ")
 	  })[1]
 	  descrip <- c("effort","samples","width","left","observations")
-    units <- c(units$Length_units, units$Type, units$Distance_units, Units$Distance_units, "clusters")
-	  ans<-data.frame(Parameters=descrip,Values=ans, units=units)
+    units <- c(units$Length_units, units$Type, units$Distance_units, units$Distance_units, "clusters")
+	  ans<-data.frame(PARAMETERS=descrip, VALUES=ans, UNITS=units)
 	  res$Global<-list()
 	  res$Global[[1]]<-ans
 	  res$Global[[2]]<-l
