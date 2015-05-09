@@ -5,11 +5,13 @@
 \usage{
 distance.wrap(dataset, path, pathMCDS, SMP_LABEL = "SMP_LABEL",
   SMP_EFFORT = "SMP_EFFORT", DISTANCE = "DISTANCE", SIZE = "SIZE",
-  STR_LABEL = "STR_LABEL", STR_AREA = "STR_AREA", breaks = c(0, 50, 100,
-  200, 300), covariates = NULL, factor = NULL, lsub = NULL,
-  stratum = NULL, split = TRUE, rare = NULL, period = NULL,
-  detection = "All", monotone = "Strict", estimator = NULL,
-  multiplier = 2, empty = NULL, verbose = FALSE)
+  STR_LABEL = "STR_LABEL", STR_AREA = "STR_AREA", units = list(Type =
+  "Line", Distance = "Perp", Length_units = "Kilometer", Distance_units =
+  "Meter", Area_units = "Square kilometer"), breaks = c(0, 50, 100, 200, 300),
+  covariates = NULL, factor = NULL, lsub = NULL, stratum = NULL,
+  split = TRUE, rare = NULL, period = NULL, detection = "All",
+  monotone = "Strict", estimator = NULL, multiplier = 2, empty = NULL,
+  verbose = FALSE)
 }
 \arguments{
 \item{dataset}{A \code{\link{data.frame}} with observations.}
@@ -20,15 +22,18 @@ distance.wrap(dataset, path, pathMCDS, SMP_LABEL = "SMP_LABEL",
 
 \item{SMP_LABEL}{Name of the column to use for the transect/watch label.}
 
-\item{SMP_EFFORT}{Length in km of the transect or the transect/watch unit.}
+\item{SMP_EFFORT}{Length in of the transect or the transect/watch unit.}
 
-\item{DISTANCE}{Distance of the observation in meters.}
+\item{DISTANCE}{Distance of the observation.}
 
 \item{SIZE}{Number of individuals in the observation.}
 
 \item{STR_LABEL}{Name of the column to use as a stratum label.}
 
 \item{STR_AREA}{Name of the column to use for the stratum area.}
+
+\item{units}{list of th units used for the analysis. Contains the Type of analysis (Line or Point), the Distance enfine to use (Perp or Radial),
+the Length units, the Distance units, and the Area_units.For the possible units of distance and area see Distance 6.2 documentation.}
 
 \item{breaks}{A vector giving the distance intervals in meters to be used in the analysis.}
 

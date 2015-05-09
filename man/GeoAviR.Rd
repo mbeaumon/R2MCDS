@@ -11,8 +11,8 @@ This package allows the user to create spatial grids, plot the animal density an
 \tabular{ll}{
 Package: \tab GeoAviR\cr
 Type: \tab Package\cr
-Version: \tab 0.7.2\cr
-Date: \tab 2015-02-17\cr
+Version: \tab 0.7.3\cr
+Date: \tab 2015-05-07\cr
 License: \tab GPL-2\cr
 LazyLoad: \tab yes\cr
 }

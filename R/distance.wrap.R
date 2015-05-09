@@ -16,9 +16,12 @@
 
 #'@param SMP_LABEL Name of the column to use for the transect/watch label.
 
-#'@param SMP_EFFORT Length in km of the transect or the transect/watch unit.
+#'@param units list of th units used for the analysis. Contains the Type of analysis (Line or Point), the Distance enfine to use (Perp or Radial), 
+#'the Length units, the Distance units, and the Area_units.For the possible units of distance and area see Distance 6.2 documentation.     
 
-#'@param DISTANCE Distance of the observation in meters.
+#'@param SMP_EFFORT Length in of the transect or the transect/watch unit.
+
+#'@param DISTANCE Distance of the observation.
 
 #'@param SIZE Number of individuals in the observation.
 
@@ -144,7 +147,8 @@ distance.wrap <-
            SIZE="SIZE",            														
            STR_LABEL="STR_LABEL",
            STR_AREA="STR_AREA",												
-           units=list(Type="Line",Length="Kilometer",Distance="Meter",Area="Square kilometer"),
+           units=list(Type="Line",Distance="Perp",Length_units="Kilometer",
+                      Distance_units="Meter",Area_units="Square kilometer"),
            breaks=c(0,50,100,200,300),
            covariates=NULL,
            factor=NULL,
@@ -309,13 +313,17 @@ distance.wrap <-
       #dat<-dat[!(duplicated(dat[,SMP_LABEL]) & dat[,DISTANCE]==""),]
       #######################################################
       ### input
-      
+    
       opts2<-list()
       opts2["Options;"]<-""
-      opts2["Type="]<-paste(units$Type,";",sep="")
-      opts2["Length /Measure="]<-paste("'",units$Length,"';",sep="")
-      opts2["Distance=Perp /Measure="]<-paste("'",units$Distance,"';",sep="")
-      opts2["Area /Units="]<-paste("'",units$Area,"';",sep="")
+      opts2["Type="] <- paste(units$Type,";",sep="")
+      opts2["Length /Measure="] <- paste("'",units$Length_units,"';",sep="")
+      if(units$Distance=="Perp"){
+      opts2["Distance=Perp /Measure="] <- paste("'",units$Distance_units,"';",sep="")    
+      }else{
+      opts2["Distance=Radial /Measure="] <- paste("'",units$Distance_units,"';",sep="")    
+      }
+      opts2["Area /Units="] <- paste("'",units$Area_units,"';",sep="")
       opts2["Object="]<-"Cluster;"
       opts2["SF="]<-"1;"
       opts2["Selection="]<-"Specify;"
@@ -328,7 +336,7 @@ distance.wrap <-
       opts2["Print="]<-"Selection;"
       opts2["End1;"]<-""
       opts2["Data /Structure="]<-"Flat;"
-      dat<-dat[,unique(c(STR_LABEL,STR_AREA,SMP_LABEL,SMP_EFFORT,DISTANCE,SIZE,factor,covariates))] #the stratum part used to be ifelse(stratum=="STR_LABEL",STR_LABEL,stratum)
+      dat<-dat[,unique(c(STR_LABEL,STR_AREA,SMP_LABEL,SMP_EFFORT,DISTANCE,SIZE,factor,covariates))]
       names(dat)[1:6]<-c("STR_LABEL","STR_AREA","SMP_LABEL","SMP_EFFORT","DISTANCE","SIZE")
       
       opts2["Fields="]<-paste(paste(names(dat),collapse=", "),";",sep="")
