@@ -144,7 +144,7 @@ distance.wrap <-
            SMP_LABEL="SMP_LABEL",
            SMP_EFFORT="SMP_EFFORT",
            DISTANCE="DISTANCE",
-           SIZE="SIZE",            														
+           SIZE="SIZE",                												
            STR_LABEL="STR_LABEL",
            STR_AREA="STR_AREA",												
            units=list(Type="Line",Distance="Perp",Length_units="Kilometer",
@@ -153,17 +153,60 @@ distance.wrap <-
            covariates=NULL,
            factor=NULL,
            lsub=NULL,
-           stratum=NULL, #new
+           stratum=NULL, 
            split=TRUE,
-           rare=NULL,  #testing
+           rare=NULL, 
            period=NULL,
-           detection="All", #or "stratum" is possible
+           detection="All", 
            monotone="Strict",
            estimator=NULL,
-           multiplier=2, #new
+           multiplier=2, 
            empty=NULL,
            verbose=FALSE
   ){
+    
+    ##Make sure input are correct
+    #check for detection options
+    if(toupper(detection)%in%c("ALL","STRATUM")==FALSE)
+      stop("Detection options are 'All' or 'Stratum'")
+    
+    if(toupper(monotone)%in%c("NONE","WEAK", "STRICT")==FALSE)
+      stop("monotone options are 'None', 'Weak' or 'Strict'")
+    
+    #Check for monotone options
+    if(!is.null(covariates) & monotone!="none")
+      stop("monotone must be set to 'none' when  facrots or covariates ar included")
+    
+    if(!is.null(factor) & monotone!="none")
+      stop("monotone must be set to 'none' when  facrots or covariates ar included")
+  
+    #Check for units
+    if(length(units)!= 5)
+      stop("units list must includes values for Type, Distance, Length_units, Distance_units and Area_units")
+    
+    if(toupper(units$Type)%in%c("LINE","POINT", "CUE")==FALSE)
+      stop("Type of sampling available are: Line, Point or Cue")
+    
+    if(toupper(units$Distance)%in%c("Perp","Radial")==FALSE)
+      stop("Type of distance available are: Perp or Radial")
+    
+    if(toupper(units$Length_units)%in%c("CENTIMETERS", "METERS", "KILOMETERS", "MILES", 
+                                    "INCHES", "FEET", "YARDS", "NAUTICAL MILES")==FALSE)
+      stop("Distance units must be one of thse: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches', 
+           'Feet', 'Yards', Or 'Nautical Miles'")  
+    
+    if(toupper(units$Distance_units)%in%c("CENTIMETERS", "METERS", "KILOMETERS", "MILES", 
+                                    "INCHES", "FEET", "YARDS", "NAUTICAL MILES")==FALSE)
+      stop("Distance units must be one of thse: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches', 
+           'Feet', 'Yards', Or 'Nautical Miles'")  
+    
+    if(toupper(units$Area_units)%in%c("SQUARE CENTIMETERS", "SQUARE METERS", "SQUARE KILOMETERS", "SQUARE MILES", 
+                                          "SQUARE INCHES", "SQUARE FEET", "SQUARE YARDS", "HECTARES")==FALSE)
+      stop("Distance units must be one of thse: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches', 
+           'Feet', 'Yards', Or 'Nautical Miles'")  
+    
+    
+    
     #get the list of arguments
     arguments<-as.list(environment())
     if(!is.null(period)){
@@ -313,15 +356,15 @@ distance.wrap <-
       #dat<-dat[!(duplicated(dat[,SMP_LABEL]) & dat[,DISTANCE]==""),]
       #######################################################
       ### input
-    
+      
       opts2<-list()
       opts2["Options;"]<-""
       opts2["Type="] <- paste(units$Type,";",sep="")
       opts2["Length /Measure="] <- paste("'",units$Length_units,"';",sep="")
       if(units$Distance=="Perp"){
-      opts2["Distance=Perp /Measure="] <- paste("'",units$Distance_units,"';",sep="")    
+        opts2["Distance=Perp /Measure="] <- paste("'",units$Distance_units,"';",sep="")    
       }else{
-      opts2["Distance=Radial /Measure="] <- paste("'",units$Distance_units,"';",sep="")    
+        opts2["Distance=Radial /Measure="] <- paste("'",units$Distance_units,"';",sep="")    
       }
       opts2["Area /Units="] <- paste("'",units$Area_units,"';",sep="")
       opts2["Object="]<-"Cluster;"
@@ -490,8 +533,8 @@ distance.wrap <-
       names(input.data)<-c("observations","breaks")
       mans <-vector(mode="list",length=n.model)
       names(mans) <-  sapply(1:n.model, function(j){paste(names(dataset)[i],
-                                                    substr(opts2[names(opts2)=="Estimator"][j][[1]],7,8),
-                                                    substr(opts2[names(opts2)=="Estimator"][j][[1]],18,19), sep="_")})
+                                                          substr(opts2[names(opts2)=="Estimator"][j][[1]],7,8),
+                                                          substr(opts2[names(opts2)=="Estimator"][j][[1]],18,19), sep="_")})
       
       #list of model
       for(j in 1:n.model){
