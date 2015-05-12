@@ -190,6 +190,10 @@ distance.wrap <-
     if(toupper(units$Distance)%in%c("Perp","Radial")==FALSE)
       stop("Type of distance available are: Perp or Radial")
     
+    if(toupper(units$Type)%in%c("POINT", "CUE") & toupper(units$Distance)!=c("Radial"))
+      stop("For Points and Cue sampling scheme Distance must be set to radial")
+    
+    
     if(toupper(units$Length_units)%in%c("CENTIMETERS", "METERS", "KILOMETERS", "MILES", 
                                     "INCHES", "FEET", "YARDS", "NAUTICAL MILES")==FALSE)
       stop("Distance units must be one of thse: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches', 
@@ -204,8 +208,6 @@ distance.wrap <-
                                           "SQUARE INCHES", "SQUARE FEET", "SQUARE YARDS", "HECTARES")==FALSE)
       stop("Distance units must be one of thse: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches', 
            'Feet', 'Yards', Or 'Nautical Miles'")  
-    
-    
     
     #get the list of arguments
     arguments<-as.list(environment())
