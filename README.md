@@ -14,7 +14,7 @@ Version 0.8.0
 * Added a vignette for simple models
 * Added a vignette for stratified analysis
 * Added the keep.best.model function to simplify output when many model are fitted to the same species
-* Made cosmetic change to the print and summary function for the distanceList and distanceFit class
+* Made cosmetic changes to the print and summary functions for the distanceList and distanceFit class
 * Created the SpeciesList class 
 * Redefined the distanceList class
 * Added the units options to distance.wrap
