@@ -108,40 +108,38 @@ Francois Rousseu, Christian Roy, Francois Bolduc
 \examples{
 ########################################
 ### Simple models without stratification
-
 ### Import and filter data
 data(alcidae)
 alcids<-filterECSAS(alcidae)
 
-### Set arguments and parameters
-path<-("c:/temp/distance")
-pathMCDS<-"C:/Program Files (x86)/Distance 6"
-breaks<-c(0,50,100,200,300)
-STR_LABEL<-"STR_LABEL"
-STR_AREA<-"STR_AREA"
-SMP_LABEL<-"WatchID"
-SMP_EFFORT<-"WatchLenKm"
-DISTANCE<-"Distance"
-SIZE<-"Count"
-
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-x<-distance.wrap(alcids,path=path,pathMCDS=pathMCDS,breaks=breaks,STR_LABEL=STR_LABEL,STR_AREA=STR_AREA,SMP_LABEL=SMP_LABEL,SMP_EFFORT=SMP_EFFORT,DISTANCE=DISTANCE,SIZE=SIZE,verbose=FALSE)
+dist.out1 <-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
+                         units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
+                                    Distance_units="Meters",Area_units="Square kilometers"),
+                         breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
+                         STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",SMP_LABEL="WatchID",
+                         path="c:/temp/distance",
+                         pathMCDS="C:/Program Files (x86)/Distance 6")
 
-### Plot results
-global.summary(model=x, species="alcidae",file="alcidae_global", directory="C:/temp/distance")
+summary(dist.out1)
+global.summary(model=dist.out1, species="alcidae",file="alcidae_global", directory="C:/temp/distance")
 
 ### Run separate analysis for years 2008-2009
-lsub<-list(Year=c(2008,2009))
-split<-TRUE
-empty<-"Year"
-x<-distance.wrap(alcids,empty=empty,lsub=lsub,split=split,path=path,pathMCDS=pathMCDS,breaks=breaks,STR_LABEL=STR_LABEL,STR_AREA=STR_AREA,SMP_LABEL=SMP_LABEL,SMP_EFFORT=SMP_EFFORT,DISTANCE=DISTANCE,SIZE=SIZE,verbose=F)
+dist.out2 <- distance.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
+                          units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
+                                     Distance_units="Meters",Area_units="Square kilometers"),
+                          breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
+                          lsub=list(Year=c(2008,2009)), split=TRUE, empty="Year",
+                          STR_AREA="STR_AREA",SMP_LABEL="WatchID",
+                          path="c:/temp/distance",
+                          pathMCDS="C:/Program Files (x86)/Distance 6")
 
-### Get the names of the different models produced and plot results for the first model
-names(x)
-global.summary(model=x, species="alcidae", file="alcidae", directory="C:/temp/distance")
-
-### Plot all results in a single line
-lapply(x,resume.plot)
+### Get the names of the different models produced
+names(dist.out2)
+#####summary for the Year 2008 model
+summary(dist.out2[["2008"]])
+#### Plot results for the Year2008 model
+global.summary(model=dist.out2[["2008"]], species="alcidae", file="alcidae", directory="C:/temp/distance")
 #END
 }
 \references{
