@@ -10,10 +10,12 @@ vignette: >
 ---
 ##Including explanatory varible in the analysis
 
-By default the function will fit a total of 6 different model to the data:
+The distance analysis are made via the MCDS engine of Distance 6.2 and the analysis are currently restricted to binned data. The distance that can be fitted are derived from 3 different key function (Harlf-normal and Hazard rate) and 3 different series adjustement (Cosine, Simple polynomial, Hermite polynomial). The uniform model are not available ascovariates cannot be used with this type of model. 
 
-- Uniform key function with Cosine adjustement
-- Uniform key function with Hermine polynomial adjustement
+#Basic model
+
+By default the function will fit a total of 4 different model to the data:
+
 - Half-normal key function with Cosine adjustement
 - Half-normal key function with Hermine polynomial adjustement
 - Hazard rate key function with Cosine adjustement
@@ -33,4 +35,6 @@ x<-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count
                  STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
                  path="c:/temp/distance",
                  pathMCDS="C:/Program Files (x86)/Distance 6",verbose=FALSE)
+#Look at the output
+x
 ```
