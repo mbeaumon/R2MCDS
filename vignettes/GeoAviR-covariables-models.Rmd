@@ -8,11 +8,11 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
-##Including explanatory varible in the analysis
+#Including explanatory varible in the analysis
 
 The distance analysis are made via the MCDS engine of Distance 6.2 and the analysis are currently restricted to binned data. The distance that can be fitted are derived from 3 different key function (Harlf-normal and Hazard rate) and 3 different series adjustement (Cosine, Simple polynomial, Hermite polynomial). The uniform model are not available ascovariates cannot be used with this type of model. 
 
-#Basic model
+##Basic model
 
 By default the function will fit a total of 4 different model to the data:
 
@@ -21,6 +21,9 @@ By default the function will fit a total of 4 different model to the data:
 - Hazard rate key function with Cosine adjustement
 - Hazard rate key function with Simple polynomial adjustement
 
+Covariates have been splitted between factor covariates ('factor'), and non-factor covariates ('covariates'). Factor covariates classify the data into differnent category while non-factor covariates must be numeric. A simple example would be the effect of the observer on the detection function. 
+
+Note that for analysis with explanatory variable it will be important to set monotone option to 'none' otherwise the distance.wrap function will return an error message. It is also important to note that it will take considerably more time for model to be fitted.
 
 ```{r,warning=FALSE,message=FALSE}
 library(GeoAviR)
@@ -29,12 +32,40 @@ data(alcidae)
 alcids<-filterECSAS(alcidae)
 
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-x<-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
-                 units=list(Type="Line",Length="Kilometer",Distance="Meter",Area="Square kilometer"),
-                 breaks=c(0,50,100,200,300), STR_LABEL="STR_LABEL", 
-                 STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
+x<-distance.wrap(alcids,SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
+                 units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
+                            Distance_units="Meters",Area_units="Square kilometers"),
+                 factor = c("Observer1"), monotone = "none",
+                 breaks=c(0,50,100,200,300), SMP_LABEL="WatchID",
+                 STR_LABEL="STR_LABEL",STR_AREA="STR_AREA",
                  path="c:/temp/distance",
                  pathMCDS="C:/Program Files (x86)/Distance 6",verbose=FALSE)
 #Look at the output
 x
+#Keep only the best model basec on AICc and look at the output
+x.best <- keep.best.model(x)
+summary(x.best)
 ```
+
+
+````{r}
+start <- unclass(as.POSIXlt(alcids$StartTime))$hour*60+unclass(as.POSIXlt(alcids$StartTime))$min
+end <- unclass(as.POSIXlt(alcids$EndTime))$hour*60+unclass(as.POSIXlt(alcids$EndTime ))$min
+alcids$Minutes <- (end+start)/2
+
+### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
+x<-distance.wrap(alcids,SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
+                 units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
+                            Distance_units="Meters",Area_units="Square kilometers"),
+                 covariates = c("Minutes"), factor = c("Observer1") , monotone = "none",
+                 breaks=c(0,50,100,200,300), SMP_LABEL="WatchID",
+                 STR_LABEL="STR_LABEL",STR_AREA="STR_AREA",
+                 path="c:/temp/distance",
+                 pathMCDS="C:/Program Files (x86)/Distance 6",verbose=FALSE)
+#Look at the output
+x
+#Keep only the best model basec on AICc and look at the output
+x.best <- keep.best.model(x)
+summary(x.best)
+```
+
