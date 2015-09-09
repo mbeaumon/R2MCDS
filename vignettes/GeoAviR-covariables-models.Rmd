@@ -8,9 +8,9 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
-#Including explanatory varible in the analysis
+#Including explanatory variables in the analysis
 
-The distance analysis are made via the MCDS engine of Distance 6.2 and the analysis are currently restricted to binned data. The distance that can be fitted are derived from 3 different key function (Harlf-normal and Hazard rate) and 3 different series adjustement (Cosine, Simple polynomial, Hermite polynomial). The uniform model are not available ascovariates cannot be used with this type of model. 
+The distance analysis are made via the MCDS engine of DISTANCE 6.2 and the analysis are currently restricted to binned data. The distance models that can be fitted are derived from 3 different key function (Harlf-normal and Hazard rate) and 3 different series adjustement (Cosine, Simple polynomial, Hermite polynomial). The uniform model is not available for this type of analysis as covariates cannot be used with this type of model. 
 
 ##Basic model
 
@@ -21,12 +21,16 @@ By default the function will fit a total of 4 different model to the data:
 - Hazard rate key function with Cosine adjustement
 - Hazard rate key function with Simple polynomial adjustement
 
-Covariates have been splitted between factor covariates ('factor'), and non-factor covariates ('covariates'). Factor covariates classify the data into differnent category while non-factor covariates must be numeric. A simple example would be the effect of the observer on the detection function. 
+Covariates have been splitted between factor covariates ('factor'), and non-factor covariates ('covariates'). Factor covariates classify the data into different categories while non-factor covariates must be numeric. A simple example for a factor would be the effect of the observer on the detection function while the effect of temperature would be a good example for a non-factor covariates. 
 
-Note that for analysis with explanatory variable it will be important to set monotone option to 'none' otherwise the distance.wrap function will return an error message. It is also important to note that it will take considerably more time for model to be fitted.
+For analysis with explanatory variable it will be important to set monotone option to 'none' otherwise the distance.wrap function will return an error message. It is also important to note that it will take considerably more time for model to be fitted.
+
+We can start with a simple example using the observations of _Alcidae_ if the Gulf of St-Lawrence by observers from the Canadian Wildlife Service _Eastern Canadian Seabirds at Sea_ (ECSAS) monitoring program. We will use the different observers as a an explanatory variable and we run all four possible models. 
 
 ```{r,warning=FALSE,message=FALSE}
 library(GeoAviR)
+###set seed for reproductibility    
+set.seed(062)
 ### Import and filter data
 data(alcidae)
 alcids<-filterECSAS(alcidae)
@@ -42,10 +46,21 @@ x<-distance.wrap(alcids,SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count"
                  pathMCDS="C:/Program Files (x86)/Distance 6",verbose=FALSE)
 #Look at the output
 x
+```
+
+All four models have converged. From this set of candidate models we can use the function _keep.best model()_ to keep the best model and then look at the output with the function _summary()_.For our example the best model (i.e. the one with the lowest AICc value) is the Half-normal model with a cosine adjustement. 
+
+However, it is interesting to note that both hazard rate model have a similar value of AICc and are therefore equivalent for this example. If there is more than one model with the lowest AICc value, function _keep.best model()_ will select randomly between all the equivalent models as it is done in the program DISTANCE 6.2.
+
+```{r}
 #Keep only the best model basec on AICc and look at the output
 x.best <- keep.best.model(x)
 summary(x.best)
 ```
+
+The main differences in the model the summary of model with explanatory variables appear in the table _Parameters of the detection function_. There will be more parameters in the table than if the model would have been fit without variables. The Desciption of the parameters occur under the table. 
+
+In this analysis we would be particularly interested in looking at the mean effect (_Estimates_) and the associated standard error(_SE_) of the parameter A(2), A(3) and A(4) as they represent respectively the effect of the Observer1, Observer2 and Observer3. In our case the SE are so large that the 95% Credible Intervals will include zero for each of those parameters hereby indicating that the Observers had no effect on the detection function.     
 
 
 ````{r}
