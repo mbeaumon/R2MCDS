@@ -11,6 +11,10 @@ vignette: >
 
 ##Startified models with distance.wrap
 
+GeoAvir can be used to develop startified distance sampling model. 
+
+The first step is to transform the survey lines form the project into a spatial object.
+
 ```{r,warning=FALSE,message=FALSE}
 library(GeoAviR)
 library(rgdal)
@@ -23,7 +27,11 @@ transect <- data.frame(lat=d$LatStart,lon=d$LongStart)
 coordinates(transect) <- ~lon + lat
 transect<-SpatialPointsDataFrame(transect,data=d[,"Count",drop=FALSE])
 proj4string(transect)<-CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
+```
 
+The second step is to import a shapefile of the survey area and to associate each survey line to a zone in the survey area
+
+```{r,warning=FALSE,message=FALSE}
 ### Import a spatial polygon
 data(zonegulf)
 
@@ -36,14 +44,19 @@ d<-d[!is.na(d$zone),]
 
 ### Build labels for samples.
 d$SMP_LABEL<-paste(d$zone,d$Date,sep="_")
+```
 
-### Here, every day is made of several WatchID (bouts) and the sample used will
-#be the day (or date). Consequently, the lengths of every WatchID is summed
-#to calculate the effort for the day.
+In our case, the observations made during each days are made of several WatchID (bouts). We will therefore use the day as the sample unit. Consequently, we need to to sum the WatchID within a day to calculate the effort for the day.
+
+```{r,warning=FALSE,message=FALSE}
 temp<-aggregate(WatchLenKm~SMP_LABEL,data=unique(d[,c("SMP_LABEL","WatchID","WatchLenKm")]),sum)
 names(temp)[2]<-"SMP_EFFORT"
 d<-merge(d,temp,sort=FALSE)
+```
 
+We then subset the dataset to keep only the variable of interest for the analysis and run the analysis. For this example we will use the observations of Black-legged Kittiwake (_Rissa tridactyla_). 
+
+```{r,warning=FALSE,message=FALSE}
 #Keep only the column of interest
 d<-d[,c("zone","zone_area","Date","SMP_LABEL","SMP_EFFORT",
         "Distance","Count","Alpha","LatStart","LongStart")]
@@ -68,7 +81,16 @@ x <- distance.wrap(d,SMP_LABEL="SMP_LABEL",SMP_EFFORT="SMP_EFFORT",
                    STR_LABEL="SMP_LABEL",STR_AREA="zone_area",stratum="STR_LABEL",
                    path="c:/temp/distance",
                    pathMCDS="C:/Program Files (x86)/Distance 6",verbose=FALSE)
+
+```
+
+We can then proceed to look at the ouput of the analysis.
+
+```{r}
 x
 summary(x)
 ```
+
+
+
 
