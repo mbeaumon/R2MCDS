@@ -4,6 +4,10 @@ The package allows the user to create spatial grids, plot the observed animal de
 
 Version 0.8.1
 =======
+* Improved the vignettes
+* Anonymised the alcidae database
+Version 0.8.1
+=======
 * Made changes to the vignettes
 * Changed the example in distance.wrap
 * Added code to foolproof the inputs of distance.wrap
