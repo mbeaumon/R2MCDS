@@ -8,7 +8,8 @@
 
 #'@details
 #'Select the model with the smallest AICc value. If more than one model have a Delta AICc equal to zero the uniform models
-#'are discaded and the best model is chosen randomly between the remaining models.  
+#'are discaded and the best model is chosen randomly between the remaining models.If the two best models are the uniform model, 
+#'one is chose randomly and a warning is printed.  
 
 #'@return
 #'An object of class \code{"distanceFit"}
@@ -32,7 +33,7 @@ keep.best.model <- function(x){
     ans <- sapply(1:length(best.model), function(i){charmatch("Uniform", x[[best.model[i]]]$model_fitting$Global$Type, nomatch = 2)-1})  
     if(sum(ans)==0){
       out <- x[[sample(best.model,1)]]  
-      mes <- "Uniform model selected randomly among the model with the lowest AICc values\n"
+      mes <- "WARNING: One uniform model has been selected randomly. You should check the observations histogram"
     }else{
       best.model <- best.model[which(ans==1)]
       if(length(best.model)==1){

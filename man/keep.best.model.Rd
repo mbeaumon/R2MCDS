@@ -17,7 +17,8 @@ This function keep the model with the lowest AICc value in a distanceList object
 }
 \details{
 Select the model with the smallest AICc value. If more than one model have a Delta AICc equal to zero the uniform models
-are discaded and the best model is chosen randomly between the remaining models.
+are discaded and the best model is chosen randomly between the remaining models.If the two best models are the uniform model,
+one is chose randomly and a warning is printed.
 }
 \section{Author}{
 Christian Roy
