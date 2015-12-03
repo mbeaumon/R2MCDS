@@ -8,7 +8,7 @@
 
 #'@details
 #'Select the model with the smallest AICc value. If more than one model have a Delta AICc equal to zero the uniform models
-#'are discaded and the best model is chosen randomly between the remaining models. 
+#'are discaded and the best model is chosen randomly between the remaining models.  
 
 #'@return
 #'An object of class \code{"distanceFit"}
@@ -19,7 +19,7 @@
 keep.best.model <- function(x){
   
   if(class(x)!="distanceList")
-  stop("the function can only be applied on distanceList object")  
+    stop("the function can only be applied on distanceList object")  
   
   n.model <- length(x)
   aicc_values <- sapply(1:n.model, function(i){x[[i]]$AIC[3]})
@@ -29,16 +29,20 @@ keep.best.model <- function(x){
     out <- x[[best.model]]  
     mes <- "Best model selected via AICc ranking\n"
   }else{
-    ans <- sapply(1:length(best.model), function(i){charmatch("Uniform", x[[best.model[i]]]$model_fitting$Global$Type, nomatch = 0)})  
-    best.model <- best.model[which(ans==0)]
-    if(length(best.model)==1){
-      out <- x[[best.model]] 
-      mes <- "A Uniform model with equivalent AICc value was discarded\n"
-    }else{
+    ans <- sapply(1:length(best.model), function(i){charmatch("Uniform", x[[best.model[i]]]$model_fitting$Global$Type, nomatch = 2)-1})  
+    if(sum(ans)==0){
       out <- x[[sample(best.model,1)]]  
-      mes <- "Model selected randomly among the model with the lowest AICc values\n"
-    }
-  }
+      mes <- "Uniform model selected randomly among the model with the lowest AICc values\n"
+    }else{
+      best.model <- best.model[which(ans==1)]
+      if(length(best.model)==1){
+        out <- x[[best.model]] 
+        mes <- "A Uniform model with equivalent AICc value was discarded\n"
+      }else{
+        out <- x[[sample(best.model,1)]]  
+        mes <- "Model selected randomly among the model with the lowest AICc values\n"
+      }
+    }}
   cat(mes)
   return(out)
 } 
