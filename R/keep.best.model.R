@@ -33,7 +33,7 @@ keep.best.model <- function(x){
     ans <- sapply(1:length(best.model), function(i){charmatch("Uniform", x[[best.model[i]]]$model_fitting$Global$Type, nomatch = 2)-1})  
     if(sum(ans)==0){
       out <- x[[sample(best.model,1)]]  
-      mes <- "WARNING: One uniform model has been selected randomly. You should check the observations histogram"
+      mes <- "WARNING: One uniform model has been selected randomly. You should check the observation histogram to make sure that the observation follow the distance sampling assumptions"
     }else{
       best.model <- best.model[which(ans==1)]
       if(length(best.model)==1){
