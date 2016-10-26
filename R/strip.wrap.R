@@ -16,6 +16,9 @@
 
 #'@param SMP_LABEL Name of the column to use for the transect/watch label.
 
+#'@param units list of th units used for the analysis. Contains the Type of analysis (Line or Point), the Distance enfine to use (Perp or Radial), 
+#'the Length units, the Distance units, and the Area_units.For the possible units of distance and area see Distance 6.2 documentation.     
+
 #'@param SMP_EFFORT Length in km of the transect or the transect/watch unit.
 
 #'@param SIZE Number of individuals in the observation.
@@ -79,27 +82,19 @@
 #'@examples
 #'########################################
 #'### Simple models without stratification
-#'
 #'### Import and filter data
 #'data(alcidae)
 #'alcids<-filterECSAS(alcidae)
 #'
-#'### Set arguments and parameters
-#'path<-("c:/temp/distance")
-#'pathMCDS<-"C:/Program Files (x86)/Distance 6"
-#'breaks<-c(0,50,100,200,300)
-#'STR_LABEL<-"STR_LABEL"
-#'STR_AREA<-"STR_AREA"
-#'SMP_LABEL<-"WatchID"
-#'SMP_EFFORT<-"WatchLenKm"
-#'DISTANCE<-"Distance"
-#'SIZE<-"Count"
-#'
 #'### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-#'x<-distance.wrap(alcids,path=path,pathMCDS=pathMCDS,breaks=breaks,STR_LABEL=STR_LABEL,STR_AREA=STR_AREA,SMP_LABEL=SMP_LABEL,SMP_EFFORT=SMP_EFFORT,DISTANCE=DISTANCE,SIZE=SIZE,verbose=FALSE)
+#'strip.out1 <-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",SIZE="Count", breaks=c(0,300),
+#'                          units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
+#'                                     Distance_units="Meters",Area_units="Square kilometers"),
+#'                          STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
+#'                          path="c:/temp/distance",
+#'                          pathMCDS="C:/Program Files (x86)/Distance 6")
 #'
-#'### Plot results
-#'Global.summary(model=x, file="alcidae_global", directory="C:/temp/distance")
+#'summary(strip.out1)
 #'#END
 
 strip.wrap <-
@@ -110,7 +105,9 @@ function(dataset,
 																								SMP_EFFORT="SMP_EFFORT",
 																								SIZE="SIZE",																				
 																								STR_LABEL="STR_LABEL",
-																								STR_AREA="STR_AREA",												
+																								STR_AREA="STR_AREA",	
+                                                units=list(Type="Line",Distance="Perp",Length_units="Kilometer",
+                                                           Distance_units="Meter",Area_units="Square kilometer"),
 																								breaks=c(0,300),  # make change
 																								lsub=NULL,
 																								stratum=NULL, 
@@ -121,7 +118,37 @@ function(dataset,
 																								empty=NULL,
 																								verbose=FALSE
 ){
-	#get the list of arguments
+	
+  #Check for units
+  if(length(units)!= 5)
+    stop("units list must includes values for Type, Distance, Length_units, Distance_units and Area_units")
+  
+  if(toupper(units$Type)%in%c("LINE","POINT", "CUE")==FALSE)
+    stop("Type of sampling available are: Line, Point or Cue")
+  
+  if(toupper(units$Distance)%in%c("PERP","RADIAL")==FALSE)
+    stop("Type of distance available are: Perp or Radial")
+  
+  if(toupper(units$Type)%in%c("POINT", "CUE") & toupper(units$Distance)!=c("RADIAL"))
+    stop("For Points and Cue sampling scheme Distance must be set to radial")
+  
+  
+  if(toupper(units$Length_units)%in%c("CENTIMETERS", "METERS", "KILOMETERS", "MILES", 
+                                      "INCHES", "FEET", "YARDS", "NAUTICAL MILES")==FALSE)
+    stop("Distance units must be one of thse: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches', 
+         'Feet', 'Yards', Or 'Nautical Miles'")  
+  
+  if(toupper(units$Distance_units)%in%c("CENTIMETERS", "METERS", "KILOMETERS", "MILES", 
+                                        "INCHES", "FEET", "YARDS", "NAUTICAL MILES")==FALSE)
+    stop("Distance units must be one of thse: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches', 
+         'Feet', 'Yards', Or 'Nautical Miles'")  
+  
+  if(toupper(units$Area_units)%in%c("SQUARE CENTIMETERS", "SQUARE METERS", "SQUARE KILOMETERS", "SQUARE MILES", 
+                                    "SQUARE INCHES", "SQUARE FEET", "SQUARE YARDS", "HECTARES")==FALSE)
+    stop("Distance units must be one of thse: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches', 
+         'Feet', 'Yards', Or 'Nautical Miles'")  
+  
+  #get the list of arguments
 	arguments<-as.list(environment())
 	if(!is.null(period)){
 		dataset<-dataset[dataset$Date>=min(period) & dataset$Date<=max(period),]
@@ -248,10 +275,14 @@ function(dataset,
 		opts[""]<-"None"
 		opts[""]<-"None"
 		opts["Options;"]<-""
-		opts["Type="]<-"Line;"
-		opts["Length /Measure="]<-"'Kilometer';"
-		opts["Distance=Perp /Measure="]<-"'Meter';"
-		opts["Area /Units="]<-"'Square kilometer';"
+		opts["Type="] <- paste(units$Type,";",sep="")
+		opts["Length /Measure="] <- paste("'",units$Length_units,"';",sep="")
+		if(units$Distance=="Perp"){
+		  opts["Distance=Perp /Measure="] <- paste("'",units$Distance_units,"';",sep="")    
+		}else{
+		  opts["Distance=Radial /Measure="] <- paste("'",units$Distance_units,"';",sep="")    
+		}
+		opts["Area /Units="] <- paste("'",units$Area_units,"';",sep="")
 		opts["Object="]<-"Cluster;"
 		opts["SF="]<-"1;"
 		opts["Selection="]<-"Specify;"
@@ -341,7 +372,7 @@ function(dataset,
 		y<-readLines(file.path(path,det.file[i]))
 		ans<-vector(mode="list",length=8)
 		ans[[1]] <-input.data
-    ans[[2]] <-model_fittingMCDS(x)
+    ans[[2]] <-model_fittingMCDS(x, units=units)
 		ans[[3]] <-parameter_estimatesMCDS(x)
 		ans[[4]] <- "No covariates in strip transect models"
 		ans[[5]] <-chi_square_testMCDS(x)
