@@ -1,8 +1,8 @@
 Package: GeoAviR
 Type: Package
 Title: Mapping and implementing distance sampling for seabird at-sea data
-Version: 0.8.2
-Date: 2015-05-10
+Version: 0.8.3
+Date: 2016-10-26
 Author: Christian Roy, Francois Rousseu and Francois Bolduc
 Maintainer: Francois Bolduc <francois.Bolduc@ec.gc.ca>
 Description: This package will allow the user to plot abundance and correct

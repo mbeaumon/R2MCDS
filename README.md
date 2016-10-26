@@ -2,6 +2,10 @@ GeoAviR
 =======
 The package allows the user to create spatial grids, plot the observed animal density and run some basic distance analysis via the MCDS engine of Distance 6.2.
 
+Version 0.8.3
+=======
+* Fixed a bug in the strip transect function
+
 Version 0.8.2
 =======
 * Improved the vignettes
