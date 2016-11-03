@@ -80,7 +80,7 @@ x <- distance.wrap(d,SMP_LABEL="SMP_LABEL",SMP_EFFORT="SMP_EFFORT",
                    detection="All",lsub=list(Alpha=c("BLKI")),split=TRUE,empty=NULL,
                    STR_LABEL="SMP_LABEL",STR_AREA="zone_area",stratum="STR_LABEL",
                    path="c:/temp/distance",
-                   pathMCDS="C:/Program Files (x86)/Distance 6",verbose=FALSE)
+                   pathMCDS="C:/Distance 6",verbose=FALSE)
 
 ```
 
