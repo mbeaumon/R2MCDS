@@ -26,18 +26,18 @@ function(x,dist2m=TRUE){
 	x<-x[!is.na(x[,"LatStart"]),]
 	x<-x[!(x[,"Distance"]=="" & x[,"Alpha"]!=""),] #eliminates observations recorded without a distance
 	x[,"Distance"]<-ifelse(x[,"Distance"]=="",NA,as.character(x[,"Distance"])) #writes NA when there is no distance, when nothing in the transect
-	x<-x[x[,"Distance"]%in%c("A","B","C","D",NA),]
   y<-x
 	y[,"Distance"]<-NA
 	y[,"Alpha"]<-""
-	x[,"Distance"]<-as.character(x[,"Distance"])
 	if(dist2m){
+	  x<-x[x[,"Distance"]%in%c("A","B","C","D",NA),]
+	  x[,"Distance"]<-as.character(x[,"Distance"])
 		x[,"Distance"]<-ifelse(x[,"Distance"]=="A",25,x[,"Distance"])
 		x[,"Distance"]<-ifelse(x[,"Distance"]=="B",75,x[,"Distance"])
 		x[,"Distance"]<-ifelse(x[,"Distance"]=="C",150,x[,"Distance"])
 		x[,"Distance"]<-ifelse(x[,"Distance"]=="D",250,x[,"Distance"])
-		x[,"Distance"]<-as.numeric(x[,"Distance"])
 	}
+	x[,"Distance"]<-as.numeric(x[,"Distance"])
 	x<-x[x[,"InTransect"]==1 | x[,"Alpha"]=="",] #keep observations that are in the transect or empty transects/WatchID
 	y<-y[!y[,"WatchID"]%in%x[,"WatchID"],] #keep only WatchID that are not already in x
 	x<-rbind(x,unique(y)) #add empty transects with outside distances to the main data.frame
