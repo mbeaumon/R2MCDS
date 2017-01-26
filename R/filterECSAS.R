@@ -24,8 +24,7 @@ filterECSAS <-
 function(x,dist2m=TRUE){	
 	x<-x[x[,"WatchLenKm"]>0,] 
 	x<-x[!is.na(x[,"LatStart"]),]
-	x<-x[!(x[, "Distance"] %in% c("", NA) &
-	         !x[, "Alpha"] %in% c("", NA)), ] #eliminates observations recorded without a distance
+	x<-x[!(x[,"Distance"]=="" & x[,"Alpha"]!=""),] #eliminates observations recorded without a distance
 	x[,"Distance"]<-ifelse(x[,"Distance"]=="",NA,as.character(x[,"Distance"])) #writes NA when there is no distance, when nothing in the transect
   y<-x
 	y[,"Distance"]<-NA
