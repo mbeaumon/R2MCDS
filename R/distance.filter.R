@@ -13,6 +13,8 @@
 #'@param long.field Name of the column containing the longitude of the observations.
 #'@param sp.field Name of the column containing the species ID.
 #'@param date.field Name of the column containing the date for the observations.
+#'@param distanceLabels.field Name of the column containing the distance classes for filtering.
+#'@param dist2m Boolean to indicate if the conversion from classes to numeric should be performed.
 #'@details
 #'When "WatchLenKm" = 0, observations are eliminated. Transects for which "Alpha" = "" (no species names) 
 #'will be kept because they are transects that were done but where no observations were recorded.
@@ -29,8 +31,9 @@
 distance.filter <-
 function(x, transect.id="WatchID",distance.field="Distance", distance.labels=c("A","B","C","D"),
                            distance.midpoints=c(25,75,150,250),effort.field="WatchLenKm",
-                           lat.field="LatStart", long.field="LongStart", sp.field="Alpha", date.field="Date"){
-                          
+                           lat.field="LatStart", long.field="LongStart", sp.field="Alpha", date.field="Date", distanceLabel.field = "Distance",
+                           dist2m = TRUE){
+
                           #Warning
                           if(length(distance.midpoints)!=length(distance.labels))
                           stop("Distance class labels and distance class mipdoints must be of equal length")
@@ -48,20 +51,25 @@ function(x, transect.id="WatchID",distance.field="Distance", distance.labels=c("
                           x<-x[x[,"WatchLenKm"]>0,] 
                           x<-x[!is.na(x[,"LatStart"]),]
                           x<-x[!is.na(x[,"LongStart"]),]
-                          x<-x[!(x[,"Distance"]=="" & x[,"Alpha"]!=""),] #eliminates observations recorded without a distance
-                          x[,"Distance"]<-ifelse(x[,"Distance"]=="",NA,as.character(x[,"Distance"]))    #writes NA when there is no distance, when nothing in the transect
-                          x<-x[x[,"Distance"]%in%c(distance.labels,NA),]
+                          x<-x[!(x[,"Distance"] %in% "" & !x[,"Alpha"] %in% ""),] #eliminates observations recorded without a distance
+                          x[,"Distance"]<-ifelse(x[,"Distance"] %in% "",NA,as.character(x[,"Distance"]))    #writes NA when there is no distance, when nothing in the transect
+                          x<-x[x[, distanceLabel.field]%in%c(distance.labels,NA),]
                           y<-x
                         	y[,"Distance"]<-NA
                         	x[,"Distance"]<-as.character(x[,"Distance"])
                           
-                          for(i in 1:length(distance.labels)){
-                            x[,"Distance"]<-ifelse(x[,"Distance"]==distance.labels[i],distance.midpoints[i],x[,"Distance"])
-                          }
+                        	if (dist2m) {
+                            for(i in 1:length(distance.labels)){
+                              x[,"Distance"]<-ifelse(x[,"Distance"]==distance.labels[i],distance.midpoints[i],x[,"Distance"])
+                            }
+                        	}
                           
-                         	x<-x[x[,"Alpha"]!="",] #keep observations that are in the transect or empty transects/WatchID
+                         	x<-x[(!is.na(x$InTransect) & x$InTransect != 0) | x[,"Alpha"] %in% c(NA, ""),] #keep observations that are in the transect or empty transects/WatchID
                         	y<-y[!y[,"WatchID"]%in%x[,"WatchID"],] #keep only WatchID that are not already in x
-                        	x<-rbind(x,unique(y)) #add empty transects with outside distances to the main data.frame
+                        	# Do not perform unnecessary lengthy rbind
+                        	if (nrow(y) > 0) {
+                        	  x<-rbind(x,unique(y)) #add empty transects with outside distances to the main data.frame
+                        	}
                         	date<-sapply(strsplit(sapply(strsplit(as.character(x[,"Date"])," "),function(i){i[1]}),"/"),function(j){
                         		res<-rev(j)
                         		paste(c(res[1],formatC(as.numeric(res[2:3]),width=2,flag="0")),collapse="-")
