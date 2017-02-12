@@ -111,7 +111,9 @@ Francois Rousseu, Christian Roy, Francois Bolduc
 ### Simple models without stratification
 ### Import and filter data
 data(alcidae)
-alcids<-filterECSAS(alcidae)
+alcids <- distance.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
+                         distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", lat.field = "LatStart", 
+                         long.field = "LongStart", sp.field = "Alpha", date.field = "Date") 
 
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
 dist.out1 <-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
@@ -120,11 +122,9 @@ dist.out1 <-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SI
                          breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
                          STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
                          path="c:/temp/distance",
-                         pathMCDS="C:/Program Files (x86)/Distance 6")
+                         pathMCDS="C:/Distance 6",verbose=FALSE)
 
 summary(dist.out1)
-global.summary(model=dist.out1, species="alcidae",file="alcidae_global", directory="C:/temp/distance")
-
 ### Run separate analysis for years 2008-2009
 dist.out2 <- distance.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
                           units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
@@ -133,14 +133,12 @@ dist.out2 <- distance.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",S
                           lsub=list(Year=c(2008,2009)), split=TRUE, empty="Year",
                           STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
                           path="c:/temp/distance",
-                          pathMCDS="C:/Program Files (x86)/Distance 6")
+                         pathMCDS="C:/Distance 6",verbose=FALSE)
 
 ### Get the names of the different models produced
 names(dist.out2)
 #####summary for the Year 2008 model
 summary(dist.out2[["2008"]])
-#### Plot results for the Year2008 model
-global.summary(model=dist.out2[["2008"]], species="alcidae", file="alcidae", directory="C:/temp/distance")
 #END
 }
 \references{

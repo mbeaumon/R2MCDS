@@ -12,7 +12,7 @@
 
 <meta name="author" content="Christian Roy" />
 
-<meta name="date" content="2017-02-11" />
+<meta name="date" content="2017-02-12" />
 
 <title>GeoAviR spatial models</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">GeoAviR spatial models</h1>
 <h4 class="author"><em>Christian Roy</em></h4>
-<h4 class="date"><em>2017-02-11</em></h4>
+<h4 class="date"><em>2017-02-12</em></h4>
 
 
 
@@ -83,7 +83,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 ### Import and filter data
 <span class="kw">data</span>(quebec)
-d&lt;-<span class="kw">filterECSAS</span>(quebec)
+d &lt;-<span class="st"> </span><span class="kw">distance.filter</span>(quebec, <span class="dt">transect.id =</span> <span class="st">&quot;WatchID&quot;</span>, <span class="dt">distance.field =</span> <span class="st">&quot;Distance&quot;</span>, <span class="dt">distance.labels =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C&quot;</span>, <span class="st">&quot;D&quot;</span>), 
+                     <span class="dt">distance.midpoints =</span> <span class="kw">c</span>(<span class="dv">25</span>, <span class="dv">75</span>, <span class="dv">150</span>, <span class="dv">250</span>), <span class="dt">effort.field =</span> <span class="st">&quot;WatchLenKm&quot;</span>, <span class="dt">lat.field =</span> <span class="st">&quot;LatStart&quot;</span>, 
+                     <span class="dt">long.field =</span> <span class="st">&quot;LongStart&quot;</span>, <span class="dt">sp.field =</span> <span class="st">&quot;Alpha&quot;</span>, <span class="dt">date.field =</span> <span class="st">&quot;Date&quot;</span>)
 ### Build a shapefile with transect starts
 transect &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">lat=</span>d$LatStart,<span class="dt">lon=</span>d$LongStart)
 <span class="kw">coordinates</span>(transect) &lt;-<span class="st"> </span><span class="er">~</span>lon +<span class="st"> </span>lat
@@ -137,7 +139,7 @@ x &lt;-<span class="st"> </span><span class="kw">distance.wrap</span>(d,<span cl
 ## 
 ## Detection function: Half-normal key
 ## 
-## Estimated abundance in covered region: 3434300 (3053800-3862100) 95% CI
+## Estimated abundance in covered region: 4056400 (3597800-4573400) 95% CI
 ## 
 ## Model AICc = 3039.2
 ## 
@@ -146,8 +148,8 @@ x &lt;-<span class="st"> </span><span class="kw">distance.wrap</span>(d,<span cl
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(x)</code></pre></div>
 <pre><code>## Summary of a distance sampling object fitted via the MCDS engine:
 ##  PARAMETERS   VALUES   UNITS     
-##  effort       11517.11 Kilometers
-##  samples        234.00 Line      
+##  effort       10185.47 Kilometers
+##  samples        242.00 Line      
 ##  width          300.00 Meters    
 ##  left             0.00 Meters    
 ##  observations  1100.00 clusters  
@@ -164,9 +166,9 @@ x &lt;-<span class="st"> </span><span class="kw">distance.wrap</span>(d,<span cl
 ## 
 ## Density estimates for the entire survey area:
 ##  Parameters  Estimates   SE % of var.  95% Lower  95% Upper
-##          DS 2.8594e-01 5.78    140.75 2.5511e-01 3.2050e-01
-##           D 3.9013e-01 5.95    158.45 3.4691e-01 4.3873e-01
-##           N 3.4343e+06 5.95    158.45 3.0538e+06 3.8621e+06
+##          DS 3.2934e-01 5.90    112.86 2.9305e-01 3.7013e-01
+##           D 4.4934e-01 6.07    126.46 3.9854e-01 5.0662e-01
+##           N 4.0564e+06 6.07    126.46 3.5978e+06 4.5734e+06
 ## 
 ## Model AICc = 3039.2</code></pre>
 </div>

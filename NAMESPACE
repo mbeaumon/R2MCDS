@@ -1,7 +1,6 @@
 exportPattern("^[[:alpha:]]+")
 export(distance.filter)
 export(distance.wrap)
-export(filterECSAS)
 export(hist.wrap)
 export(resume.plot)
 S3method(resume.plot,distanceFit)

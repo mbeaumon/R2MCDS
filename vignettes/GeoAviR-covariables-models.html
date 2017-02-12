@@ -12,7 +12,7 @@
 
 <meta name="author" content="Christian Roy" />
 
-<meta name="date" content="2017-02-11" />
+<meta name="date" content="2017-02-12" />
 
 <title>GeoAviR models with covariables</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">GeoAviR models with covariables</h1>
 <h4 class="author"><em>Christian Roy</em></h4>
-<h4 class="date"><em>2017-02-11</em></h4>
+<h4 class="date"><em>2017-02-12</em></h4>
 
 
 
@@ -94,7 +94,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <span class="kw">set.seed</span>(<span class="dv">062</span>)
 ### Import and filter data
 <span class="kw">data</span>(alcidae)
-alcids&lt;-<span class="kw">filterECSAS</span>(alcidae)
+alcids &lt;-<span class="st"> </span><span class="kw">distance.filter</span>(alcidae, <span class="dt">transect.id =</span> <span class="st">&quot;WatchID&quot;</span>, <span class="dt">distance.field =</span> <span class="st">&quot;Distance&quot;</span>, <span class="dt">distance.labels =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C&quot;</span>, <span class="st">&quot;D&quot;</span>), 
+                          <span class="dt">distance.midpoints =</span> <span class="kw">c</span>(<span class="dv">25</span>, <span class="dv">75</span>, <span class="dv">150</span>, <span class="dv">250</span>), <span class="dt">effort.field =</span> <span class="st">&quot;WatchLenKm&quot;</span>, <span class="dt">lat.field =</span> <span class="st">&quot;LatStart&quot;</span>, 
+                          <span class="dt">long.field =</span> <span class="st">&quot;LongStart&quot;</span>, <span class="dt">sp.field =</span> <span class="st">&quot;Alpha&quot;</span>, <span class="dt">date.field =</span> <span class="st">&quot;Date&quot;</span>)
 
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
 x&lt;-<span class="kw">distance.wrap</span>(alcids,<span class="dt">SMP_EFFORT=</span><span class="st">&quot;WatchLenKm&quot;</span>,<span class="dt">DISTANCE=</span><span class="st">&quot;Distance&quot;</span>,<span class="dt">SIZE=</span><span class="st">&quot;Count&quot;</span>,
@@ -111,22 +113,22 @@ x</code></pre></div>
 ## 
 ## Results for model_HN_CO:
 ## Detection function: Half-normal key
-## Estimated abundance in covered region: 42 (34-51) 95% CI
+## Estimated abundance in covered region: 47 (38-59) 95% CI
 ## Model AICc = 625.73
 ## 
 ## Results for model_HN_HE:
 ## Detection function: Half-normal key
-## Estimated abundance in covered region: 28 (23-34) 95% CI
+## Estimated abundance in covered region: 32 (25-39) 95% CI
 ## Model AICc = 644.63
 ## 
 ## Results for model_HA_CO:
 ## Detection function: Hazard Rate key
-## Estimated abundance in covered region: 44 (35-56) 95% CI
+## Estimated abundance in covered region: 50 (39-65) 95% CI
 ## Model AICc = 630.59
 ## 
 ## Results for model_HA_PO:
 ## Detection function: Hazard Rate key
-## Estimated abundance in covered region: 44 (35-56) 95% CI
+## Estimated abundance in covered region: 50 (39-65) 95% CI
 ## Model AICc = 630.59
 ## 
 ## 
@@ -140,8 +142,8 @@ x.best &lt;-<span class="st"> </span><span class="kw">keep.best.model</span>(x)<
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(x.best)</code></pre></div>
 <pre><code>## Summary of a distance sampling object fitted via the MCDS engine:
 ##  PARAMETERS   VALUES UNITS     
-##  effort       131.05 Kilometers
-##  samples      279.00 Line      
+##  effort       114.68 Kilometers
+##  samples      234.00 Line      
 ##  width        300.00 Meters    
 ##  left           0.00 Meters    
 ##  observations 253.00 clusters  
@@ -177,11 +179,11 @@ x.best &lt;-<span class="st"> </span><span class="kw">keep.best.model</span>(x)<
 ##        f(0)  0.011247 0.00060779      5.40  0.010112  0.012509
 ##           p  0.296370 0.01601600      5.40  0.266470  0.329630
 ##         ESW 88.912000 4.80480000      5.40 79.941000 98.890000
-##         n/L  1.930600 0.15812000      8.19  1.643500  2.267700
-##          DS 21.713000 2.13060000      9.81 17.914000 26.319000
+##         n/L  2.206100 0.19641000      8.90  1.851800  2.628200
+##          DS 24.813000 2.58420000     10.41 20.229000 30.434000
 ##        E(S)  1.912200 0.07606500      3.98  1.768100  2.067900
-##           D 41.519000 4.39620000     10.59 33.744000 51.087000
-##           N 42.000000 4.44710000     10.59 34.000000 51.000000
+##           D 47.446000 5.28960000     11.15 38.138000 59.025000
+##           N 47.000000 5.23980000     11.15 38.000000 59.000000
 ## 
 ## Model AICc = 625.73</code></pre>
 <p>The main differences in the model the summary of model with explanatory variables appear in the table <em>Parameters of the detection function</em>. There will be more parameters in the table than if the model would have been fit without variables. The Desciption of the parameters occur under the table.</p>

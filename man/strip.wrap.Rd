@@ -90,7 +90,9 @@ Francois Rousseu, Christian Roy, Francois Bolduc
 ### Simple models without stratification
 ### Import and filter data
 data(alcidae)
-alcids<-filterECSAS(alcidae)
+alcids <- distance.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
+                         distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", lat.field = "LatStart", 
+                         long.field = "LongStart", sp.field = "Alpha", date.field = "Date") 
 
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
 strip.out1 <-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",SIZE="Count", breaks=c(0,300),
