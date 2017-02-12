@@ -7,7 +7,8 @@
 distance.filter(x, transect.id = "WatchID", distance.field = "Distance",
   distance.labels = c("A", "B", "C", "D"), distance.midpoints = c(25, 75,
   150, 250), effort.field = "WatchLenKm", lat.field = "LatStart",
-  long.field = "LongStart", sp.field = "Alpha", date.field = "Date")
+  long.field = "LongStart", sp.field = "Alpha", date.field = "Date",
+  distanceLabel.field = "Distance", dist2m = TRUE)
 }
 \arguments{
 \item{x}{A \code{\link{data.frame}} containing observations.}
@@ -29,6 +30,10 @@ distance.filter(x, transect.id = "WatchID", distance.field = "Distance",
 \item{sp.field}{Name of the column containing the species ID.}
 
 \item{date.field}{Name of the column containing the date for the observations.}
+
+\item{dist2m}{Boolean to indicate if the conversion from classes to numeric should be performed.}
+
+\item{distanceLabels.field}{Name of the column containing the distance classes for filtering.}
 }
 \description{
 Allow to change the names of the column of a data.frame so that it work seamlessly with \code{\link{distance.wrap}}
