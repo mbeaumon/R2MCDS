@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Christian Roy" />
+
+<meta name="date" content="2017-02-11" />
+
+<title>GeoAviR Basic models</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">GeoAviR Basic models</h1>
+<h4 class="author"><em>Christian Roy</em></h4>
+<h4 class="date"><em>2017-02-11</em></h4>
+
+
+
+<p>GeoAviR allows the user to create spatial grids, plot the animal density and run some basic distance analysis on the dataset. The distance analysis are made via the MCDS engine of Distance 6.2. The distance analysis are performed via the distance.wrap function and the analysis are currently restricted to binned data. The distance that can be fitted are derived from 3 different key function (Uniform, Harlf-normal and Hazard rate) and 3 different series adjustement (Cosine, Simple polynomial, Hermite polynomial).</p>
+<div id="basic-model-with-distance.wrap" class="section level2">
+<h2>Basic model with distance.wrap</h2>
+<p>By default the function will fit a total of 6 different model to the data:</p>
+<ul>
+<li>Uniform key function with Cosine adjustement</li>
+<li>Uniform key function with Hermine polynomial adjustement</li>
+<li>Half-normal key function with Cosine adjustement</li>
+<li>Half-normal key function with Hermine polynomial adjustement</li>
+<li>Hazard rate key function with Cosine adjustement</li>
+<li>Hazard rate key function with Simple polynomial adjustement</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(GeoAviR)
+### Import and filter data
+<span class="kw">data</span>(alcidae)
+alcids&lt;-<span class="kw">filterECSAS</span>(alcidae)
+
+### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
+x&lt;-<span class="kw">distance.wrap</span>(alcids, <span class="dt">SMP_EFFORT=</span><span class="st">&quot;WatchLenKm&quot;</span>,<span class="dt">DISTANCE=</span><span class="st">&quot;Distance&quot;</span>,<span class="dt">SIZE=</span><span class="st">&quot;Count&quot;</span>,
+                 <span class="dt">units=</span><span class="kw">list</span>(<span class="dt">Type=</span><span class="st">&quot;Line&quot;</span>,<span class="dt">Distance=</span><span class="st">&quot;Perp&quot;</span>,<span class="dt">Length_units=</span><span class="st">&quot;Kilometers&quot;</span>,
+                            <span class="dt">Distance_units=</span><span class="st">&quot;Meters&quot;</span>,<span class="dt">Area_units=</span><span class="st">&quot;Square kilometers&quot;</span>),
+                 <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">200</span>,<span class="dv">300</span>), <span class="dt">STR_LABEL=</span><span class="st">&quot;STR_LABEL&quot;</span>, 
+                 <span class="dt">STR_AREA=</span><span class="st">&quot;STR_AREA&quot;</span>,<span class="dt">SMP_LABEL=</span><span class="st">&quot;WatchID&quot;</span>, 
+                 <span class="dt">path=</span><span class="st">&quot;c:/temp/distance&quot;</span>,
+                 <span class="dt">pathMCDS=</span><span class="st">&quot;C:/Distance 6&quot;</span>,<span class="dt">verbose=</span><span class="ot">FALSE</span>)</code></pre></div>
+<p>The distance.warp function will return a warning after fitting each model (not shown in the example above). These warning will incliude a “status” number that is associated with the status of the model by the MCDS engine. The numbers should be intrepreted as:</p>
+<ul>
+<li>“1” the analysis ran without errors</li>
+<li>“2” the analysis ran with warnings</li>
+<li>“3” the analysis ran with errors</li>
+<li>“4” the analysis was not performed because of errors in the MCDS files</li>
+<li>“&gt;4” a major error occured</li>
+</ul>
+<p>distance.wrap will not return an output for any model which had a status above 2.</p>
+<p>The model are stored into a distancelist object and each model can be accessed directly.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x</code></pre></div>
+<pre><code>## List of Distance sampling object fitted via the MCDS engine:
+## 
+## Results for model_UN_CO:
+## Detection function: Uniform key
+## Estimated abundance in covered region: 35 (27-45) 95% CI
+## Model AICc = 633.08
+## 
+## Results for model_UN_PO:
+## Detection function: Uniform key
+## Estimated abundance in covered region: 30 (23-39) 95% CI
+## Model AICc = 640.76
+## 
+## Results for model_HN_CO:
+## Detection function: Half-normal key
+## Estimated abundance in covered region: 39 (30-50) 95% CI
+## Model AICc = 630.33
+## 
+## Results for model_HN_HE:
+## Detection function: Half-normal key
+## Estimated abundance in covered region: 27 (22-33) 95% CI
+## Model AICc = 652.17
+## 
+## Results for model_HA_CO:
+## Detection function: Hazard Rate key
+## Estimated abundance in covered region: 43 (29-65) 95% CI
+## Model AICc = 628.02
+## 
+## Results for model_HA_PO:
+## Detection function: Hazard Rate key
+## Estimated abundance in covered region: 43 (29-65) 95% CI
+## Model AICc = 628.02
+## 
+## 
+## Files created by the MCDS engine are saved in the diectory:
+## c:/temp/distance</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">####summary of one of the best model
+<span class="kw">summary</span>(x[[<span class="dv">5</span>]])</code></pre></div>
+<pre><code>## Summary of a distance sampling object fitted via the MCDS engine:
+##  PARAMETERS   VALUES UNITS     
+##  effort       131.05 Kilometers
+##  samples      279.00 Line      
+##  width        300.00 Meters    
+##  left           0.00 Meters    
+##  observations 253.00 clusters  
+## 
+## 
+## Detection function used : Hazard Rate key, k(y) = 1 - Exp(-(y/A(1))**-A(2))
+## Parameters of the detection function:
+##  Parameters Estimates        SE % of var.  95% Lower  95% Upper  df
+##        A(1) 40.990000 15.240000        NA         NA         NA  NA
+##        A(2)  1.333000  0.245400        NA         NA         NA  NA
+##        f(0)  0.011664  0.002177     18.66  0.0081013   0.016793 251
+##           p  0.285790  0.053342     18.66  0.1985000   0.411450 251
+##         ESW 85.736000 16.003000     18.66 59.5500000 123.440000 251
+## 
+## Density estimates for the entire survey area:
+##  Parameters Estimates       SE % of var. 95% Lower 95% Upper
+##          DS    22.518 4.589800     20.38   15.1420   33.4860
+##        E(S)     1.919 0.076406      3.98    1.7743    2.0755
+##           D    43.211 8.974200     20.77   28.8470   64.7270
+##           N    43.000 8.930400     20.77   29.0000   65.0000
+## 
+## Model AICc = 628.02</code></pre>
+<p>If the user is interested in keepin only the best model in the distanceList the function keep.best.model will keep the model with the lowest AICc value.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">##### Keep the 'best' model in the list
+x.best &lt;-<span class="st"> </span><span class="kw">keep.best.model</span>(x)</code></pre></div>
+<pre><code>## Model selected randomly among the model with the lowest AICc values</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(x.best)</code></pre></div>
+<pre><code>## Summary of a distance sampling object fitted via the MCDS engine:
+##  PARAMETERS   VALUES UNITS     
+##  effort       131.05 Kilometers
+##  samples      279.00 Line      
+##  width        300.00 Meters    
+##  left           0.00 Meters    
+##  observations 253.00 clusters  
+## 
+## 
+## Detection function used : Hazard Rate key, k(y) = 1 - Exp(-(y/A(1))**-A(2))
+## Parameters of the detection function:
+##  Parameters Estimates        SE % of var.  95% Lower  95% Upper  df
+##        A(1) 40.990000 15.240000        NA         NA         NA  NA
+##        A(2)  1.333000  0.245400        NA         NA         NA  NA
+##        f(0)  0.011664  0.002177     18.66  0.0081013   0.016793 251
+##           p  0.285790  0.053342     18.66  0.1985000   0.411450 251
+##         ESW 85.736000 16.003000     18.66 59.5500000 123.440000 251
+## 
+## Density estimates for the entire survey area:
+##  Parameters Estimates       SE % of var. 95% Lower 95% Upper
+##          DS    22.518 4.589800     20.38   15.1420   33.4860
+##        E(S)     1.919 0.076406      3.98    1.7743    2.0755
+##           D    43.211 8.974200     20.77   28.8470   64.7270
+##           N    43.000 8.930400     20.77   29.0000   65.0000
+## 
+## Model AICc = 628.02</code></pre>
+</div>
+<div id="selecting-the-key-function-and-adjustement-with-distance.wrap" class="section level2">
+<h2>Selecting the key function and adjustement with distance.wrap</h2>
+<p>It posssible for the user to select the key function and ajustement. For example, instead of running the 6 models by default the user may want to restrict his analysis to the half-normal key function with a cosine adjustement and the hazard rate key funciton with a polynomial adjutement he can do so via the ‘estimator’ option. The estimator option conists of a list where each element is a vector of length 2 with the first element consist of the two letters of the key function and the second element is the first two letters of the expansion term.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(GeoAviR)
+### Import and filter data
+<span class="kw">data</span>(alcidae)
+alcids&lt;-<span class="kw">filterECSAS</span>(alcidae)
+
+### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
+x&lt;-<span class="kw">distance.wrap</span>(alcids,<span class="dt">SMP_EFFORT=</span><span class="st">&quot;WatchLenKm&quot;</span>,<span class="dt">DISTANCE=</span><span class="st">&quot;Distance&quot;</span>,<span class="dt">SIZE=</span><span class="st">&quot;Count&quot;</span>,
+                 <span class="dt">units=</span><span class="kw">list</span>(<span class="dt">Type=</span><span class="st">&quot;Line&quot;</span>,<span class="dt">Distance=</span><span class="st">&quot;Perp&quot;</span>,<span class="dt">Length_units=</span><span class="st">&quot;Kilometers&quot;</span>,
+                            <span class="dt">Distance_units=</span><span class="st">&quot;Meters&quot;</span>,<span class="dt">Area_units=</span><span class="st">&quot;Square kilometers&quot;</span>),
+                 <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">200</span>,<span class="dv">300</span>), <span class="dt">SMP_LABEL=</span><span class="st">&quot;WatchID&quot;</span>,
+                 <span class="dt">STR_LABEL=</span><span class="st">&quot;STR_LABEL&quot;</span>,<span class="dt">STR_AREA=</span><span class="st">&quot;STR_AREA&quot;</span>,
+                 <span class="dt">estimator=</span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;HN&quot;</span>,<span class="st">&quot;CO&quot;</span>),<span class="kw">c</span>(<span class="st">&quot;HA&quot;</span>,<span class="st">&quot;PO&quot;</span>)),
+                 <span class="dt">path=</span><span class="st">&quot;c:/temp/distance&quot;</span>,
+                 <span class="dt">pathMCDS=</span><span class="st">&quot;C:/Distance 6&quot;</span>,<span class="dt">verbose=</span><span class="ot">FALSE</span>)
+x</code></pre></div>
+<pre><code>## List of Distance sampling object fitted via the MCDS engine:
+## 
+## Results for model_HN_CO:
+## Detection function: Half-normal key
+## Estimated abundance in covered region: 39 (30-50) 95% CI
+## Model AICc = 630.33
+## 
+## Results for model_HA_PO:
+## Detection function: Hazard Rate key
+## Estimated abundance in covered region: 43 (29-65) 95% CI
+## Model AICc = 628.02
+## 
+## 
+## Files created by the MCDS engine are saved in the diectory:
+## c:/temp/distance</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(x[[<span class="dv">2</span>]])</code></pre></div>
+<pre><code>## Summary of a distance sampling object fitted via the MCDS engine:
+##  PARAMETERS   VALUES UNITS     
+##  effort       131.05 Kilometers
+##  samples      279.00 Line      
+##  width        300.00 Meters    
+##  left           0.00 Meters    
+##  observations 253.00 clusters  
+## 
+## 
+## Detection function used : Hazard Rate key, k(y) = 1 - Exp(-(y/A(1))**-A(2))
+## Parameters of the detection function:
+##  Parameters Estimates        SE % of var.  95% Lower  95% Upper  df
+##        A(1) 40.990000 15.240000        NA         NA         NA  NA
+##        A(2)  1.333000  0.245400        NA         NA         NA  NA
+##        f(0)  0.011664  0.002177     18.66  0.0081013   0.016793 251
+##           p  0.285790  0.053342     18.66  0.1985000   0.411450 251
+##         ESW 85.736000 16.003000     18.66 59.5500000 123.440000 251
+## 
+## Density estimates for the entire survey area:
+##  Parameters Estimates       SE % of var. 95% Lower 95% Upper
+##          DS    22.518 4.589800     20.38   15.1420   33.4860
+##        E(S)     1.919 0.076406      3.98    1.7743    2.0755
+##           D    43.211 8.974200     20.77   28.8470   64.7270
+##           N    43.000 8.930400     20.77   29.0000   65.0000
+## 
+## Model AICc = 628.02</code></pre>
+</div>
+<div id="running-the-analysis-for-more-than-one-species-at-once." class="section level2">
+<h2>Running the analysis for more than one species at once.</h2>
+<p>If the user has collected the same data for many species and is interested in running the same model for many species it is possible to do so via the lsub and split option. The lsub option consist of a list of the subset that need to be analysed and the split option indicate wheter the susbet should be analysed together (FALSE) or separetely (TRUE).</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(GeoAviR)
+
+### Import and filter data
+<span class="kw">data</span>(quebec)
+d&lt;-<span class="kw">filterECSAS</span>(quebec)
+
+### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
+x&lt;-<span class="kw">distance.wrap</span>(d,<span class="dt">SMP_EFFORT=</span><span class="st">&quot;WatchLenKm&quot;</span>,<span class="dt">DISTANCE=</span><span class="st">&quot;Distance&quot;</span>,<span class="dt">SIZE=</span><span class="st">&quot;Count&quot;</span>,
+                 <span class="dt">units=</span><span class="kw">list</span>(<span class="dt">Type=</span><span class="st">&quot;Line&quot;</span>,<span class="dt">Distance=</span><span class="st">&quot;Perp&quot;</span>,<span class="dt">Length_units=</span><span class="st">&quot;Kilometers&quot;</span>,
+                            <span class="dt">Distance_units=</span><span class="st">&quot;Meters&quot;</span>,<span class="dt">Area_units=</span><span class="st">&quot;Square kilometers&quot;</span>),
+                 <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">200</span>,<span class="dv">300</span>), <span class="dt">estimator=</span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;HN&quot;</span>,<span class="st">&quot;CO&quot;</span>)),
+                 <span class="dt">lsub=</span><span class="kw">list</span>(<span class="dt">Alpha=</span><span class="kw">c</span>(<span class="st">&quot;BLKI&quot;</span>,<span class="st">&quot;GBBG&quot;</span>, <span class="st">&quot;HERG&quot;</span>)), <span class="dt">split=</span><span class="ot">TRUE</span>,
+                 <span class="dt">STR_LABEL=</span><span class="st">&quot;STR_LABEL&quot;</span>,<span class="dt">STR_AREA=</span><span class="st">&quot;STR_AREA&quot;</span>,<span class="dt">SMP_LABEL=</span><span class="st">&quot;WatchID&quot;</span>,
+                 <span class="dt">path=</span><span class="st">&quot;c:/temp/distance&quot;</span>,
+                 <span class="dt">pathMCDS=</span><span class="st">&quot;C:/Distance 6&quot;</span>,<span class="dt">verbose=</span><span class="ot">FALSE</span>)
+x</code></pre></div>
+<pre><code>## $BLKI
+## Distance sampling object fitted via the MCDS engine:
+## 
+## Detection function: Half-normal key
+## 
+## Estimated abundance in covered region: 1 (1-1) 95% CI
+## 
+## Model AICc = 3827.4
+## 
+## Files created by the MCDS engine are saved in the diectory:
+## c:/temp/distance
+## $GBBG
+## Distance sampling object fitted via the MCDS engine:
+## 
+## Detection function: Half-normal key
+## 
+## Estimated abundance in covered region: 0 (NA-NA) 95% CI
+## 
+## Model AICc = 850.38
+## 
+## Files created by the MCDS engine are saved in the diectory:
+## c:/temp/distance
+## $HERG
+## Distance sampling object fitted via the MCDS engine:
+## 
+## Detection function: Half-normal key
+## 
+## Estimated abundance in covered region: 0 (NA-NA) 95% CI
+## 
+## Model AICc = 1627.9
+## 
+## Files created by the MCDS engine are saved in the diectory:
+## c:/temp/distance
+## attr(,&quot;class&quot;)
+## [1] &quot;SpeciesList&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">##output for the Herring gull
+<span class="kw">summary</span>(x[[<span class="dv">3</span>]])</code></pre></div>
+<pre><code>## Summary of a distance sampling object fitted via the MCDS engine:
+##  PARAMETERS   VALUES   UNITS     
+##  effort       12949.39 Kilometers
+##  samples      31416.00 Line      
+##  width          300.00 Meters    
+##  left             0.00 Meters    
+##  observations   589.00 clusters  
+## 
+## 
+## Detection function used : Half-normal key, k(y) = Exp(-y**2/(2*A(1)**2))
+## Parameters of the detection function:
+##  Parameters  Estimates         SE % of var.  95% Lower  95% Upper  df
+##        A(1) 2.5010e+02 2.6490e+01        NA         NA         NA  NA
+##        A(2) 1.6170e-01 6.2890e-02        NA         NA         NA  NA
+##        f(0) 4.8333e-03 3.3638e-04      6.96 4.2165e-03 5.5404e-03 587
+##           p 6.8966e-01 4.7997e-02      6.96 6.0165e-01 7.9054e-01 587
+##         ESW 2.0690e+02 1.4399e+01      6.96 1.8049e+02 2.3716e+02 587
+## 
+## Density estimates for the entire survey area:
+##  Parameters Estimates       SE % of var. 95% Lower 95% Upper
+##          DS   0.21984 0.018722      8.52   0.18607   0.25974
+##        E(S)   1.19410 0.016529      1.38   1.16200   1.22700
+##           D   0.26251 0.022649      8.63   0.22170   0.31082
+##           N   0.00000       NA        NA        NA        NA
+## 
+## Model AICc = 1627.9</code></pre>
+</div>
+<div id="rare-species-case" class="section level2">
+<h2>Rare species case</h2>
+<p>A model estimated for a selected rarer species for which the probability of detection is estimated through other similar species and making use of multipliers. The user can choose the key function and adjustement for the reference species or can simply let Distance pick the best model for the reference species (estimator=NULL).</p>
+<p>Distance will fit a uniform detection function to the rare species but will use a multiplier derived from the detection function of the reference species.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#'### </span>
+<span class="kw">library</span>(GeoAviR)
+
+### Import and filter data
+<span class="kw">data</span>(quebec)
+d&lt;-<span class="kw">filterECSAS</span>(quebec)
+
+### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
+x&lt;-<span class="kw">distance.wrap</span>(d,<span class="dt">SMP_EFFORT=</span><span class="st">&quot;WatchLenKm&quot;</span>,<span class="dt">DISTANCE=</span><span class="st">&quot;Distance&quot;</span>,<span class="dt">SIZE=</span><span class="st">&quot;Count&quot;</span>,
+                 <span class="dt">units=</span><span class="kw">list</span>(<span class="dt">Type=</span><span class="st">&quot;Line&quot;</span>,<span class="dt">Distance=</span><span class="st">&quot;Perp&quot;</span>,<span class="dt">Length_units=</span><span class="st">&quot;Kilometers&quot;</span>,
+                            <span class="dt">Distance_units=</span><span class="st">&quot;Meters&quot;</span>,<span class="dt">Area_units=</span><span class="st">&quot;Square kilometers&quot;</span>),
+                 <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">200</span>,<span class="dv">300</span>), <span class="dt">estimator=</span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;HN&quot;</span>,<span class="st">&quot;CO&quot;</span>)),
+                 <span class="dt">lsub=</span><span class="kw">list</span>(<span class="dt">Alpha=</span><span class="kw">c</span>(<span class="st">&quot;HERG&quot;</span>)), <span class="dt">rare=</span> <span class="kw">list</span>(<span class="dt">Alpha=</span><span class="kw">c</span>(<span class="st">&quot;RBGU&quot;</span>)), <span class="dt">split=</span><span class="ot">TRUE</span>,
+                 <span class="dt">STR_LABEL=</span><span class="st">&quot;STR_LABEL&quot;</span>,<span class="dt">STR_AREA=</span><span class="st">&quot;STR_AREA&quot;</span>,<span class="dt">SMP_LABEL=</span><span class="st">&quot;WatchID&quot;</span>,
+                 <span class="dt">path=</span><span class="st">&quot;c:/temp/distance&quot;</span>,
+                 <span class="dt">pathMCDS=</span><span class="st">&quot;C:/Distance 6&quot;</span>,<span class="dt">verbose=</span><span class="ot">FALSE</span>)
+x</code></pre></div>
+<pre><code>## Distance sampling object fitted via the MCDS engine:
+## 
+## Detection function: Uniform key
+## 
+## Estimated abundance in covered region: 0 (NA-NA) 95% CI
+## 
+## Model AICc = 447.08
+## 
+## Files created by the MCDS engine are saved in the diectory:
+## c:/temp/distance</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">##output for the Ring-billed Gull
+<span class="kw">summary</span>(x)</code></pre></div>
+<pre><code>## Summary of a distance sampling object fitted via the MCDS engine:
+##  PARAMETERS   VALUES   UNITS     
+##  effort       12949.39 Kilometers
+##  samples      31416.00 Line      
+##  width          300.00 Meters    
+##  left             0.00 Meters    
+##  observations   153.00 clusters  
+## 
+## 
+## Detection function used : Uniform key, k(y) = 1/W
+## Parameters of the detection function:
+##  Parameters  Estimates SE % of var.  95% Lower  95% Upper  df
+##        f(0) 3.3333e-03  0         0 3.3333e-03 3.3333e-03 153
+##           p 1.0000e+00  0         0 1.0000e+00 1.0000e+00 153
+##         ESW 3.0000e+02  0         0 3.0000e+02 3.0000e+02 153
+## 
+## Density estimates for the entire survey area:
+##  Parameters Estimates       SE % of var. 95% Lower 95% Upper
+##          DS  0.057107 0.007650     13.40  0.043969   0.07417
+##        E(S)  1.522900 0.105770      6.95  1.327800   1.74660
+##           D  0.086966 0.013123     15.09  0.064799   0.11672
+##           N  0.000000       NA        NA        NA        NA
+## 
+## Model AICc = 447.08</code></pre>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Christian Roy" />
+
+<meta name="date" content="2017-02-11" />
+
+<title>GeoAviR models with covariables</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">GeoAviR models with covariables</h1>
+<h4 class="author"><em>Christian Roy</em></h4>
+<h4 class="date"><em>2017-02-11</em></h4>
+
+
+
+<div id="including-explanatory-variables-in-the-analysis" class="section level1">
+<h1>Including explanatory variables in the analysis</h1>
+<p>The distance analysis are made via the MCDS engine of DISTANCE 6.2 and the analysis are currently restricted to binned data. The distance models that can be fitted are derived from 3 different key function (Harlf-normal and Hazard rate) and 3 different series adjustement (Cosine, Simple polynomial, Hermite polynomial). The uniform model is not available for this type of analysis as covariates cannot be used with this type of model.</p>
+<div id="basic-model" class="section level2">
+<h2>Basic model</h2>
+<p>By default the function will fit a total of 4 different model to the data:</p>
+<ul>
+<li>Half-normal key function with Cosine adjustement</li>
+<li>Half-normal key function with Hermine polynomial adjustement</li>
+<li>Hazard rate key function with Cosine adjustement</li>
+<li>Hazard rate key function with Simple polynomial adjustement</li>
+</ul>
+<p>Covariates have been splitted between factor covariates (‘factor’), and non-factor covariates (‘covariates’). Factor covariates classify the data into different categories while non-factor covariates must be numeric. A simple example for a factor would be the effect of the observer on the detection function while the effect of temperature would be a good example for a non-factor covariates.</p>
+<p>For analysis with explanatory variable it will be important to set monotone option to ‘none’ otherwise the distance.wrap function will return an error message. It is also important to note that it will take considerably more time for model to be fitted.</p>
+<p>We can start with a simple example using the observations of <em>Alcidae</em> if the Gulf of St-Lawrence by observers from the Canadian Wildlife Service <em>Eastern Canadian Seabirds at Sea</em> (ECSAS) monitoring program. We will use the different observers as a an explanatory variable and we run all four possible models.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(GeoAviR)
+###set seed for reproductibility    
+<span class="kw">set.seed</span>(<span class="dv">062</span>)
+### Import and filter data
+<span class="kw">data</span>(alcidae)
+alcids&lt;-<span class="kw">filterECSAS</span>(alcidae)
+
+### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
+x&lt;-<span class="kw">distance.wrap</span>(alcids,<span class="dt">SMP_EFFORT=</span><span class="st">&quot;WatchLenKm&quot;</span>,<span class="dt">DISTANCE=</span><span class="st">&quot;Distance&quot;</span>,<span class="dt">SIZE=</span><span class="st">&quot;Count&quot;</span>,
+                 <span class="dt">units=</span><span class="kw">list</span>(<span class="dt">Type=</span><span class="st">&quot;Line&quot;</span>,<span class="dt">Distance=</span><span class="st">&quot;Perp&quot;</span>,<span class="dt">Length_units=</span><span class="st">&quot;Kilometers&quot;</span>,
+                            <span class="dt">Distance_units=</span><span class="st">&quot;Meters&quot;</span>,<span class="dt">Area_units=</span><span class="st">&quot;Square kilometers&quot;</span>),
+                 <span class="dt">factor =</span> <span class="kw">c</span>(<span class="st">&quot;Observer1&quot;</span>), <span class="dt">monotone =</span> <span class="st">&quot;none&quot;</span>,
+                 <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">200</span>,<span class="dv">300</span>), <span class="dt">SMP_LABEL=</span><span class="st">&quot;WatchID&quot;</span>,
+                 <span class="dt">STR_LABEL=</span><span class="st">&quot;STR_LABEL&quot;</span>,<span class="dt">STR_AREA=</span><span class="st">&quot;STR_AREA&quot;</span>,
+                 <span class="dt">path=</span><span class="st">&quot;c:/temp/distance&quot;</span>,
+                 <span class="dt">pathMCDS=</span><span class="st">&quot;C:/Distance 6&quot;</span>,<span class="dt">verbose=</span><span class="ot">FALSE</span>)
+<span class="co">#Look at the output</span>
+x</code></pre></div>
+<pre><code>## List of Distance sampling object fitted via the MCDS engine:
+## 
+## Results for model_HN_CO:
+## Detection function: Half-normal key
+## Estimated abundance in covered region: 42 (34-51) 95% CI
+## Model AICc = 625.73
+## 
+## Results for model_HN_HE:
+## Detection function: Half-normal key
+## Estimated abundance in covered region: 28 (23-34) 95% CI
+## Model AICc = 644.63
+## 
+## Results for model_HA_CO:
+## Detection function: Hazard Rate key
+## Estimated abundance in covered region: 44 (35-56) 95% CI
+## Model AICc = 630.59
+## 
+## Results for model_HA_PO:
+## Detection function: Hazard Rate key
+## Estimated abundance in covered region: 44 (35-56) 95% CI
+## Model AICc = 630.59
+## 
+## 
+## Files created by the MCDS engine are saved in the diectory:
+## c:/temp/distance</code></pre>
+<p>All four models have converged. From this set of candidate models we can use the function <em>keep.best model()</em> to keep the best model and then look at the output with the function <em>summary()</em>.For our example the best model (i.e. the one with the lowest AICc value) is the Half-normal model with a cosine adjustement.</p>
+<p>However, it is interesting to note that both hazard rate model have a similar value of AICc and are therefore equivalent for this example. If there is more than one model with the lowest AICc value, function <em>keep.best model()</em> will select randomly between all the equivalent models as it is done in the program DISTANCE 6.2.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Keep only the best model basec on AICc and look at the output</span>
+x.best &lt;-<span class="st"> </span><span class="kw">keep.best.model</span>(x)</code></pre></div>
+<pre><code>## Best model selected via AICc ranking</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(x.best)</code></pre></div>
+<pre><code>## Summary of a distance sampling object fitted via the MCDS engine:
+##  PARAMETERS   VALUES UNITS     
+##  effort       131.05 Kilometers
+##  samples      279.00 Line      
+##  width        300.00 Meters    
+##  left           0.00 Meters    
+##  observations 253.00 clusters  
+## 
+## 
+## Detection function used : Half-normal key, k(y) = Exp(-y**2/(2*s**2))
+## Parameters of the detection function:
+##  Parameters  Estimates         SE % of var. 95% Lower 95% Upper  df
+##        A(1) 191.800000 2.6590e+01        NA        NA        NA  NA
+##        A(2)  -0.366700 7.3700e-01        NA        NA        NA  NA
+##        A(3)  -0.738100 7.3220e-01        NA        NA        NA  NA
+##        A(4)  -0.432200 7.3100e-01        NA        NA        NA  NA
+##        A(5)   0.234500 1.3820e-01        NA        NA        NA  NA
+##        A(6)   0.400600 1.5620e-01        NA        NA        NA  NA
+##        f(0)   0.011247 6.0779e-04       5.4  0.010112  0.012509 247
+##           p   0.296370 1.6016e-02       5.4  0.266470  0.329630 247
+##         ESW  88.912000 4.8048e+00       5.4 79.941000 98.890000 247
+## 
+## Parameter A(1) is the intercept of the scale parameter s.
+## Parameter A(2) is the coefficient of level OBS1 of factor covariate OBSERVER1.
+## Parameter A(3) is the coefficient of level OBS2 of factor covariate OBSERVER1.
+## Parameter A(4) is the coefficient of level OBS3 of factor covariate OBSERVER1.
+## Parameter A(5) is the coefficient of the adjustment term of order 2.
+## Parameter A(6) is the coefficient of the adjustment term of order 3.
+## 
+## 
+## 
+## 
+## 
+## 
+## Density estimates for the entire survey area:
+##  Parameters Estimates         SE % of var. 95% Lower 95% Upper
+##        f(0)  0.011247 0.00060779      5.40  0.010112  0.012509
+##           p  0.296370 0.01601600      5.40  0.266470  0.329630
+##         ESW 88.912000 4.80480000      5.40 79.941000 98.890000
+##         n/L  1.930600 0.15812000      8.19  1.643500  2.267700
+##          DS 21.713000 2.13060000      9.81 17.914000 26.319000
+##        E(S)  1.912200 0.07606500      3.98  1.768100  2.067900
+##           D 41.519000 4.39620000     10.59 33.744000 51.087000
+##           N 42.000000 4.44710000     10.59 34.000000 51.000000
+## 
+## Model AICc = 625.73</code></pre>
+<p>The main differences in the model the summary of model with explanatory variables appear in the table <em>Parameters of the detection function</em>. There will be more parameters in the table than if the model would have been fit without variables. The Desciption of the parameters occur under the table.</p>
+<p>In this analysis we would be particularly interested in looking at the mean effect (<em>Estimates</em>) and the associated standard error(<em>SE</em>) of the parameter A(2), A(3) and A(4) as they represent respectively the effect of the Observer1, Observer2 and Observer3. In our case the SE are so large that the 95% Credible Intervals will include zero for each of those parameters hereby indicating that the Observers had no effect on the detection function.</p>
+</div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
