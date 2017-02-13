@@ -9,7 +9,7 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-GeoAviR allows the user to create spatial grids, plot the animal density and run some basic distance analysis on the dataset. The distance analysis are made via the MCDS engine of Distance 6.2. The distance analysis are performed via the distance.wrap function and the analysis are currently restricted to binned data. The distance that can be fitted are derived from 3 different key function (Uniform, Harlf-normal and Hazard rate) and 3 different series adjustement (Cosine, Simple polynomial, Hermite polynomial). 
+GeoAviR allows the to run some basic distance analysis on the dataset via the MCDS engine of Distance 6.2. Distance sampling models are run via the distance.wrap function will strip transect function are analyzed with the strip.wrap function. The analysis are currently restricted line transect and to binned data. The distance model support 3 different key function (Uniform, Harlf-normal and Hazard rate) and 3 different series adjustement (Cosine, Simple polynomial, Hermite polynomial). 
 
 
 ##Basic model with distance.wrap
@@ -57,7 +57,7 @@ x
 summary(x[[5]])
 ```
 
-If the user is interested in keepin only the best model in the distanceList the function keep.best.model will keep the model with the lowest AICc value. 
+If the user is interested in keepin only the best model in the distanceList the function keep.best.model will keep the model with the lowest AICc value. If the two best model have the excat same value, the keep.best.model function will select one model randomly. 
 
 ```{r}
 ##### Keep the 'best' model in the list
@@ -119,7 +119,7 @@ summary(x[[3]])
 
 ##Rare species case
 
-A model estimated for a selected rarer species for which the probability of detection is estimated through other similar species and making use of multipliers. The user can choose the key function and adjustement for the reference species or can simply let Distance pick the best model for the reference species (estimator=NULL). 
+For rare species, it is possible to correct the observed densities by using the detection curve of a similar species and making use of multipliers. The user can choose the key function and adjustement for the reference species or can simply let Distance pick the best model for the reference species (estimator=NULL). 
 
 Distance will fit a uniform detection function to the rare species but will use a multiplier derived from the detection function of the reference species.  
 

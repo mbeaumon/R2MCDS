@@ -11,7 +11,7 @@ vignette: >
 
 ##Startified models with distance.wrap
 
-GeoAvir can be used to develop startified distance sampling model. 
+GeoAvir can be used  twith stratified model of distance sampling. 
 
 The first step is to transform the survey lines form the project into a spatial object.
 
@@ -19,7 +19,7 @@ The first step is to transform the survey lines form the project into a spatial 
 library(GeoAviR)
 library(rgdal)
 
-### Import and filter data
+### Import and filter the observation data
 data(quebec)
 d <- distance.filter(quebec, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
                      distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", lat.field = "LatStart", 
@@ -31,7 +31,7 @@ transect<-SpatialPointsDataFrame(transect,data=d[,"Count",drop=FALSE])
 proj4string(transect)<-CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
 ```
 
-The second step is to import a shapefile of the survey area and to associate each survey line to a zone in the survey area
+The second step is to import the shapefile of the survey area and to associate each survey line to a zone in the survey area
 
 ```{r,warning=FALSE,message=FALSE}
 ### Import a spatial polygon
@@ -48,7 +48,7 @@ d<-d[!is.na(d$zone),]
 d$SMP_LABEL<-paste(d$zone,d$Date,sep="_")
 ```
 
-In our case, the observations made during each days are made of several WatchID (bouts). We will therefore use the day as the sample unit. Consequently, we need to to sum the WatchID within a day to calculate the effort for the day.
+In our case, observations were made during bouts of a few minutes (identified by WatchID) each day. We will therefore use the day as the sample unit and we will sum the length of all the bout made within a day to calculate the total effort for the day.
 
 ```{r,warning=FALSE,message=FALSE}
 temp<-aggregate(WatchLenKm~SMP_LABEL,data=unique(d[,c("SMP_LABEL","WatchID","WatchLenKm")]),sum)
@@ -56,7 +56,7 @@ names(temp)[2]<-"SMP_EFFORT"
 d<-merge(d,temp,sort=FALSE)
 ```
 
-We then subset the dataset to keep only the variable of interest for the analysis and run the analysis. For this example we will use the observations of Black-legged Kittiwake (_Rissa tridactyla_). 
+We then subset the dataset to keep only the variable of interest for the analysis and run the analysis. For this example we will use the observations of Black-legged Kittiwake (_Rissa tridactyla_). For simplicity, we will only run a detection model with a half-normal key, a cosine adjustement and no explanatory variable. 
 
 ```{r,warning=FALSE,message=FALSE}
 #Keep only the column of interest
@@ -71,8 +71,6 @@ d<-d[(d$SMP_LABEL%in%dd$SMP_LABEL & !duplicated(d$SMP_LABEL)) |
        (!d$SMP_LABEL%in%dd$SMP_LABEL & !(d$Alpha=="")),]
 
 d<-d[order(d$zone),]
-
-
 ###Run the analysis for the Gull species only
 x <- distance.wrap(d,SMP_LABEL="SMP_LABEL",SMP_EFFORT="SMP_EFFORT",
                    DISTANCE="Distance",SIZE="Count",
