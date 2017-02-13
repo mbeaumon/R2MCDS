@@ -25,9 +25,9 @@ print(xtable(model$density_estimate$Global, digits =3, caption='Density Estimate
 print(xtable(model$model_fitting$Global$Parameters, digits =3, caption='Model description'), size='\\\\small',
       caption.placement = getOption('xtable.caption.placement','top'))
 ##Make the histogram
-p <- hist.wrap(model[['input_data']][['observations']], Count='SIZE', Dist.class='DISTANCE',
-Keep.class=as.character(unique(sort(as.numeric(model[['input_data']][['observations']]$DISTANCE)))),
-Breaks=model[['input_data']][['breaks']], color='powderblue',
+p <- Observation_hist(model[['input_data']][['observations']], count='SIZE', dist.class='DISTANCE',
+keep.class=as.character(unique(sort(as.numeric(model[['input_data']][['observations']]$DISTANCE)))),
+breaks=model[['input_data']][['breaks']], color='powderblue',
 rescale=model$detection[['Global']][,'predicted'][1]) +
 labs(title = 'Detection probability vs. distance', x = 'Distance', y = 'Detection probability')
 

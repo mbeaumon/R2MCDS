@@ -31,9 +31,9 @@ print(xtable(nmodel$model_fitting$Global$Parameters, digits =3, caption='Model d
              caption.placement = getOption('xtable.caption.placement','top'))
 
 ##Make the histogram
-p <- hist.wrap(nmodel[['input_data']][['observations']], Count='SIZE', Dist.class='DISTANCE',
-Keep.class=as.character(unique(sort(as.numeric(nmodel[['input_data']][['observations']]$DISTANCE)))),
-Breaks=nmodel[['input_data']][['breaks']], color='powderblue',
+p <- observation_hist(nmodel[['input_data']][['observations']], count='SIZE', dist.class='DISTANCE',
+keep.class=as.character(unique(sort(as.numeric(nmodel[['input_data']][['observations']]$DISTANCE)))),
+breaks=nmodel[['input_data']][['breaks']], color='powderblue',
 rescale=nmodel$detection[['Global']][,'predicted'][1]) +
 labs(title = 'Detection probability vs. distance', x = 'Distance', y = 'Detection probability')
 
