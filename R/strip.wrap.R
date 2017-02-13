@@ -84,7 +84,9 @@
 #'### Simple models without stratification
 #'### Import and filter data
 #'data(alcidae)
-#'alcids<-filterECSAS(alcidae)
+#'alcids <- distance.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
+#'                          distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", lat.field = "LatStart", 
+#'                          long.field = "LongStart", sp.field = "Alpha", date.field = "Date") 
 #'
 #'### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
 #'strip.out1 <-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",SIZE="Count", breaks=c(0,300),
@@ -98,25 +100,12 @@
 #'#END
 
 strip.wrap <-
-function(dataset,
-																								path,
-																								pathMCDS,
-																								SMP_LABEL="SMP_LABEL",
-																								SMP_EFFORT="SMP_EFFORT",
-																								SIZE="SIZE",																				
-																								STR_LABEL="STR_LABEL",
-																								STR_AREA="STR_AREA",	
-                                                units=list(Type="Line",Distance="Perp",Length_units="Kilometer",
-                                                           Distance_units="Meter",Area_units="Square kilometer"),
-																								breaks=c(0,300),  # make change
-																								lsub=NULL,
-																								stratum=NULL, 
-																								split=TRUE,
-																								period=NULL,
-																								detection="All", #or "stratum" is possible
-																								multiplier=2, 
-																								empty=NULL,
-																								verbose=FALSE
+function(dataset, path, pathMCDS, SMP_LABEL="SMP_LABEL", SMP_EFFORT="SMP_EFFORT",
+				SIZE="SIZE", STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",	
+        units=list(Type="Line",Distance="Perp",Length_units="Kilometer",
+                   Distance_units="Meter",Area_units="Square kilometer"),
+				breaks=c(0,300), lsub=NULL, stratum=NULL, split=TRUE,period=NULL,
+				detection="All", multiplier=2, empty=NULL, verbose=FALSE
 ){
 	
   #Check for units

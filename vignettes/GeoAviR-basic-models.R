@@ -1,29 +1,4 @@
----
-title: "GeoAviR Basic models"
-author: "Christian Roy"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Vignette Title}
-  %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
----
-
-GeoAviR allows the to run some basic distance analysis on the dataset via the MCDS engine of Distance 6.2. Distance sampling models are run via the distance.wrap function will strip transect function are analyzed with the strip.wrap function. The analysis are currently restricted line transect and to binned data. The distance model support 3 different key function (Uniform, Harlf-normal and Hazard rate) and 3 different series adjustement (Cosine, Simple polynomial, Hermite polynomial). 
-
-
-##Basic model with distance.wrap
-
-By default the function will fit a total of 6 different model to the data:
-
-- Uniform key function with Cosine adjustement
-- Uniform key function with Hermine polynomial adjustement
-- Half-normal key function with Cosine adjustement
-- Half-normal key function with Hermine polynomial adjustement
-- Hazard rate key function with Cosine adjustement
-- Hazard rate key function with Simple polynomial adjustement
-
-```{r,warning=FALSE,message=FALSE}
+## ----warning=FALSE,message=FALSE-----------------------------------------
 library(GeoAviR)
 ### Import and filter data
 data(alcidae)
@@ -39,37 +14,18 @@ x<-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count
                  STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
                  path="c:/temp/distance",
                  pathMCDS="C:/Distance 6",verbose=FALSE)
-```
-The distance.warp function will return a warning after fitting each model (not shown in the example above). These warning will incliude a "status" number that is associated with the status of the model by the MCDS engine. The numbers should be intrepreted as:
 
-- "1" the analysis ran without errors
-- "2" the analysis ran with warnings
-- "3" the analysis ran with errors
-- "4" the analysis was not performed because of errors in the MCDS files
-- ">4" a major error occured 
-
-distance.wrap will not return an output for any model which had a status above 2. 
-
-The model are stored into a distancelist object and each model can be accessed directly. 
-```{r}
+## ------------------------------------------------------------------------
 x
 ####summary of one of the best model
 summary(x[[5]])
-```
 
-If the user is interested in keepin only the best model in the distanceList the function keep.best.model will keep the model with the lowest AICc value. If the two best model have the excat same value, the keep.best.model function will select one model randomly. 
-
-```{r}
+## ------------------------------------------------------------------------
 ##### Keep the 'best' model in the list
 x.best <- keep.best.model(x)
 summary(x.best)
-```
 
-##Selecting the key function and adjustement with distance.wrap
-
-It posssible for the user to select the key function and ajustement. For example, instead of running the 6 models by default the user may want to restrict his analysis to the half-normal key function with a cosine adjustement and the hazard rate key funciton with a polynomial adjutement he can do so via the 'estimator' option. The estimator option conists of a list where each element is a vector of length 2 with the first element consist of the two letters of the key function and the second element is the first two letters of the expansion term. 
-
-```{r,warning=FALSE,message=FALSE}
+## ----warning=FALSE,message=FALSE-----------------------------------------
 library(GeoAviR)
 ### Import and filter data
 data(alcidae)
@@ -88,12 +44,8 @@ x<-distance.wrap(alcids,SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count"
                  pathMCDS="C:/Distance 6",verbose=FALSE)
 x
 summary(x[[2]])
-```
 
-##Running the analysis for more than one species at once.
-If the user has collected the same data for many species and is interested in running the same model for many species it is possible to do so via the lsub and split option. The lsub option consist of a list of the subset that need to be analysed and the split option indicate wheter the susbet should be analysed together (FALSE) or separetely (TRUE). 
-
-```{r,warning=FALSE,message=FALSE}
+## ----warning=FALSE,message=FALSE-----------------------------------------
 library(GeoAviR)
 
 ### Import and filter data
@@ -115,16 +67,8 @@ x
 ##output for the Herring gull
 summary(x[[3]])
 
-```
 
-##Rare species case
-
-For rare species, it is possible to correct the observed densities by using the detection curve of a similar species and making use of multipliers. The user can choose the key function and adjustement for the reference species or can simply let Distance pick the best model for the reference species (estimator=NULL). 
-
-Distance will fit a uniform detection function to the rare species but will use a multiplier derived from the detection function of the reference species.  
-
-
-```{r,warning=FALSE,message=FALSE}
+## ----warning=FALSE,message=FALSE-----------------------------------------
 #'### 
 library(GeoAviR)
 
@@ -146,5 +90,4 @@ x<-distance.wrap(d,SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
 x
 ##output for the Ring-billed Gull
 summary(x)
-```
 

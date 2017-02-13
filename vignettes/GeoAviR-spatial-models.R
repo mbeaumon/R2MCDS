@@ -1,21 +1,4 @@
----
-title: "GeoAviR spatial models"
-author: "Christian Roy"
-date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Vignette Title}
-  %\VignetteEngine{knitr::rmarkdown}
-  \usepackage[utf8]{inputenc}
----
-
-##Startified models with distance.wrap
-
-GeoAvir can be used  twith stratified model of distance sampling. 
-
-The first step is to transform the survey lines form the project into a spatial object.
-
-```{r,warning=FALSE,message=FALSE}
+## ----warning=FALSE,message=FALSE-----------------------------------------
 library(GeoAviR)
 library(rgdal)
 
@@ -29,11 +12,8 @@ transect <- data.frame(lat=d$LatStart,lon=d$LongStart)
 coordinates(transect) <- ~lon + lat
 transect<-SpatialPointsDataFrame(transect,data=d[,"Count",drop=FALSE])
 proj4string(transect)<-CRS("+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0")
-```
 
-The second step is to import the shapefile of the survey area and to associate each survey line to a zone in the survey area
-
-```{r,warning=FALSE,message=FALSE}
+## ----warning=FALSE,message=FALSE-----------------------------------------
 ### Import a spatial polygon
 data(zonegulf)
 
@@ -46,19 +26,13 @@ d<-d[!is.na(d$zone),]
 
 ### Build labels for samples.
 d$SMP_LABEL<-paste(d$zone,d$Date,sep="_")
-```
 
-In our case, observations were made during bouts of a few minutes (identified by WatchID) each day. We will therefore use the day as the sample unit and we will sum the length of all the bout made within a day to calculate the total effort for the day.
-
-```{r,warning=FALSE,message=FALSE}
+## ----warning=FALSE,message=FALSE-----------------------------------------
 temp<-aggregate(WatchLenKm~SMP_LABEL,data=unique(d[,c("SMP_LABEL","WatchID","WatchLenKm")]),sum)
 names(temp)[2]<-"SMP_EFFORT"
 d<-merge(d,temp,sort=FALSE)
-```
 
-We then subset the dataset to keep only the variable of interest for the analysis and run the analysis. For this example we will use the observations of Black-legged Kittiwake (_Rissa tridactyla_). For simplicity, we will only run a detection model with a half-normal key, a cosine adjustement and no explanatory variable. 
-
-```{r,warning=FALSE,message=FALSE}
+## ----warning=FALSE,message=FALSE-----------------------------------------
 #Keep only the column of interest
 d<-d[,c("zone","zone_area","Date","SMP_LABEL","SMP_EFFORT",
         "Distance","Count","Alpha","LatStart","LongStart")]
@@ -82,15 +56,8 @@ x <- distance.wrap(d,SMP_LABEL="SMP_LABEL",SMP_EFFORT="SMP_EFFORT",
                    path="c:/temp/distance",
                    pathMCDS="C:/Distance 6",verbose=FALSE)
 
-```
 
-We can then proceed to look at the ouput of the analysis.
-
-```{r}
+## ------------------------------------------------------------------------
 x
 summary(x)
-```
-
-
-
 
