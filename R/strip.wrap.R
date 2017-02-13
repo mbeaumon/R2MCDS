@@ -100,25 +100,12 @@
 #'#END
 
 strip.wrap <-
-function(dataset,
-																								path,
-																								pathMCDS,
-																								SMP_LABEL="SMP_LABEL",
-																								SMP_EFFORT="SMP_EFFORT",
-																								SIZE="SIZE",																				
-																								STR_LABEL="STR_LABEL",
-																								STR_AREA="STR_AREA",	
-                                                units=list(Type="Line",Distance="Perp",Length_units="Kilometer",
-                                                           Distance_units="Meter",Area_units="Square kilometer"),
-																								breaks=c(0,300),  # make change
-																								lsub=NULL,
-																								stratum=NULL, 
-																								split=TRUE,
-																								period=NULL,
-																								detection="All", #or "stratum" is possible
-																								multiplier=2, 
-																								empty=NULL,
-																								verbose=FALSE
+function(dataset, path, pathMCDS, SMP_LABEL="SMP_LABEL", SMP_EFFORT="SMP_EFFORT",
+				SIZE="SIZE", STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",	
+        units=list(Type="Line",Distance="Perp",Length_units="Kilometer",
+                   Distance_units="Meter",Area_units="Square kilometer"),
+				breaks=c(0,300), lsub=NULL, stratum=NULL, split=TRUE,period=NULL,
+				detection="All", multiplier=2, empty=NULL, verbose=FALSE
 ){
 	
   #Check for units

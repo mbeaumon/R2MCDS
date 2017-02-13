@@ -2,7 +2,7 @@
 library(GeoAviR)
 library(rgdal)
 
-### Import and filter data
+### Import and filter the observation data
 data(quebec)
 d <- distance.filter(quebec, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
                      distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", lat.field = "LatStart", 
@@ -45,8 +45,6 @@ d<-d[(d$SMP_LABEL%in%dd$SMP_LABEL & !duplicated(d$SMP_LABEL)) |
        (!d$SMP_LABEL%in%dd$SMP_LABEL & !(d$Alpha=="")),]
 
 d<-d[order(d$zone),]
-
-
 ###Run the analysis for the Gull species only
 x <- distance.wrap(d,SMP_LABEL="SMP_LABEL",SMP_EFFORT="SMP_EFFORT",
                    DISTANCE="Distance",SIZE="Count",

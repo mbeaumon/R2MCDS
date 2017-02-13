@@ -12,7 +12,7 @@
 
 <meta name="author" content="Christian Roy" />
 
-<meta name="date" content="2017-02-12" />
+<meta name="date" content="2017-02-13" />
 
 <title>GeoAviR Basic models</title>
 
@@ -70,11 +70,11 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">GeoAviR Basic models</h1>
 <h4 class="author"><em>Christian Roy</em></h4>
-<h4 class="date"><em>2017-02-12</em></h4>
+<h4 class="date"><em>2017-02-13</em></h4>
 
 
 
-<p>GeoAviR allows the user to create spatial grids, plot the animal density and run some basic distance analysis on the dataset. The distance analysis are made via the MCDS engine of Distance 6.2. The distance analysis are performed via the distance.wrap function and the analysis are currently restricted to binned data. The distance that can be fitted are derived from 3 different key function (Uniform, Harlf-normal and Hazard rate) and 3 different series adjustement (Cosine, Simple polynomial, Hermite polynomial).</p>
+<p>GeoAviR allows the to run some basic distance analysis on the dataset via the MCDS engine of Distance 6.2. Distance sampling models are run via the distance.wrap function will strip transect function are analyzed with the strip.wrap function. The analysis are currently restricted line transect and to binned data. The distance model support 3 different key function (Uniform, Harlf-normal and Hazard rate) and 3 different series adjustement (Cosine, Simple polynomial, Hermite polynomial).</p>
 <div id="basic-model-with-distance.wrap" class="section level2">
 <h2>Basic model with distance.wrap</h2>
 <p>By default the function will fit a total of 6 different model to the data:</p>
@@ -175,7 +175,7 @@ x&lt;-<span class="kw">distance.wrap</span>(alcids, <span class="dt">SMP_EFFORT=
 ##           N    49.000 10.319000     21.06   33.0000   74.0000
 ## 
 ## Model AICc = 628.02</code></pre>
-<p>If the user is interested in keepin only the best model in the distanceList the function keep.best.model will keep the model with the lowest AICc value.</p>
+<p>If the user is interested in keepin only the best model in the distanceList the function keep.best.model will keep the model with the lowest AICc value. If the two best model have the excat same value, the keep.best.model function will select one model randomly.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">##### Keep the 'best' model in the list
 x.best &lt;-<span class="st"> </span><span class="kw">keep.best.model</span>(x)</code></pre></div>
 <pre><code>## Model selected randomly among the model with the lowest AICc values</code></pre>
@@ -357,7 +357,7 @@ x</code></pre></div>
 </div>
 <div id="rare-species-case" class="section level2">
 <h2>Rare species case</h2>
-<p>A model estimated for a selected rarer species for which the probability of detection is estimated through other similar species and making use of multipliers. The user can choose the key function and adjustement for the reference species or can simply let Distance pick the best model for the reference species (estimator=NULL).</p>
+<p>For rare species, it is possible to correct the observed densities by using the detection curve of a similar species and making use of multipliers. The user can choose the key function and adjustement for the reference species or can simply let Distance pick the best model for the reference species (estimator=NULL).</p>
 <p>Distance will fit a uniform detection function to the rare species but will use a multiplier derived from the detection function of the reference species.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#'### </span>
 <span class="kw">library</span>(GeoAviR)
