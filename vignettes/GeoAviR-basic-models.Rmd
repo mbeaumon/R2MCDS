@@ -9,12 +9,11 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-GeoAviR allows the to run some basic distance analysis on the dataset via the MCDS engine of Distance 6.2. Distance sampling models are run via the distance.wrap function will strip transect function are analyzed with the strip.wrap function. The analysis are currently restricted line transect and to binned data. The distance model support 3 different key function (Uniform, Harlf-normal and Hazard rate) and 3 different series adjustement (Cosine, Simple polynomial, Hermite polynomial). 
-
+GeoAviR allows the to run some basic distance analysis on the dataset via the MCDS engine of Distance 6.2. The analyzes are currently restricted to line transect and to bin data. Distance sampling models are run via the _distance.wrap()_ function while strips transect models are analyzed with the function _strip.wrap()_. The distance model support 3 different key functions (Uniform, Half-normal and Hazard rate) and 3 different series adjustment (Cosine, Simple polynomial, Hermite polynomial).
 
 ##Basic model with distance.wrap
 
-By default the function will fit a total of 6 different model to the data:
+If the user does not input any models via the estimator argument the function distance.wrap will fit by default the 6 possible detection function available in Distance 6.2:
 
 - Uniform key function with Cosine adjustement
 - Uniform key function with Hermine polynomial adjustement
@@ -27,9 +26,11 @@ By default the function will fit a total of 6 different model to the data:
 library(GeoAviR)
 ### Import and filter data
 data(alcidae)
-alcids<-distance.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
-                        distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", lat.field = "LatStart", 
-                        long.field = "LongStart", sp.field = "Alpha", date.field = "Date")
+alcids<-distance.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", 
+                        distance.labels = c("A", "B", "C", "D"), 
+                        distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", 
+                        lat.field = "LatStart", long.field = "LongStart", 
+                        sp.field = "Alpha", date.field = "Date")
 
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
 x<-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
@@ -40,7 +41,7 @@ x<-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count
                  path="c:/temp/distance",
                  pathMCDS="C:/Distance 6",verbose=FALSE)
 ```
-The distance.warp function will return a warning after fitting each model (not shown in the example above). These warning will incliude a "status" number that is associated with the status of the model by the MCDS engine. The numbers should be intrepreted as:
+The distance.warp function will return a warning after fitting each model (not shown in the example above). These warning will include a "status" number that is associated with the status of the model by the MCDS engine. The numbers should be intrepreted as:
 
 - "1" the analysis ran without errors
 - "2" the analysis ran with warnings
@@ -48,34 +49,42 @@ The distance.warp function will return a warning after fitting each model (not s
 - "4" the analysis was not performed because of errors in the MCDS files
 - ">4" a major error occured 
 
-distance.wrap will not return an output for any model which had a status above 2. 
+The function _distance.wrap()_ will not return an output for any model which had a status above 2.A detailed description of each error message can be found in the Distance user guide (pages 333-344).  
 
-The model are stored into a distancelist object and each model can be accessed directly. 
-```{r}
+Since we ran more than one model for a set of observations the model are stored into a _distanceList_ object which consist of a list of _distanceFit_ object. The output of each detection model can therefore be accessed by subsetting the list.
+```{r,warning=FALSE,message=FALSE,fig.height=5,fig.width=5,fig.align='center'}
 x
-####summary of one of the best model
-summary(x[[5]])
+####summary of one model
+summary(x[[2]])
+predicted_hist(x[[2]])
 ```
 
-If the user is interested in keepin only the best model in the distanceList the function keep.best.model will keep the model with the lowest AICc value. If the two best model have the excat same value, the keep.best.model function will select one model randomly. 
 
-```{r}
+The summary of a _distanceFit_ object emulate the output of Distance 6.2 and present 3 tables. The first table contains all the information related to the encounter rate, the second table presents the parameters related to the detection probability, and the third table present the information related to the density/abundance in the survey area. A detailed description of the output can be found in the Distance user guide (Chapter 9 and page 330).
+
+
+If the user is interested in keeping only the best model in the _distanceList_ the function _keep.best.model()_ will keep only the model with the lowest AICc value. If more than one model have the best AIC score the keep.best.model function will select one model randomly.
+
+```{r,warning=FALSE,message=FALSE,fig.height=5,fig.width=5,fig.align='center'}
 ##### Keep the 'best' model in the list
 x.best <- keep.best.model(x)
 summary(x.best)
+predicted_hist(x.best)
 ```
 
 ##Selecting the key function and adjustement with distance.wrap
 
-It posssible for the user to select the key function and ajustement. For example, instead of running the 6 models by default the user may want to restrict his analysis to the half-normal key function with a cosine adjustement and the hazard rate key funciton with a polynomial adjutement he can do so via the 'estimator' option. The estimator option conists of a list where each element is a vector of length 2 with the first element consist of the two letters of the key function and the second element is the first two letters of the expansion term. 
+It is possible for the user to select the key function and adjustment. For example, instead of running the 6 models by default the user may want to restrict his analysis to the half-normal key function with a cosine adjustment and the hazard rate key function with a polynomial adjustment. He can do so via the 'estimator' option. The estimator option consists of a list of elements where each element is a vector containing the first two letters of the key function and the first two letters of the expansion term. It is important to remember, however, that the list of detection key is restricted to the 6 key that have been presented above. 
 
 ```{r,warning=FALSE,message=FALSE}
 library(GeoAviR)
 ### Import and filter data
 data(alcidae)
-alcids <- distance.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
-                          distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", lat.field = "LatStart", 
-                          long.field = "LongStart", sp.field = "Alpha", date.field = "Date")
+alcids<-distance.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", 
+                        distance.labels = c("A", "B", "C", "D"), 
+                        distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", 
+                        lat.field = "LatStart", long.field = "LongStart", 
+                        sp.field = "Alpha", date.field = "Date")
 
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
 x<-distance.wrap(alcids,SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
@@ -90,61 +99,11 @@ x
 summary(x[[2]])
 ```
 
-##Running the analysis for more than one species at once.
-If the user has collected the same data for many species and is interested in running the same model for many species it is possible to do so via the lsub and split option. The lsub option consist of a list of the subset that need to be analysed and the split option indicate wheter the susbet should be analysed together (FALSE) or separetely (TRUE). 
+Once again it is possible to select the best model via the _keep.best.model()_ function.
 
-```{r,warning=FALSE,message=FALSE}
-library(GeoAviR)
-
-### Import and filter data
-data(quebec)
-d <- distance.filter(quebec, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
-                     distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", lat.field = "LatStart", 
-                     long.field = "LongStart", sp.field = "Alpha", date.field = "Date")
-
-### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-x<-distance.wrap(d,SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
-                 units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
-                            Distance_units="Meters",Area_units="Square kilometers"),
-                 breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
-                 lsub=list(Alpha=c("BLKI","GBBG", "HERG")), split=TRUE,
-                 STR_LABEL="STR_LABEL",STR_AREA="STR_AREA",SMP_LABEL="WatchID",
-                 path="c:/temp/distance",
-                 pathMCDS="C:/Distance 6",verbose=FALSE)
-x
-##output for the Herring gull
-summary(x[[3]])
-
+```{r,warning=FALSE,message=FALSE,fig.height=5,fig.width=5,fig.align='center'}
+##### Keep the 'best' model in the list
+x.best <- keep.best.model(x)
+summary(x.best)
+predicted_hist(x.best)
 ```
-
-##Rare species case
-
-For rare species, it is possible to correct the observed densities by using the detection curve of a similar species and making use of multipliers. The user can choose the key function and adjustement for the reference species or can simply let Distance pick the best model for the reference species (estimator=NULL). 
-
-Distance will fit a uniform detection function to the rare species but will use a multiplier derived from the detection function of the reference species.  
-
-
-```{r,warning=FALSE,message=FALSE}
-#'### 
-library(GeoAviR)
-
-### Import and filter data
-data(quebec)
-d <- distance.filter(quebec, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
-                     distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", lat.field = "LatStart", 
-                     long.field = "LongStart", sp.field = "Alpha", date.field = "Date")
-
-### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-x<-distance.wrap(d,SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
-                 units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
-                            Distance_units="Meters",Area_units="Square kilometers"),
-                 breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
-                 lsub=list(Alpha=c("HERG")), rare= list(Alpha=c("RBGU")), split=TRUE,
-                 STR_LABEL="STR_LABEL",STR_AREA="STR_AREA",SMP_LABEL="WatchID",
-                 path="c:/temp/distance",
-                 pathMCDS="C:/Distance 6",verbose=FALSE)
-x
-##output for the Ring-billed Gull
-summary(x)
-```
-

@@ -24,4 +24,5 @@ x
 #Keep only the best model basec on AICc and look at the output
 x.best <- keep.best.model(x)
 summary(x.best)
+predicted_hist((x.best))
 

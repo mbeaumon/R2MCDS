@@ -12,7 +12,7 @@
 
 <meta name="author" content="Christian Roy" />
 
-<meta name="date" content="2017-02-12" />
+<meta name="date" content="2017-02-14" />
 
 <title>GeoAviR models with covariables</title>
 
@@ -70,24 +70,24 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">GeoAviR models with covariables</h1>
 <h4 class="author"><em>Christian Roy</em></h4>
-<h4 class="date"><em>2017-02-12</em></h4>
+<h4 class="date"><em>2017-02-14</em></h4>
 
 
 
 <div id="including-explanatory-variables-in-the-analysis" class="section level1">
 <h1>Including explanatory variables in the analysis</h1>
-<p>The distance analysis are made via the MCDS engine of DISTANCE 6.2 and the analysis are currently restricted to binned data. The distance models that can be fitted are derived from 3 different key function (Harlf-normal and Hazard rate) and 3 different series adjustement (Cosine, Simple polynomial, Hermite polynomial). The uniform model is not available for this type of analysis as covariates cannot be used with this type of model.</p>
+<p>The distance analyses are made via the MCDS engine of DISTANCE 6.2 and the analyses are currently restricted to binned data. The distance models that can be fitted are derived from 3 different key functions (Half-normal and Hazard rate) and 3 different series adjustment (Cosine, Simple polynomial, and Hermite polynomial). The uniform model is not available for this type of analysis as explanatory variables cannot be used with this type of model.</p>
 <div id="basic-model" class="section level2">
 <h2>Basic model</h2>
 <p>By default the function will fit a total of 4 different model to the data:</p>
 <ul>
-<li>Half-normal key function with Cosine adjustement</li>
-<li>Half-normal key function with Hermine polynomial adjustement</li>
-<li>Hazard rate key function with Cosine adjustement</li>
-<li>Hazard rate key function with Simple polynomial adjustement</li>
+<li>Half-normal key function with Cosine adjustment</li>
+<li>Half-normal key function with Hermine polynomial adjustment</li>
+<li>Hazard rate key function with Cosine adjustment</li>
+<li>Hazard rate key function with Simple polynomial adjustment</li>
 </ul>
-<p>Covariates have been splitted between factor covariates (‘factor’), and non-factor covariates (‘covariates’). Factor covariates classify the data into different categories while non-factor covariates must be numeric. A simple example for a factor would be the effect of the observer on the detection function while the effect of temperature would be a good example for a non-factor covariates.</p>
-<p>For analysis with explanatory variable it will be important to set monotone option to ‘none’ otherwise the distance.wrap function will return an error message. It is also important to note that it will take considerably more time for model to be fitted.</p>
+<p>Covariates have been divided between factor covariates (‘factor’), and non-factor covariates (‘covariates’). Factor covariates classify the data into different categories while non-factor covariates must be numeric. A simple example of a factor would be the effect of the observer on the detection function while the effect of temperature would be a good example for non-factor covariates.</p>
+<p>For analysis with covariables it will be important to set monotone option to ‘none’ otherwise the distance.wrap function will return an error message. It is also important to note that it can take onsiderably more time to fit models with covariables.</p>
 <p>We can start with a simple example using the observations of <em>Alcidae</em> if the Gulf of St-Lawrence by observers from the Canadian Wildlife Service <em>Eastern Canadian Seabirds at Sea</em> (ECSAS) monitoring program. We will use the different observers as a an explanatory variable and we run all four possible models.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(GeoAviR)
 ###set seed for reproductibility    
@@ -134,8 +134,8 @@ x</code></pre></div>
 ## 
 ## Files created by the MCDS engine are saved in the diectory:
 ## c:/temp/distance</code></pre>
-<p>All four models have converged. From this set of candidate models we can use the function <em>keep.best model()</em> to keep the best model and then look at the output with the function <em>summary()</em>.For our example the best model (i.e. the one with the lowest AICc value) is the Half-normal model with a cosine adjustement.</p>
-<p>However, it is interesting to note that both hazard rate model have a similar value of AICc and are therefore equivalent for this example. If there is more than one model with the lowest AICc value, function <em>keep.best model()</em> will select randomly between all the equivalent models as it is done in the program DISTANCE 6.2.</p>
+<p>All four models have converged. From this set of candidate models we can use the function <em>keep.best model()</em> to keep the best model and then look at the output with the function <em>summary()</em>.For our example the best model (i.e. the one with the lowest AICc value) is the Half-normal model with a cosine adjustment.</p>
+<p>However, it is interesting to note that both hazard rate model have a similar value of AICc and are therefore equivalent for this example. when there is more than one model with the lowest AICc value, the function <em>keep.best model()</em> will select randomly between all the equivalent models as it is done in the program DISTANCE 6.2.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#Keep only the best model basec on AICc and look at the output</span>
 x.best &lt;-<span class="st"> </span><span class="kw">keep.best.model</span>(x)</code></pre></div>
 <pre><code>## Best model selected via AICc ranking</code></pre>
@@ -186,8 +186,10 @@ x.best &lt;-<span class="st"> </span><span class="kw">keep.best.model</span>(x)<
 ##           N 47.000000 5.23980000     11.15 38.000000 59.000000
 ## 
 ## Model AICc = 625.73</code></pre>
-<p>The main differences in the model the summary of model with explanatory variables appear in the table <em>Parameters of the detection function</em>. There will be more parameters in the table than if the model would have been fit without variables. The Desciption of the parameters occur under the table.</p>
-<p>In this analysis we would be particularly interested in looking at the mean effect (<em>Estimates</em>) and the associated standard error(<em>SE</em>) of the parameter A(2), A(3) and A(4) as they represent respectively the effect of the Observer1, Observer2 and Observer3. In our case the SE are so large that the 95% Credible Intervals will include zero for each of those parameters hereby indicating that the Observers had no effect on the detection function.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">predicted_hist</span>((x.best))</code></pre></div>
+<p><img src="data:image/png;base64,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" alt /><!-- --></p>
+<p>The main differences in the model the summary of model with explanatory variables appear in the table <em>Parameters of the detection function</em>. There will be more parameters in the table than if the model would have been fit without variables. The description of each parameter is under the table.</p>
+<p>In this analysis we would be particularly interested in looking at the mean effect (<em>Estimates</em>) and the associated standard error (<em>SE</em>) of the parameter A(2), A(3) and A(4) as they represent respectively the effect of the Observer1, Observer2 and Observer3. In our case the SE are so large that the 95% Credible Intervals will include zero for each of those parameters hereby indicating that the Observers had no effect on the detection function.</p>
 </div>
 </div>
 

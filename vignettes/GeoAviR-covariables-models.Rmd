@@ -10,20 +10,20 @@ vignette: >
 ---
 #Including explanatory variables in the analysis
 
-The distance analysis are made via the MCDS engine of DISTANCE 6.2 and the analysis are currently restricted to binned data. The distance models that can be fitted are derived from 3 different key function (Harlf-normal and Hazard rate) and 3 different series adjustement (Cosine, Simple polynomial, Hermite polynomial). The uniform model is not available for this type of analysis as covariates cannot be used with this type of model. 
+The distance analyses are made via the MCDS engine of DISTANCE 6.2 and the analyses are currently restricted to binned data. The distance models that can be fitted are derived from 3 different key functions (Half-normal and Hazard rate) and 3 different series adjustment (Cosine, Simple polynomial, and Hermite polynomial). The uniform model is not available for this type of analysis as explanatory variables cannot be used with this type of model. 
 
 ##Basic model
 
 By default the function will fit a total of 4 different model to the data:
 
-- Half-normal key function with Cosine adjustement
-- Half-normal key function with Hermine polynomial adjustement
-- Hazard rate key function with Cosine adjustement
-- Hazard rate key function with Simple polynomial adjustement
+- Half-normal key function with Cosine adjustment
+- Half-normal key function with Hermine polynomial adjustment
+- Hazard rate key function with Cosine adjustment
+- Hazard rate key function with Simple polynomial adjustment
 
-Covariates have been splitted between factor covariates ('factor'), and non-factor covariates ('covariates'). Factor covariates classify the data into different categories while non-factor covariates must be numeric. A simple example for a factor would be the effect of the observer on the detection function while the effect of temperature would be a good example for a non-factor covariates. 
+Covariates have been divided between factor covariates ('factor'), and non-factor covariates ('covariates'). Factor covariates classify the data into different categories while non-factor covariates must be numeric. A simple example of a factor would be the effect of the observer on the detection function while the effect of temperature would be a good example for non-factor covariates. 
 
-For analysis with explanatory variable it will be important to set monotone option to 'none' otherwise the distance.wrap function will return an error message. It is also important to note that it will take considerably more time for model to be fitted.
+For analysis with covariables it will be important to set monotone option to 'none' otherwise the distance.wrap function will return an error message. It is also important to note that it can take onsiderably more time to fit models with covariables.
 
 We can start with a simple example using the observations of _Alcidae_ if the Gulf of St-Lawrence by observers from the Canadian Wildlife Service _Eastern Canadian Seabirds at Sea_ (ECSAS) monitoring program. We will use the different observers as a an explanatory variable and we run all four possible models. 
 
@@ -50,17 +50,17 @@ x<-distance.wrap(alcids,SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count"
 x
 ```
 
-All four models have converged. From this set of candidate models we can use the function _keep.best model()_ to keep the best model and then look at the output with the function _summary()_.For our example the best model (i.e. the one with the lowest AICc value) is the Half-normal model with a cosine adjustement. 
+All four models have converged. From this set of candidate models we can use the function _keep.best model()_ to keep the best model and then look at the output with the function _summary()_.For our example the best model (i.e. the one with the lowest AICc value) is the Half-normal model with a cosine adjustment. 
 
-However, it is interesting to note that both hazard rate model have a similar value of AICc and are therefore equivalent for this example. If there is more than one model with the lowest AICc value, function _keep.best model()_ will select randomly between all the equivalent models as it is done in the program DISTANCE 6.2.
+However, it is interesting to note that both hazard rate model have a similar value of AICc and are therefore equivalent for this example. when there is more than one model with the lowest AICc value, the function _keep.best model()_ will select randomly between all the equivalent models as it is done in the program DISTANCE 6.2.
 
 ```{r}
 #Keep only the best model basec on AICc and look at the output
 x.best <- keep.best.model(x)
 summary(x.best)
+predicted_hist((x.best))
 ```
 
-The main differences in the model the summary of model with explanatory variables appear in the table _Parameters of the detection function_. There will be more parameters in the table than if the model would have been fit without variables. The Desciption of the parameters occur under the table. 
+The main differences in the model the summary of model with explanatory variables appear in the table _Parameters of the detection function_. There will be more parameters in the table than if the model would have been fit without variables. The description of each parameter is under the table. 
 
-In this analysis we would be particularly interested in looking at the mean effect (_Estimates_) and the associated standard error(_SE_) of the parameter A(2), A(3) and A(4) as they represent respectively the effect of the Observer1, Observer2 and Observer3. In our case the SE are so large that the 95% Credible Intervals will include zero for each of those parameters hereby indicating that the Observers had no effect on the detection function.     
-
+In this analysis we would be particularly interested in looking at the mean effect (_Estimates_) and the associated standard error (_SE_) of the parameter A(2), A(3) and A(4) as they represent respectively the effect of the Observer1, Observer2 and Observer3. In our case the SE are so large that the 95% Credible Intervals will include zero for each of those parameters hereby indicating that the Observers had no effect on the detection function.
