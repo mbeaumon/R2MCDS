@@ -26,13 +26,13 @@
 #'
 #' #END
 predicted_hist <- function(model){
-  p <- observation_hist(model[['input_data']][['observations']], Count='SIZE', Dist.class='DISTANCE',
-                         Keep.class=as.character(unique(sort(as.numeric(x[['input_data']][['observations']]$DISTANCE)))),
-                         Breaks=model[['input_data']][['breaks']], color='powderblue',
+  p <- observation_hist(dataset=model[['input_data']][['observations']], count='SIZE', dist.class='DISTANCE',
+                         keep.class=as.character(unique(sort(as.numeric(model[['input_data']][['observations']]$DISTANCE)))),
+                         breaks=model[['input_data']][['breaks']], color='powderblue',
                          rescale=model$detection[['Global']][,'predicted'][1]) +
   labs(title = 'Detection probability vs. distance', x = 'Distance', y = 'Detection probability')
   
-  pred.df <- data.frame(x=x$detection[['Global']][,'distance'],y=x$detection[['Global']][,'predicted'])
+  pred.df <- data.frame(x=model$detection[['Global']][,'distance'],y=model$detection[['Global']][,'predicted'])
   p + geom_line(data=pred.df, aes(x=x,y=y), linetype=1, size=1.25)
   
 }
