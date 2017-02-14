@@ -18,11 +18,11 @@
 #'data(alcidae)
 #'
 #'###Check the naïve detection histogram for alcidae
-#'observation_hist(alcidae, count="Count", dist.class="Distance", keep.class=c("A", "B", "C", "D"), breaks=c(0,50,100,200,300), color="white")
+#'Observation_hist(alcidae, count="Count", dist.class="Distance", keep.class=c("A", "B", "C", "D"), breaks=c(0,50,100,200,300), color="white")
 #'#END
 
 
-observation_hist <- function(dataset, count, dist.class, keep.class, breaks, color="white", rescale=NA){
+observation_hist <- function(dataset, count, dist.class, keep.class, breaks, color="white", rescale=1){
     
     ##Keep only the distance class desired
     dataset <- droplevels(dataset[dataset[,dist.class]%in%keep.class,])
@@ -32,7 +32,7 @@ observation_hist <- function(dataset, count, dist.class, keep.class, breaks, col
     ##Make histogram df
     d <- as.numeric(as.character(Observations))
     h <- hist(d, breaks = breaks, plot =FALSE)
-    if( !is.na(rescale)){
+    if( !is.na(rescale)==T){
       h$density <- h$density*rescale/h$density[1]
     }
     r <- data.frame(h[2:4], xmin = head(h$breaks, -1), xmax = h$breaks[-1])
