@@ -575,6 +575,6 @@ distance.wrap <-
     }
     if(!is.null(notrun)){warning(paste("No models for the following combinations: ",paste(notrun,collapse=" "),". See log files." ,sep=""),immediate.=TRUE)}
     lans<-lans[!sapply(lans,is.null)]
-    class(lans) <- "SpeciesList"
+    class(lans) <- "speciesList"
     if(length(lans)==1){lans[[1]]}else{lans}
   }
