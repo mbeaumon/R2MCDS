@@ -64,7 +64,8 @@ function(x, transect.id="WatchID",distance.field="Distance", distance.labels=c("
                             }
                         	}
                           
-                         	x<-x[(!is.na(x$InTransect) & x$InTransect != 0) | x[,"Alpha"] %in% c(NA, ""),] #keep observations that are in the transect or empty transects/WatchID
+                        	
+                        	x<-x[!x[,"Alpha"] %in% c(NA, ""),] #keep only observation that are not empty
                         	y<-y[!y[,"WatchID"]%in%x[,"WatchID"],] #keep only WatchID that are not already in x
                         	# Do not perform unnecessary lengthy rbind
                         	if (nrow(y) > 0) {
