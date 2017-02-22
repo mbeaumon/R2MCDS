@@ -59,8 +59,8 @@
 #'length 2 with the first element the key function and the second element the expansion term (ex: \code{list(c("HN","CO"),c("HA","PO")}).
 #'When \code{rare != NULL}, only one set is used (UN-CO) for the final specific model. 
 
-#'@param multiplier Value by which the estimates of density or abundance are multiplied. Default value \code{multiplier = 2} meaning
-#'only one-half of the transect is surveyed. When \code{rare != NULL}, the multiplier will be modified to account
+#'@param multiplier Value by which the estimates of density or abundance are multiplied. The first value is the multiplier, the second the SE and the third the degree of freedom associated with the multiplier (useful when using the probability of detection as a multiplier in a two-step analyses with the second step). Default value \code{multiplier = c(2,0,0)} meaning
+#'only one-half of the transect is surveyed and the value is known with certainty with an infinite degree of freedom. When \code{rare != NULL}, the multiplier will be modified to account
 #'for the probability of detection.
 
 #'@param empty Determine how empty transects are to be selected in the analysis. When \code{empty = NULL}, all
@@ -157,7 +157,7 @@ distance.wrap <-
            detection="All", 
            monotone="Strict",
            estimator=NULL,
-           multiplier=2, 
+           multiplier=c(2,0,0), 
            empty=NULL,
            verbose=FALSE
   ){
@@ -449,7 +449,8 @@ distance.wrap <-
       opts2["GOF;"]<-""
       opts2["Cluster /Bias="]<-"GXLOG;"
       opts2["VarN="]<-"Empirical;"
-      opts2["Multiplier1="]<-paste(multiplier," /Label='Sampling fraction';",sep="")
+      #opts2["Multiplier1="]<-paste(multiplier," /Label='Sampling fraction';",sep="")
+      opts2["Multiplier1="]<-paste(multiplier[1]," /Label='Sampling fraction'"," /SE=",multiplier[2]," /DF=",multiplier[3],";",sep="") 
       if(!is.null(rare)){
         opts2["Multiplier2="]<-paste(1/pdetect," /Label='Rare'"," /SE=",sedetect/pdetect^2," /DF=",dfdetect,";",sep="")  
       }

@@ -39,4 +39,3 @@ hist.wrap(alcidae,Trn.Value="Count", Dist.class="Distance", Keep.class=c("A", "B
 \seealso{
 \code{\link{filterECSAS}}
 }
-

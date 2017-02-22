@@ -27,6 +27,7 @@ This function creates a visual summary of the output file saved as a PDF. See th
 \section{Author}{
 Christian Roy
 }
+
 \examples{
 ### Import and filter data
 data(alcidae)
@@ -51,4 +52,3 @@ END
 \references{
 S.T. Buckland, D.R. Anderson, K.P. Burnham, J.L Laake, D.L. Borchers and L. Thomas. 2001. \emph{Introduction to Distance Sampling}. Estimating abundance of biological populations. Oxford University Press.
 }
-
