@@ -85,6 +85,7 @@ list object.
 \section{Author}{
 Francois Rousseu, Christian Roy, Francois Bolduc
 }
+
 \examples{
 ########################################
 ### Simple models without stratification
@@ -111,4 +112,3 @@ T. A. Marques, and K. P. Burnham. 2010. \emph{Distance software: design and anal
 surveys for estimating population size.} Journal of Applied Ecology 47: 5-14.
 DOI: 10.1111/j.1365-2664.2009.01737.x
 }
-

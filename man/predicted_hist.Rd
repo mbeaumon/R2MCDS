@@ -18,6 +18,7 @@ Make a histogram of the observations and the predicted detection curve in functi
 \section{Author}{
 Christian Roy
 }
+
 \examples{
 data(alcidae)
 alcids <- distance.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
@@ -38,4 +39,3 @@ predicted_hist(x)
 
 #END
 }
-

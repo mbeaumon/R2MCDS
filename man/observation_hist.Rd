@@ -31,12 +31,12 @@ Make a histogram of the observations in function of the distance class
 \section{Author}{
 Christian Roy
 }
+
 \examples{
 ###Import the data
 data(alcidae)
 
-###Check the naïve detection histogram for alcidae
+###Check the naÃ¯ve detection histogram for alcidae
 Observation_hist(alcidae, count="Count", dist.class="Distance", keep.class=c("A", "B", "C", "D"), breaks=c(0,50,100,200,300), color="white")
 #END
 }
-

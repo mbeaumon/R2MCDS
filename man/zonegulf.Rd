@@ -12,4 +12,3 @@
 \description{
 This file gives the boundaries of fishing zones in the Gulf of St-Lawrence.
 }
-
