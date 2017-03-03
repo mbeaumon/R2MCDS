@@ -1,8 +1,8 @@
 #' @export
-#'@title Filter data before using it with distance.wrap
+#'@title Filter data before using it with mcds.wrap
 #'
 #'
-#'@description Allow to change the names of the column of a data.frame so that it work seamlessly with \code{\link{distance.wrap}}
+#'@description Allow to change the names of the column of a data.frame so that it work seamlessly with \code{\link{mcds.wrap}}
 #'@param x  A \code{\link{data.frame}} containing observations.
 #'@param transect.id Name of the column containing the unique ID of each transect.
 #'@param distance.field Name of the column containing the distance classes of each observations. 
@@ -23,12 +23,12 @@
 #'@section Author:Christian Roy
 #'@examples
 #'data(quebec)
-#'x<-distance.filter(quebec, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
+#'x<- mcds.filter(quebec, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
 #'                   distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", lat.field = "LatStart", 
 #'                   long.field = "LongStart", sp.field = "Alpha", date.field = "Date")
 #'str(x)
 
-distance.filter <-
+mcds.filter <-
 function(x, transect.id="WatchID",distance.field="Distance", distance.labels=c("A","B","C","D"),
                            distance.midpoints=c(25,75,150,250),effort.field="WatchLenKm",
                            lat.field="LatStart", long.field="LongStart", sp.field="Alpha", date.field="Date", distanceLabel.field = "Distance",
