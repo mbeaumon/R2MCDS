@@ -5,6 +5,8 @@ The package allows the user to create spatial grids, plot the observed animal de
 Version 0.9.0
 =======
 * Renamed package 
+* Renamed distance.wrap function to mcds.wrap
+* Renamed distance.filter to mcds.filter
 * Replaced hist.wrap with "observation_hist" and "predicted_hist" 
 * Removed the gridding functions
 * Removed the plotting functions
