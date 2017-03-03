@@ -71,12 +71,7 @@ function(x, transect.id="WatchID",distance.field="Distance", distance.labels=c("
                         	if (nrow(y) > 0) {
                         	  x<-rbind(x,unique(y)) #add empty transects with outside distances to the main data.frame
                         	}
-                        	date<-sapply(strsplit(sapply(strsplit(as.character(x[,"Date"])," "),function(i){i[1]}),"/"),function(j){
-                        		res<-rev(j)
-                        		paste(c(res[1],formatC(as.numeric(res[2:3]),width=2,flag="0")),collapse="-")
-                        	})
-                        	x[,"Date"]<-date
-                        	
+
                         	#make sure some entries are numeric
                           x[,"LatStart"] <- as.numeric(x[,"LatStart"])
                           x[,"LongStart"] <- as.numeric(x[,"LongStart"])
@@ -85,10 +80,10 @@ function(x, transect.id="WatchID",distance.field="Distance", distance.labels=c("
                           
                           
                           #Warning
-                          if((min(x[,"LatStart"])<0 & 0<max(x[,"LatStart"])) | (max(x[,"LatStart"])<0 & 0<min(x[,"LatStart"]))==T)                          
+                          if((min(x[,"LatStart"], na.rm=T)<0 & 0<max(x[,"LatStart"], na.rm=T)) | (max(x[,"LatStart"], na.rm=T)<0 & 0<min(x[,"LatStart"], na.rm=T))==T)                          
                           print("Warning dataset include data north and south of the Equator")
                           
-                          if((min(x[,"LongStart"])<0 & 0<max(x[,"LongStart"])) | (max(x[,"LongStart"])<0 & 0<min(x[,"LongStart"]))==T)  
+                          if((min(x[,"LongStart"], na.rm=T)<0 & 0<max(x[,"LongStart"], na.rm=T)) | (max(x[,"LongStart"], na.rm=T)<0 & 0<min(x[,"LongStart"], na.rm=T))==T)  
                           print("Warning dataset include data east and west of the Prime Meridian")
                           
                           return(x)
