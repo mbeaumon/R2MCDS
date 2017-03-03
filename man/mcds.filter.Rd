@@ -47,6 +47,7 @@ The "Date" column will be transformed in the yyyy-mm-dd format.
 \section{Author}{
 Christian Roy
 }
+
 \examples{
 data(quebec)
 x<- mcds.filter(quebec, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
@@ -54,4 +55,3 @@ x<- mcds.filter(quebec, transect.id = "WatchID", distance.field = "Distance", di
                   long.field = "LongStart", sp.field = "Alpha", date.field = "Date")
 str(x)
 }
-
