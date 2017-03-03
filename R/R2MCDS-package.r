@@ -1,8 +1,8 @@
-#'@title Creating spatial grids and implementing distance sampling from the package unmarked. 
+#'@title Calling  Distance 6.2 MCDS engine from R.
 #'
-#'@description This package allows the user to create spatial grids, plot the animal density and run some basic distance analysis on the dataset.
+#'@description This package will allow the user to call the MCDS engine from Distance 6.2 in the R environment.
 #'
-#'@name GeoAviR
+#'@name R2MCDS
 #'@docType package
 #'@details
 #'\tabular{ll}{
