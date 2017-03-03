@@ -12,7 +12,7 @@
 
 <meta name="author" content="Christian Roy" />
 
-<meta name="date" content="2017-02-14" />
+<meta name="date" content="2017-03-03" />
 
 <title>GeoAviR Multi-species models</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">GeoAviR Multi-species models</h1>
 <h4 class="author"><em>Christian Roy</em></h4>
-<h4 class="date"><em>2017-02-14</em></h4>
+<h4 class="date"><em>2017-03-03</em></h4>
 
 
 
@@ -78,34 +78,34 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2>Multispecies analysis</h2>
 <p>If the user has collected the same data for many species and is interested in running the same model for many species, it is possible to do so via the ‘lsub’ and ‘split’ argument. The ‘lsub’ argument consists of a list that contains all the species that the user want to include in the analysis and the ‘split’ option indicate whether the species should be analyzed together (FALSE) or separately (TRUE).</p>
 <p>For simplicity we will run this example with only one detection function (Half-normal key function with Cosine adjustment). However it is possible to run models with different key functions and subsequently chose the best model for each species.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(GeoAviR)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(R2MCDS)
 
 ### Import and filter data
 <span class="kw">data</span>(quebec)
-d &lt;-<span class="st"> </span><span class="kw">distance.filter</span>(quebec, <span class="dt">transect.id =</span> <span class="st">&quot;WatchID&quot;</span>, <span class="dt">distance.field =</span> <span class="st">&quot;Distance&quot;</span>, 
+d &lt;-<span class="st"> </span><span class="kw">mcds.filter</span>(quebec, <span class="dt">transect.id =</span> <span class="st">&quot;WatchID&quot;</span>, <span class="dt">distance.field =</span> <span class="st">&quot;Distance&quot;</span>, 
                      <span class="dt">distance.labels =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C&quot;</span>, <span class="st">&quot;D&quot;</span>), 
                      <span class="dt">distance.midpoints =</span> <span class="kw">c</span>(<span class="dv">25</span>, <span class="dv">75</span>, <span class="dv">150</span>, <span class="dv">250</span>), 
                      <span class="dt">effort.field =</span> <span class="st">&quot;WatchLenKm&quot;</span>, <span class="dt">lat.field =</span> <span class="st">&quot;LatStart&quot;</span>, 
                      <span class="dt">long.field =</span> <span class="st">&quot;LongStart&quot;</span>, <span class="dt">sp.field =</span> <span class="st">&quot;Alpha&quot;</span>, <span class="dt">date.field =</span> <span class="st">&quot;Date&quot;</span>)
 
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-x&lt;-<span class="kw">distance.wrap</span>(d,<span class="dt">SMP_EFFORT=</span><span class="st">&quot;WatchLenKm&quot;</span>,<span class="dt">DISTANCE=</span><span class="st">&quot;Distance&quot;</span>,<span class="dt">SIZE=</span><span class="st">&quot;Count&quot;</span>,
-                 <span class="dt">units=</span><span class="kw">list</span>(<span class="dt">Type=</span><span class="st">&quot;Line&quot;</span>,<span class="dt">Distance=</span><span class="st">&quot;Perp&quot;</span>,<span class="dt">Length_units=</span><span class="st">&quot;Kilometers&quot;</span>,
-                            <span class="dt">Distance_units=</span><span class="st">&quot;Meters&quot;</span>,<span class="dt">Area_units=</span><span class="st">&quot;Square kilometers&quot;</span>),
-                 <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">200</span>,<span class="dv">300</span>), <span class="dt">estimator=</span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;HN&quot;</span>,<span class="st">&quot;CO&quot;</span>)),
-                 <span class="dt">lsub=</span><span class="kw">list</span>(<span class="dt">Alpha=</span><span class="kw">c</span>(<span class="st">&quot;BLKI&quot;</span>,<span class="st">&quot;GBBG&quot;</span>, <span class="st">&quot;HERG&quot;</span>)), <span class="dt">split=</span><span class="ot">TRUE</span>,
-                 <span class="dt">STR_LABEL=</span><span class="st">&quot;STR_LABEL&quot;</span>,<span class="dt">STR_AREA=</span><span class="st">&quot;STR_AREA&quot;</span>,<span class="dt">SMP_LABEL=</span><span class="st">&quot;WatchID&quot;</span>,
-                 <span class="dt">path=</span><span class="st">&quot;c:/temp/distance&quot;</span>,
-                 <span class="dt">pathMCDS=</span><span class="st">&quot;C:/Distance 6&quot;</span>,<span class="dt">verbose=</span><span class="ot">FALSE</span>)
+x &lt;-<span class="st"> </span><span class="kw">mcds.wrap</span>(d,<span class="dt">SMP_EFFORT=</span><span class="st">&quot;WatchLenKm&quot;</span>,<span class="dt">DISTANCE=</span><span class="st">&quot;Distance&quot;</span>,<span class="dt">SIZE=</span><span class="st">&quot;Count&quot;</span>,
+               <span class="dt">units=</span><span class="kw">list</span>(<span class="dt">Type=</span><span class="st">&quot;Line&quot;</span>,<span class="dt">Distance=</span><span class="st">&quot;Perp&quot;</span>,<span class="dt">Length_units=</span><span class="st">&quot;Kilometers&quot;</span>,
+                          <span class="dt">Distance_units=</span><span class="st">&quot;Meters&quot;</span>,<span class="dt">Area_units=</span><span class="st">&quot;Square kilometers&quot;</span>),
+               <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">200</span>,<span class="dv">300</span>), <span class="dt">estimator=</span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;HN&quot;</span>,<span class="st">&quot;CO&quot;</span>)),
+               <span class="dt">lsub=</span><span class="kw">list</span>(<span class="dt">Alpha=</span><span class="kw">c</span>(<span class="st">&quot;BLKI&quot;</span>,<span class="st">&quot;GBBG&quot;</span>, <span class="st">&quot;HERG&quot;</span>)), <span class="dt">split=</span><span class="ot">TRUE</span>,
+               <span class="dt">STR_LABEL=</span><span class="st">&quot;STR_LABEL&quot;</span>,<span class="dt">STR_AREA=</span><span class="st">&quot;STR_AREA&quot;</span>,<span class="dt">SMP_LABEL=</span><span class="st">&quot;WatchID&quot;</span>,
+               <span class="dt">path=</span><span class="st">&quot;c:/temp/distance&quot;</span>,
+               <span class="dt">pathMCDS=</span><span class="st">&quot;C:/Distance 6&quot;</span>,<span class="dt">verbose=</span><span class="ot">FALSE</span>)
 x</code></pre></div>
 <pre><code>## $BLKI
 ## Distance sampling object fitted via the MCDS engine:
 ## 
 ## Detection function: Half-normal key
 ## 
-## Estimated abundance in covered region: 1 (1-1) 95% CI
+## Estimated abundance in covered region: 2 (1-3) 95% CI
 ## 
-## Model AICc = 3827.4
+## Model AICc = 358.8
 ## 
 ## Files created by the MCDS engine are saved in the diectory:
 ## c:/temp/distance
@@ -114,9 +114,9 @@ x</code></pre></div>
 ## 
 ## Detection function: Half-normal key
 ## 
-## Estimated abundance in covered region: 0 (NA-NA) 95% CI
+## Estimated abundance in covered region: 0 (0-1) 95% CI
 ## 
-## Model AICc = 850.38
+## Model AICc = 76.957
 ## 
 ## Files created by the MCDS engine are saved in the diectory:
 ## c:/temp/distance
@@ -125,97 +125,96 @@ x</code></pre></div>
 ## 
 ## Detection function: Half-normal key
 ## 
-## Estimated abundance in covered region: 0 (NA-NA) 95% CI
+## Estimated abundance in covered region: 0 (0-1) 95% CI
 ## 
-## Model AICc = 1627.9
+## Model AICc = 154.56
 ## 
 ## Files created by the MCDS engine are saved in the diectory:
 ## c:/temp/distance
 ## attr(,&quot;class&quot;)
-## [1] &quot;SpeciesList&quot;</code></pre>
+## [1] &quot;speciesList&quot;</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#output for the Great Black-backed Gull </span>
 <span class="kw">summary</span>(x[[<span class="dv">2</span>]])</code></pre></div>
 <pre><code>## Summary of a distance sampling object fitted via the MCDS engine:
-##  PARAMETERS   VALUES   UNITS     
-##  effort       11496.65 Kilometers
-##  samples      27581.00 Line      
-##  width          300.00 Meters    
-##  left             0.00 Meters    
-##  observations   311.00 clusters  
+##  PARAMETERS   VALUES    UNITS     
+##  effort        837.1255 Kilometers
+##  samples      1042.0000 Line      
+##  width         300.0000 Meters    
+##  left            0.0000 Meters    
+##  observations   26.0000 clusters  
+## 
+## 
+## Detection function used : Half-normal key, k(y) = Exp(-y**2/(2*A(1)**2))
+## Parameters of the detection function:
+##  Parameters  Estimates         SE % of var.  95% Lower  95% Upper df
+##        A(1) 3.2180e+02 2.7340e+02        NA         NA         NA NA
+##        f(0) 3.8216e-03 8.3633e-04     21.88 2.4479e-03 5.9663e-03 25
+##           p 8.7223e-01 1.9088e-01     21.88 5.5869e-01 1.0000e+00 25
+##         ESW 2.6167e+02 5.7263e+01     21.88 1.6761e+02 4.0851e+02 25
+## 
+## Density estimates for the entire survey area:
+##  Parameters Estimates       SE % of var. 95% Lower 95% Upper
+##          DS   0.11869 0.036289     30.57   0.06556   0.21490
+##        E(S)   2.32150 0.471320     20.30   1.53330   3.51490
+##           D   0.27555 0.101130     36.70   0.13623   0.55735
+##           N   0.00000 0.000000     36.70   0.00000   1.00000
+## 
+## Model AICc = 76.957</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">predicted_hist</span>(x[[<span class="dv">2</span>]])</code></pre></div>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">##output for the Herring gull
+<span class="kw">summary</span>(x[[<span class="dv">1</span>]])</code></pre></div>
+<pre><code>## Summary of a distance sampling object fitted via the MCDS engine:
+##  PARAMETERS   VALUES    UNITS     
+##  effort        837.1255 Kilometers
+##  samples      1042.0000 Line      
+##  width         300.0000 Meters    
+##  left            0.0000 Meters    
+##  observations  128.0000 clusters  
 ## 
 ## 
 ## Detection function used : Half-normal key, k(y) = Exp(-y**2/(2*A(1)**2))
 ## Parameters of the detection function:
 ##  Parameters  Estimates         SE % of var.  95% Lower  95% Upper  df
-##        A(1) 3.6670e+02 1.1280e+02        NA         NA         NA  NA
-##        A(2) 8.3880e-02 8.8600e-02        NA         NA         NA  NA
-##        f(0) 4.0245e-03 4.3538e-04     10.82 3.2548e-03 4.9761e-03 309
-##           p 8.2827e-01 8.9605e-02     10.82 6.6987e-01 1.0000e+00 309
-##         ESW 2.4848e+02 2.6882e+01     10.82 2.0096e+02 3.0724e+02 309
+##        A(1) 171.900000 2.0070e+01        NA         NA         NA  NA
+##        A(2)   0.327700 1.2970e-01        NA         NA         NA  NA
+##        f(0)   0.006755 7.8766e-04     11.66 5.3672e-03 8.5016e-03 126
+##           p   0.493460 5.7541e-02     11.66 3.9208e-01 6.2106e-01 126
+##         ESW 148.040000 1.7262e+01     11.66 1.1762e+02 1.8632e+02 126
 ## 
 ## Density estimates for the entire survey area:
-##  Parameters Estimates       SE % of var. 95% Lower 95% Upper
-##          DS   0.10887 0.013673     12.56  0.085149   0.13919
-##        E(S)   1.14770 0.023902      2.08  1.101600   1.19570
-##           D   0.12495 0.015907     12.73  0.097403   0.16028
-##           N   0.00000       NA        NA        NA        NA
+##  Parameters Estimates      SE % of var. 95% Lower 95% Upper
+##          DS    1.0329 0.16309     15.79   0.75866    1.4062
+##        E(S)    1.8042 0.11422      6.33   1.59190    2.0447
+##           D    1.8635 0.31702     17.01   1.33720    2.5969
+##           N    2.0000 0.34025     17.01   1.00000    3.0000
 ## 
-## Model AICc = 850.38</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">predicted_hist</span>(x[[<span class="dv">2</span>]])</code></pre></div>
-<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">##output for the Herring gull
-<span class="kw">summary</span>(x[[<span class="dv">1</span>]])</code></pre></div>
-<pre><code>## Summary of a distance sampling object fitted via the MCDS engine:
-##  PARAMETERS   VALUES   UNITS     
-##  effort       11496.65 Kilometers
-##  samples      27581.00 Line      
-##  width          300.00 Meters    
-##  left             0.00 Meters    
-##  observations  1381.00 clusters  
-## 
-## 
-## Detection function used : Half-normal key, k(y) = Exp(-y**2/(2*A(1)**2))
-## Parameters of the detection function:
-##  Parameters  Estimates         SE % of var.  95% Lower  95% Upper   df
-##        A(1) 2.0140e+02 9.31900000        NA         NA         NA   NA
-##        A(2) 2.5110e-01 0.04014000        NA         NA         NA   NA
-##        f(0) 5.7762e-03 0.00023101         4 5.3405e-03 6.2474e-03 1379
-##           p 5.7708e-01 0.02308000         4 5.3355e-01 6.2416e-01 1379
-##         ESW 1.7312e+02 6.92390000         4 1.6007e+02 1.8725e+02 1379
-## 
-## Density estimates for the entire survey area:
-##  Parameters Estimates       SE % of var. 95% Lower 95% Upper
-##          DS   0.69385 0.034903      5.03   0.62872   0.76572
-##        E(S)   1.33940 0.017171      1.28   1.30610   1.37350
-##           D   0.92930 0.048242      5.19   0.83943   1.02880
-##           N   1.00000 0.051912      5.19   1.00000   1.00000
-## 
-## Model AICc = 3827.4</code></pre>
+## Model AICc = 358.8</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">predicted_hist</span>(x[[<span class="dv">1</span>]])</code></pre></div>
-<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
 </div>
 <div id="rare-species-case" class="section level2">
 <h2>Rare species case</h2>
 <p>It is also possible to correct the observed densities of a rare species by using the detection curve of a similar species by using multipliers. As usual, the user can choose the key function and adjustment for the reference species or can simply let Distance pick the best model for the reference species (estimator=NULL).</p>
 <p>Distance will first estimate the detection function of the reference species and will then fit a uniform detection function to the rare species but will use a multiplier derived from the detection function of the reference species.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#'### </span>
-<span class="kw">library</span>(GeoAviR)
+<span class="kw">library</span>(R2MCDS)
 
 ### Import and filter data
 <span class="kw">data</span>(quebec)
-d &lt;-<span class="st"> </span><span class="kw">distance.filter</span>(quebec, <span class="dt">transect.id =</span> <span class="st">&quot;WatchID&quot;</span>, <span class="dt">distance.field =</span> <span class="st">&quot;Distance&quot;</span>, <span class="dt">distance.labels =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C&quot;</span>, <span class="st">&quot;D&quot;</span>), 
+d &lt;-<span class="st"> </span><span class="kw">mcds.filter</span>(quebec, <span class="dt">transect.id =</span> <span class="st">&quot;WatchID&quot;</span>, <span class="dt">distance.field =</span> <span class="st">&quot;Distance&quot;</span>, <span class="dt">distance.labels =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C&quot;</span>, <span class="st">&quot;D&quot;</span>), 
                      <span class="dt">distance.midpoints =</span> <span class="kw">c</span>(<span class="dv">25</span>, <span class="dv">75</span>, <span class="dv">150</span>, <span class="dv">250</span>), <span class="dt">effort.field =</span> <span class="st">&quot;WatchLenKm&quot;</span>, <span class="dt">lat.field =</span> <span class="st">&quot;LatStart&quot;</span>, 
                      <span class="dt">long.field =</span> <span class="st">&quot;LongStart&quot;</span>, <span class="dt">sp.field =</span> <span class="st">&quot;Alpha&quot;</span>, <span class="dt">date.field =</span> <span class="st">&quot;Date&quot;</span>)
 
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-x&lt;-<span class="kw">distance.wrap</span>(d,<span class="dt">SMP_EFFORT=</span><span class="st">&quot;WatchLenKm&quot;</span>,<span class="dt">DISTANCE=</span><span class="st">&quot;Distance&quot;</span>,<span class="dt">SIZE=</span><span class="st">&quot;Count&quot;</span>,
-                 <span class="dt">units=</span><span class="kw">list</span>(<span class="dt">Type=</span><span class="st">&quot;Line&quot;</span>,<span class="dt">Distance=</span><span class="st">&quot;Perp&quot;</span>,<span class="dt">Length_units=</span><span class="st">&quot;Kilometers&quot;</span>,
-                            <span class="dt">Distance_units=</span><span class="st">&quot;Meters&quot;</span>,<span class="dt">Area_units=</span><span class="st">&quot;Square kilometers&quot;</span>),
-                 <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">200</span>,<span class="dv">300</span>), <span class="dt">estimator=</span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;HN&quot;</span>,<span class="st">&quot;CO&quot;</span>)),
-                 <span class="dt">lsub=</span><span class="kw">list</span>(<span class="dt">Alpha=</span><span class="kw">c</span>(<span class="st">&quot;HERG&quot;</span>)), <span class="dt">rare=</span> <span class="kw">list</span>(<span class="dt">Alpha=</span><span class="kw">c</span>(<span class="st">&quot;RBGU&quot;</span>)), <span class="dt">split=</span><span class="ot">TRUE</span>,
-                 <span class="dt">STR_LABEL=</span><span class="st">&quot;STR_LABEL&quot;</span>,<span class="dt">STR_AREA=</span><span class="st">&quot;STR_AREA&quot;</span>,<span class="dt">SMP_LABEL=</span><span class="st">&quot;WatchID&quot;</span>,
-                 <span class="dt">path=</span><span class="st">&quot;c:/temp/distance&quot;</span>,
-                 <span class="dt">pathMCDS=</span><span class="st">&quot;C:/Distance 6&quot;</span>,<span class="dt">verbose=</span><span class="ot">FALSE</span>)
+x &lt;-<span class="st"> </span><span class="kw">mcds.wrap</span>(d,<span class="dt">SMP_EFFORT=</span><span class="st">&quot;WatchLenKm&quot;</span>,<span class="dt">DISTANCE=</span><span class="st">&quot;Distance&quot;</span>,<span class="dt">SIZE=</span><span class="st">&quot;Count&quot;</span>,
+               <span class="dt">units=</span><span class="kw">list</span>(<span class="dt">Type=</span><span class="st">&quot;Line&quot;</span>,<span class="dt">Distance=</span><span class="st">&quot;Perp&quot;</span>,<span class="dt">Length_units=</span><span class="st">&quot;Kilometers&quot;</span>,
+                          <span class="dt">Distance_units=</span><span class="st">&quot;Meters&quot;</span>,<span class="dt">Area_units=</span><span class="st">&quot;Square kilometers&quot;</span>),
+               <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">200</span>,<span class="dv">300</span>), <span class="dt">estimator=</span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;HN&quot;</span>,<span class="st">&quot;CO&quot;</span>)),
+               <span class="dt">lsub=</span><span class="kw">list</span>(<span class="dt">Alpha=</span><span class="kw">c</span>(<span class="st">&quot;HERG&quot;</span>)), <span class="dt">rare=</span> <span class="kw">list</span>(<span class="dt">Alpha=</span><span class="kw">c</span>(<span class="st">&quot;RBGU&quot;</span>)), <span class="dt">split=</span><span class="ot">TRUE</span>,
+               <span class="dt">STR_LABEL=</span><span class="st">&quot;STR_LABEL&quot;</span>,<span class="dt">STR_AREA=</span><span class="st">&quot;STR_AREA&quot;</span>,<span class="dt">SMP_LABEL=</span><span class="st">&quot;WatchID&quot;</span>,
+               <span class="dt">path=</span><span class="st">&quot;c:/temp/distance&quot;</span>,
+               <span class="dt">pathMCDS=</span><span class="st">&quot;C:/Distance 6&quot;</span>,<span class="dt">verbose=</span><span class="ot">FALSE</span>)
 x</code></pre></div>
 <pre><code>## Distance sampling object fitted via the MCDS engine:
 ## 
@@ -223,36 +222,36 @@ x</code></pre></div>
 ## 
 ## Estimated abundance in covered region: 0 (NA-NA) 95% CI
 ## 
-## Model AICc = 447.08
+## Model AICc = 55.035
 ## 
 ## Files created by the MCDS engine are saved in the diectory:
 ## c:/temp/distance</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">##output for the Ring-billed Gull
 <span class="kw">summary</span>(x)</code></pre></div>
 <pre><code>## Summary of a distance sampling object fitted via the MCDS engine:
-##  PARAMETERS   VALUES   UNITS     
-##  effort       11496.65 Kilometers
-##  samples      27581.00 Line      
-##  width          300.00 Meters    
-##  left             0.00 Meters    
-##  observations   153.00 clusters  
+##  PARAMETERS   VALUES    UNITS     
+##  effort        837.1255 Kilometers
+##  samples      1042.0000 Line      
+##  width         300.0000 Meters    
+##  left            0.0000 Meters    
+##  observations   20.0000 clusters  
 ## 
 ## 
 ## Detection function used : Uniform key, k(y) = 1/W
 ## Parameters of the detection function:
-##  Parameters  Estimates SE % of var.  95% Lower  95% Upper  df
-##        f(0) 3.3333e-03  0         0 3.3333e-03 3.3333e-03 153
-##           p 1.0000e+00  0         0 1.0000e+00 1.0000e+00 153
-##         ESW 3.0000e+02  0         0 3.0000e+02 3.0000e+02 153
+##  Parameters  Estimates SE % of var.  95% Lower  95% Upper df
+##        f(0) 3.3333e-03  0         0 3.3333e-03 3.3333e-03 20
+##           p 1.0000e+00  0         0 1.0000e+00 1.0000e+00 20
+##         ESW 3.0000e+02  0         0 3.0000e+02 3.0000e+02 20
 ## 
 ## Density estimates for the entire survey area:
-##  Parameters Estimates        SE % of var. 95% Lower 95% Upper
-##          DS  0.064323 0.0086172     13.40  0.049524  0.083543
-##        E(S)  1.522900 0.1057700      6.95  1.327800  1.746600
-##           D  0.097955 0.0147820     15.09  0.072987  0.131470
-##           N  0.000000        NA        NA        NA        NA
+##  Parameters Estimates       SE % of var. 95% Lower 95% Upper
+##          DS   0.10679 0.033802     31.65  0.058227   0.19587
+##        E(S)   1.20000 0.091766      7.65  1.022800   1.40800
+##           D   0.12815 0.041730     32.56  0.068720   0.23899
+##           N   0.00000       NA        NA        NA        NA
 ## 
-## Model AICc = 447.08</code></pre>
+## Model AICc = 55.035</code></pre>
 </div>
 
 
