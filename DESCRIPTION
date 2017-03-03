@@ -1,4 +1,4 @@
-Package: GeoAviR
+Package: R2MCDS
 Type: Package
 Title: Calling MCDS from R. 
 Version: 0.9.0
