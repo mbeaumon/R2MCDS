@@ -9,6 +9,7 @@ Version 0.9.0
 * Renamed distance.wrap function to mcds.wrap
 * Renamed distance.filter to mcds.filter
 * Replaced hist.wrap with "observation_hist" and "predicted_hist" 
+* Re-extracted the dataset from ECSAS and added a new dataset (Laridae) 
 * Removed the gridding functions
 * Removed the plotting functions
 * Removed filterECSAS
