@@ -1,5 +1,5 @@
 ## ----warning=FALSE,message=FALSE-----------------------------------------
-library(GeoAviR)
+library(R2MCDS)
 ### Import and filter data
 data(alcidae)
 alcids <- mcds.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", 
@@ -30,7 +30,7 @@ summary(x.best)
 predicted_hist(x.best)
 
 ## ----warning=FALSE,message=FALSE-----------------------------------------
-library(GeoAviR)
+library(R2MCDS)
 ### Import and filter data
 data(alcidae)
 alcids <- mcds.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", 

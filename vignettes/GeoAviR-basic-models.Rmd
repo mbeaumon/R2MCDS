@@ -23,7 +23,7 @@ If the user does not input any models via the estimator argument the function di
 - Hazard rate key function with Simple polynomial adjustement
 
 ```{r,warning=FALSE,message=FALSE}
-library(GeoAviR)
+library(R2MCDS)
 ### Import and filter data
 data(alcidae)
 alcids <- mcds.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", 
@@ -77,7 +77,7 @@ predicted_hist(x.best)
 It is possible for the user to select the key function and adjustment. For example, instead of running the 6 models by default the user may want to restrict his analysis to the half-normal key function with a cosine adjustment and the hazard rate key function with a polynomial adjustment. He can do so via the 'estimator' option. The estimator option consists of a list of elements where each element is a vector containing the first two letters of the key function and the first two letters of the expansion term. It is important to remember, however, that the list of detection key is restricted to the 6 key that have been presented above. 
 
 ```{r,warning=FALSE,message=FALSE}
-library(GeoAviR)
+library(R2MCDS)
 ### Import and filter data
 data(alcidae)
 alcids <- mcds.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", 
@@ -99,7 +99,7 @@ x
 summary(x[[2]])
 ```
 
-Once again it is possible to select the best model via the _keep.best.model()_ function.
+Once again it is possible to select the model with the lowest AIC value via the _keep.best.model()_ function.
 
 ```{r,warning=FALSE,message=FALSE,fig.height=5,fig.width=5,fig.align='center'}
 ##### Keep the 'best' model in the list

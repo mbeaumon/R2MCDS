@@ -12,7 +12,7 @@ alcids <- mcds.filter(alcidae, transect.id = "WatchID", distance.field = "Distan
 x <- mcds.wrap(alcids,SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
                    units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
                               Distance_units="Meters",Area_units="Square kilometers"),
-                   factor = c("ObserverName"), monotone = "none",
+                   factor = c("Observer"), monotone = "none",
                    breaks=c(0,50,100,200,300), SMP_LABEL="WatchID",
                    STR_LABEL="STR_LABEL",STR_AREA="STR_AREA",
                    path="c:/temp/distance",
