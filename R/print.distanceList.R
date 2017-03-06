@@ -17,6 +17,6 @@ print.distanceList <- function(x, ...){
     cat(paste("Model AICc = ",x[[i]]$AIC[3],sep=""))
     cat("\n\n")
   }
-  cat("\nFiles created by the MCDS engine are saved in the diectory:\n")
+  cat("\nFiles created by the MCDS engine are saved in the directory:\n")
   cat(x[[1]]$path)
 }
