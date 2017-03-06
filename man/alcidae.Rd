@@ -3,39 +3,27 @@
 \docType{data}
 \name{alcidae}
 \alias{alcidae}
-\title{sample dataset for the distance analysis}
-\format{A data frame with 281 observations on the following 19 variables.
+\title{sample dataset distance analysis}
+\format{A data frame with 1670 observations on the following 14 variables.
  \describe{
    \item{\code{CruiseID}}{unique cruise ID.}
-   \item{\code{Start.Date}}{start date of the cruise.}
-   \item{\code{End.Date}}{end date of the cruise.}
-   \item{\code{WatchID}}{unique 5-min watch ID.}
-   \item{\code{Observer1}}{name of first Observer.}
+   \item{\code{WatchID}}{unique watch ID.}
+   \item{\code{Observer}}{Categorical variable identifying the different observers.}
    \item{\code{Date}}{date of the watch.}
    \item{\code{StartTime}}{start time of the watch.}
    \item{\code{EndTime}}{end time of the watch.}
    \item{\code{LatStart}}{latitude at start of the watch, decimal degrees.}
    \item{\code{LongStart}}{longitude at start of the watch, decimal degrees.}
-   \item{\code{WatchLenKm}}{distance travelled during the watch in kilometers.}
-   \item{\code{Snapshot}}{whether snapshot method was used or not for flying birds.}
+   \item{\code{WatchLenKm}}{distance travelled during the watch in kilometers (estimated from platform speed and observation length since many watches don't have start and end positions).}
    \item{\code{Alpha}}{four letter code of the species.}
    \item{\code{English}}{English name.}
    \item{\code{Latin}}{scientific name.}
    \item{\code{Distance}}{Classes of distances for the observations. A=0-50m, B=50-100m, C=100-200m, D=200-300m.}
-   \item{\code{InTransect}}{Are the observations made in the transect or outside of the transect}
    \item{\code{Count}}{number of individuals.}
-   \item{\code{Year}}{Year the observations were made.}
  }}
 \description{
-A simulated sample dataset based on the observation made in the Eastern Canada Seabirds At Sea (ECSAS) program in the Gulf of St-Lawrence.
-}
-\examples{
-data(alcidae)
-###Check the na?ve detection histogram
-hist.wrap(alcidae,Trn.Value="Count", Dist.class="Distance", Keep.class=c("A", "B", "C", "D"),
-         Breaks=c(0,50,100,200,300), Trn.ID="WatchID",  Trn.length="WatchLenKm", Resume=F)
-#END
+A sample dataset containing observation of alcidae made in the Eastern Canada Seabirds At Sea (ECSAS) program.
 }
 \seealso{
-\code{\link{filterECSAS}}
+\code{\link{mcds.filter}}
 }
