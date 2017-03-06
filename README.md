@@ -1,17 +1,17 @@
 R2MCDS
 =======
-The package allows the user to create spatial grids, plot the observed animal density and run some basic distance analysis via the MCDS engine of Distance 6.2.
+This package will allow the user to call the MCDS engine from Distance 6.2 in the R environment.
 
 Version 0.9.0
 =======
 * Renamed package 
+* Updated vignettes
 * Renamed distance.wrap function to mcds.wrap
 * Renamed distance.filter to mcds.filter
 * Replaced hist.wrap with "observation_hist" and "predicted_hist" 
 * Removed the gridding functions
 * Removed the plotting functions
 * Removed filterECSAS
-* Updated vignettes
 
 Version 0.8.3
 =======
