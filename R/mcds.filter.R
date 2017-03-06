@@ -59,12 +59,9 @@ function(x, transect.id="WatchID",distance.field="Distance", distance.labels=c("
                         	x[,"Distance"]<-as.character(x[,"Distance"])
                           
                         	if (dist2m) {
-                            for(i in 1:length(distance.labels)){
-                              x[,"Distance"]<-ifelse(x[,"Distance"]==distance.labels[i],distance.midpoints[i],x[,"Distance"])
-                            }
+                        	  x[,"Distance"] <- as.numeric(as.character(factor(x[,"Distance"], labels=distance.midpoints)))
                         	}
                           
-                        	
                         	x<-x[!x[,"Alpha"] %in% c(NA, ""),] #keep only observation that are not empty
                         	y<-y[!y[,"WatchID"]%in%x[,"WatchID"],] #keep only WatchID that are not already in x
                         	# Do not perform unnecessary lengthy rbind
