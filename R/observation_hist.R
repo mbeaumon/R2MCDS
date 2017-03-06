@@ -9,6 +9,7 @@
 #'@param keep.class which class of observations should be used for the analysis.
 #'@param breaks what are the intervals for the distance analysis.
 #'@param color fill color for the bars
+#'@param ungroup will plot the Count histogram instead of the group histogram if TRUE 
 #'@param rescale set the height of the first bin
 #'@details
 #' Make a histogram of the observations in function of the distance class
@@ -22,12 +23,17 @@
 #'#END
 
 
-observation_hist <- function(dataset, count, dist.class, keep.class, breaks, color="white", rescale=1){
+observation_hist <- function(dataset, count, dist.class, keep.class, breaks, color="white",ungroup=F, rescale=1){
     
     ##Keep only the distance class desired
     dataset <- droplevels(dataset[dataset[,dist.class]%in%keep.class,])
-    ## Make sure to transform groups into individuals
-    Observations <- rep(dataset[,dist.class],as.numeric(dataset[,count]))
+    if(ungroup==T){
+      ## Make sure to transform groups into individuals
+      Observations <- rep(dataset[,dist.class],as.numeric(dataset[,count]))
+    }else{
+      Observations <- dataset[,dist.class]
+    }
+
     levels(Observations) <- sapply(2:length(breaks), function(i){ mean(c(breaks[i-1],breaks[i]))})
     ##Make histogram df
     d <- as.numeric(as.character(Observations))
