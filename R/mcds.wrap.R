@@ -103,12 +103,12 @@
 #'### Simple models without stratification
 #'### Import and filter data
 #'data(alcidae)
-#'alcids <- distance.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
+#'alcids <- mcds.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
 #'                          distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", lat.field = "LatStart", 
 #'                          long.field = "LongStart", sp.field = "Alpha", date.field = "Date") 
 #'
 #'### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-#'dist.out1 <-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
+#'dist.out1 <- mcds.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
 #'                          units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
 #'                                     Distance_units="Meters",Area_units="Square kilometers"),
 #'                          breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
@@ -118,7 +118,7 @@
 #'
 #'summary(dist.out1)
 #'### Run separate analysis for years 2008-2009
-#'dist.out2 <- distance.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
+#'dist.out2 <- mcds.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
 #'                           units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
 #'                                      Distance_units="Meters",Area_units="Square kilometers"),
 #'                           breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
@@ -134,7 +134,7 @@
 #'#END
 
 
-distance.wrap <-
+mcds.wrap <-
   function(dataset,
            path,
            pathMCDS,
@@ -237,7 +237,7 @@ distance.wrap <-
       arguments[["detection"]]<-"All"
       arguments[["rare"]]<-NULL
       arguments[["verbose"]]<-FALSE
-      premod<-do.call("distance.wrap",arguments)
+      premod<-do.call("mcds.wrap",arguments)
       if(class(premod)=="distanceFit"){
         best.premod <- premod
       }else{

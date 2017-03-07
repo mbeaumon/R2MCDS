@@ -15,7 +15,7 @@ print.distanceFit <- function(x, ...){
   cat("\n\n")
   cat(paste("Model AICc = ",as.numeric(x$AIC[3]),sep=""))
   cat("\n")
-  cat("\nFiles created by the MCDS engine are saved in the diectory:\n")
+  cat("\nFiles created by the MCDS engine are saved in the directory:\n")
   cat(x$path)
 }
 

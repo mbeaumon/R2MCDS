@@ -5,7 +5,7 @@
 \title{Plot a detection histogram of apparent density.}
 \usage{
 observation_hist(dataset, count, dist.class, keep.class, breaks,
-  color = "white", rescale = 1)
+  color = "white", ungroup = F, rescale = 1)
 }
 \arguments{
 \item{dataset}{A \code{\link{data.frame}} containing observations.}
@@ -19,6 +19,8 @@ observation_hist(dataset, count, dist.class, keep.class, breaks,
 \item{breaks}{what are the intervals for the distance analysis.}
 
 \item{color}{fill color for the bars}
+
+\item{ungroup}{will plot the Count histogram instead of the group histogram if TRUE}
 
 \item{rescale}{set the height of the first bin}
 }

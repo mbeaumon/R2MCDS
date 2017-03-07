@@ -23,23 +23,23 @@ If the user does not input any models via the estimator argument the function di
 - Hazard rate key function with Simple polynomial adjustement
 
 ```{r,warning=FALSE,message=FALSE}
-library(GeoAviR)
+library(R2MCDS)
 ### Import and filter data
 data(alcidae)
-alcids<-distance.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", 
-                        distance.labels = c("A", "B", "C", "D"), 
-                        distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", 
-                        lat.field = "LatStart", long.field = "LongStart", 
-                        sp.field = "Alpha", date.field = "Date")
+alcids <- mcds.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", 
+                          distance.labels = c("A", "B", "C", "D"), 
+                          distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", 
+                          lat.field = "LatStart", long.field = "LongStart", 
+                          sp.field = "Alpha", date.field = "Date")
 
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-x<-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
-                 units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
-                            Distance_units="Meters",Area_units="Square kilometers"),
-                 breaks=c(0,50,100,200,300), STR_LABEL="STR_LABEL", 
-                 STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
-                 path="c:/temp/distance",
-                 pathMCDS="C:/Distance 6",verbose=FALSE)
+x <- mcds.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
+                   units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
+                              Distance_units="Meters",Area_units="Square kilometers"),
+                   breaks=c(0,50,100,200,300), STR_LABEL="STR_LABEL", 
+                   STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
+                   path="c:/temp/distance",
+                   pathMCDS="C:/Distance 6",verbose=FALSE)
 ```
 The distance.warp function will return a warning after fitting each model (not shown in the example above). These warning will include a "status" number that is associated with the status of the model by the MCDS engine. The numbers should be intrepreted as:
 
@@ -77,29 +77,29 @@ predicted_hist(x.best)
 It is possible for the user to select the key function and adjustment. For example, instead of running the 6 models by default the user may want to restrict his analysis to the half-normal key function with a cosine adjustment and the hazard rate key function with a polynomial adjustment. He can do so via the 'estimator' option. The estimator option consists of a list of elements where each element is a vector containing the first two letters of the key function and the first two letters of the expansion term. It is important to remember, however, that the list of detection key is restricted to the 6 key that have been presented above. 
 
 ```{r,warning=FALSE,message=FALSE}
-library(GeoAviR)
+library(R2MCDS)
 ### Import and filter data
 data(alcidae)
-alcids<-distance.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", 
-                        distance.labels = c("A", "B", "C", "D"), 
-                        distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", 
-                        lat.field = "LatStart", long.field = "LongStart", 
-                        sp.field = "Alpha", date.field = "Date")
+alcids <- mcds.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", 
+                      distance.labels = c("A", "B", "C", "D"), 
+                      distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", 
+                      lat.field = "LatStart", long.field = "LongStart", 
+                      sp.field = "Alpha", date.field = "Date")
 
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-x<-distance.wrap(alcids,SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
-                 units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
+x <- mcds.wrap(alcids,SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
+               units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
                             Distance_units="Meters",Area_units="Square kilometers"),
-                 breaks=c(0,50,100,200,300), SMP_LABEL="WatchID",
-                 STR_LABEL="STR_LABEL",STR_AREA="STR_AREA",
-                 estimator=list(c("HN","CO"),c("HA","PO")),
-                 path="c:/temp/distance",
-                 pathMCDS="C:/Distance 6",verbose=FALSE)
+               breaks=c(0,50,100,200,300), SMP_LABEL="WatchID",
+               STR_LABEL="STR_LABEL",STR_AREA="STR_AREA",
+               estimator=list(c("HN","CO"),c("HA","PO")),
+               path="c:/temp/distance",
+               pathMCDS="C:/Distance 6",verbose=FALSE)
 x
 summary(x[[2]])
 ```
 
-Once again it is possible to select the best model via the _keep.best.model()_ function.
+Once again it is possible to select the model with the lowest AIC value via the _keep.best.model()_ function.
 
 ```{r,warning=FALSE,message=FALSE,fig.height=5,fig.width=5,fig.align='center'}
 ##### Keep the 'best' model in the list

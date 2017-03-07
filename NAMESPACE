@@ -1,6 +1,6 @@
 exportPattern("^[[:alpha:]]+")
-export(distance.filter)
-export(distance.wrap)
+export(mcds.filter)
+export(mcds.wrap)
 export(observation_hist)
 export(predicted_hist)
 export(resume.plot)

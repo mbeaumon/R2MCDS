@@ -12,7 +12,7 @@
 
 <meta name="author" content="Christian Roy" />
 
-<meta name="date" content="2017-02-14" />
+<meta name="date" content="2017-03-05" />
 
 <title>GeoAviR Multi-species models</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">GeoAviR Multi-species models</h1>
 <h4 class="author"><em>Christian Roy</em></h4>
-<h4 class="date"><em>2017-02-14</em></h4>
+<h4 class="date"><em>2017-03-05</em></h4>
 
 
 
@@ -78,34 +78,34 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <h2>Multispecies analysis</h2>
 <p>If the user has collected the same data for many species and is interested in running the same model for many species, it is possible to do so via the ‘lsub’ and ‘split’ argument. The ‘lsub’ argument consists of a list that contains all the species that the user want to include in the analysis and the ‘split’ option indicate whether the species should be analyzed together (FALSE) or separately (TRUE).</p>
 <p>For simplicity we will run this example with only one detection function (Half-normal key function with Cosine adjustment). However it is possible to run models with different key functions and subsequently chose the best model for each species.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(GeoAviR)
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(R2MCDS)
 
 ### Import and filter data
-<span class="kw">data</span>(quebec)
-d &lt;-<span class="st"> </span><span class="kw">distance.filter</span>(quebec, <span class="dt">transect.id =</span> <span class="st">&quot;WatchID&quot;</span>, <span class="dt">distance.field =</span> <span class="st">&quot;Distance&quot;</span>, 
+<span class="kw">data</span>(laridae)
+d &lt;-<span class="st"> </span><span class="kw">mcds.filter</span>(laridae, <span class="dt">transect.id =</span> <span class="st">&quot;WatchID&quot;</span>, <span class="dt">distance.field =</span> <span class="st">&quot;Distance&quot;</span>, 
                      <span class="dt">distance.labels =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C&quot;</span>, <span class="st">&quot;D&quot;</span>), 
                      <span class="dt">distance.midpoints =</span> <span class="kw">c</span>(<span class="dv">25</span>, <span class="dv">75</span>, <span class="dv">150</span>, <span class="dv">250</span>), 
                      <span class="dt">effort.field =</span> <span class="st">&quot;WatchLenKm&quot;</span>, <span class="dt">lat.field =</span> <span class="st">&quot;LatStart&quot;</span>, 
                      <span class="dt">long.field =</span> <span class="st">&quot;LongStart&quot;</span>, <span class="dt">sp.field =</span> <span class="st">&quot;Alpha&quot;</span>, <span class="dt">date.field =</span> <span class="st">&quot;Date&quot;</span>)
 
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-x&lt;-<span class="kw">distance.wrap</span>(d,<span class="dt">SMP_EFFORT=</span><span class="st">&quot;WatchLenKm&quot;</span>,<span class="dt">DISTANCE=</span><span class="st">&quot;Distance&quot;</span>,<span class="dt">SIZE=</span><span class="st">&quot;Count&quot;</span>,
-                 <span class="dt">units=</span><span class="kw">list</span>(<span class="dt">Type=</span><span class="st">&quot;Line&quot;</span>,<span class="dt">Distance=</span><span class="st">&quot;Perp&quot;</span>,<span class="dt">Length_units=</span><span class="st">&quot;Kilometers&quot;</span>,
-                            <span class="dt">Distance_units=</span><span class="st">&quot;Meters&quot;</span>,<span class="dt">Area_units=</span><span class="st">&quot;Square kilometers&quot;</span>),
-                 <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">200</span>,<span class="dv">300</span>), <span class="dt">estimator=</span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;HN&quot;</span>,<span class="st">&quot;CO&quot;</span>)),
-                 <span class="dt">lsub=</span><span class="kw">list</span>(<span class="dt">Alpha=</span><span class="kw">c</span>(<span class="st">&quot;BLKI&quot;</span>,<span class="st">&quot;GBBG&quot;</span>, <span class="st">&quot;HERG&quot;</span>)), <span class="dt">split=</span><span class="ot">TRUE</span>,
-                 <span class="dt">STR_LABEL=</span><span class="st">&quot;STR_LABEL&quot;</span>,<span class="dt">STR_AREA=</span><span class="st">&quot;STR_AREA&quot;</span>,<span class="dt">SMP_LABEL=</span><span class="st">&quot;WatchID&quot;</span>,
-                 <span class="dt">path=</span><span class="st">&quot;c:/temp/distance&quot;</span>,
-                 <span class="dt">pathMCDS=</span><span class="st">&quot;C:/Distance 6&quot;</span>,<span class="dt">verbose=</span><span class="ot">FALSE</span>)
+x &lt;-<span class="st"> </span><span class="kw">mcds.wrap</span>(d,<span class="dt">SMP_EFFORT=</span><span class="st">&quot;WatchLenKm&quot;</span>,<span class="dt">DISTANCE=</span><span class="st">&quot;Distance&quot;</span>,<span class="dt">SIZE=</span><span class="st">&quot;Count&quot;</span>,
+               <span class="dt">units=</span><span class="kw">list</span>(<span class="dt">Type=</span><span class="st">&quot;Line&quot;</span>,<span class="dt">Distance=</span><span class="st">&quot;Perp&quot;</span>,<span class="dt">Length_units=</span><span class="st">&quot;Kilometers&quot;</span>,
+                          <span class="dt">Distance_units=</span><span class="st">&quot;Meters&quot;</span>,<span class="dt">Area_units=</span><span class="st">&quot;Square kilometers&quot;</span>),
+               <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">200</span>,<span class="dv">300</span>), <span class="dt">estimator=</span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;HN&quot;</span>,<span class="st">&quot;CO&quot;</span>)),
+               <span class="dt">lsub=</span><span class="kw">list</span>(<span class="dt">Alpha=</span><span class="kw">c</span>(<span class="st">&quot;GBBG&quot;</span>,<span class="st">&quot;BLKI&quot;</span>,<span class="st">&quot;HERG&quot;</span>)), <span class="dt">split=</span><span class="ot">TRUE</span>,
+               <span class="dt">STR_LABEL=</span><span class="st">&quot;STR_LABEL&quot;</span>,<span class="dt">STR_AREA=</span><span class="st">&quot;STR_AREA&quot;</span>,<span class="dt">SMP_LABEL=</span><span class="st">&quot;WatchID&quot;</span>,
+               <span class="dt">path=</span><span class="st">&quot;c:/temp/distance&quot;</span>,
+               <span class="dt">pathMCDS=</span><span class="st">&quot;C:/Distance 6&quot;</span>,<span class="dt">verbose=</span><span class="ot">FALSE</span>)
 x</code></pre></div>
 <pre><code>## $BLKI
 ## Distance sampling object fitted via the MCDS engine:
 ## 
 ## Detection function: Half-normal key
 ## 
-## Estimated abundance in covered region: 1 (1-1) 95% CI
+## Estimated abundance in covered region: 12 (9-15) 95% CI
 ## 
-## Model AICc = 3827.4
+## Model AICc = 574.28
 ## 
 ## Files created by the MCDS engine are saved in the diectory:
 ## c:/temp/distance
@@ -114,9 +114,9 @@ x</code></pre></div>
 ## 
 ## Detection function: Half-normal key
 ## 
-## Estimated abundance in covered region: 0 (NA-NA) 95% CI
+## Estimated abundance in covered region: 2 (1-2) 95% CI
 ## 
-## Model AICc = 850.38
+## Model AICc = 356.83
 ## 
 ## Files created by the MCDS engine are saved in the diectory:
 ## c:/temp/distance
@@ -125,105 +125,135 @@ x</code></pre></div>
 ## 
 ## Detection function: Half-normal key
 ## 
-## Estimated abundance in covered region: 0 (NA-NA) 95% CI
+## Estimated abundance in covered region: 3 (2-4) 95% CI
 ## 
-## Model AICc = 1627.9
+## Model AICc = 447.58
 ## 
 ## Files created by the MCDS engine are saved in the diectory:
 ## c:/temp/distance
 ## attr(,&quot;class&quot;)
-## [1] &quot;SpeciesList&quot;</code></pre>
+## [1] &quot;speciesList&quot;</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">##output for the Black-legged Kittiwake
+<span class="kw">summary</span>(x[[<span class="dv">1</span>]])</code></pre></div>
+<pre><code>## Summary of a distance sampling object fitted via the MCDS engine:
+##  PARAMETERS   VALUES   UNITS     
+##  effort       994.7093 Kilometers
+##  samples      443.0000 Line      
+##  width        300.0000 Meters    
+##  left           0.0000 Meters    
+##  observations 252.0000 clusters  
+## 
+## 
+## Detection function used : Half-normal key, k(y) = Exp(-y**2/(2*A(1)**2))
+## Parameters of the detection function:
+##  Parameters  Estimates         SE % of var. 95% Lower 95% Upper  df
+##        A(1) 107.800000 6.07600000        NA        NA        NA  NA
+##        A(2)   0.643000 0.09332000        NA        NA        NA  NA
+##        f(0)   0.011665 0.00057241      4.91  0.010591  0.012848 250
+##           p   0.285750 0.01402200      4.91  0.259440  0.314720 250
+##         ESW  85.725000 4.20650000      4.91 77.832000 94.417000 250
+## 
+## Density estimates for the entire survey area:
+##  Parameters Estimates      SE % of var. 95% Lower 95% Upper
+##          DS    2.9553 0.23745      8.03    2.5246    3.4594
+##        E(S)    3.9986 0.35328      8.84    3.3611    4.7569
+##           D   11.8170 1.41120     11.94    9.3546   14.9270
+##           N   12.0000 1.43310     11.94    9.0000   15.0000
+## 
+## Model AICc = 574.28</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">predicted_hist</span>(x[[<span class="dv">1</span>]])</code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAeAAAAHgCAMAAABKCk6nAAAAsVBMVEUAAAAAADoAAGYAOpAAZrYzMzM6AAA6ADo6AGY6kNtNTU1NTW5NTY5NbqtNjshmAABmtv9uTU1uTW5uTY5ubqtuq8huq+SOTU2OTW6OTY6ObquOyP+QOgCQtpCQ27aQ2/+rbk2rbm6rjk2ryKur5P+w4Oa2ZgC22/+2///Ijk3I///bkDrb/7bb///kq27k////tmb/yI7/25D/27b/29v/5Kv//7b//8j//9v//+T////iPycYAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAQF0lEQVR4nO3dC3vTyBWAYbEEtjG3UCiXhhbaonRJCkloQ8D//4dVkuWLbI1mpJmjmTn+vudp0Xoty553R5YcORRLUl0R+wmQbAArD2DlAaw8gJUHsPKmAfOfRTYBrDyAlQew8gBWHsDKA1h5ACsPYOUBrDyAlQew8gBWHsDKA1h5ACsPYOUBrDyAlZcKcOFb8GekpGSAS78ANgSw8gBWHsDKA1h5ACsPYOUBrDyAlQew8gBWHsDKA1h5ACsPYOUBrDyAlQew8gBWHsDKA1h5ACsPYOUBrDyAlQew8gBWHsDKA1h5ACsvGLDnVzgBFioosE8AyyQAPA0IYJnCAVeD7EEMsFAhgZuBnigMsFChgVtigFMpPPA0YoCFkgCeIgywUCLAE4QBFkoGeEUMcAJJAY8VBlgoMeCRwgALJQc8ThhgoQSBRwkDLJQk8BhhgIUSBS4Bjp44sKMcwELJArsLAyyUMLCzMMBCSQO7CgMslDiw44EWwELNAuygB7BQ8sBuwgALNQOw004aYKFmArb6ASzUHMAuwgALNQuww04aYKFmA7YIAizUPMB2YYCFmgnYupMGWKgZgYd34gDLNBewTRhgoWYDtuykARZqVuChD0MAlskyMPdvF8+um6W7l4unlwNrOXwaCXCEhgfm16fz5bfn9dL922qptZ4OPPATCYBlGh6Y+/eXy7tX9cS9e329vH/32byWy48EAZ6/4YHZsm6XHlUBnE3DA3P7bM3a7KKfeM9g82UBAMvkOoPrg6y//MMPeGgKAyyU63vw+p+MawGcZraj6Dfro+hqHq+WDGs5AhsvvgRYJqfz4HoS3y4Wm7OkqcADUxhgoeb7JKsFNl0gD7BM8wKbpzDAQs0PbPgSE8AyzQxsnMIACxUBuP+LpgDLNDewaQoDLFQM4N7f9gCwTLMDG6YwwEJFAe77jTwAyzQ/cP8UBlioOMA9vzUNYJkiAPdOYYCFigR8cG+AhYoB3DeFARYqFvD+3QEWKgpwzxQGWCiAlRcNeO/+AAsVB/hwCgMsVDzg7goACxUJ+GAKAywUwMqLCNxZA2ChYgHvT2GAhYoJvLsKwEJFAy4BnqWowDvrACxUPOAS4DmKC7xdCWChIgKXAM8QwMqLDLxZC2ChYgKXAMsXG3i9GsBCRQUuARYPYOVFBy4AFi0ucAmwdPGBC4AliwxcAiwcwMpLALgAWLDYwCXAsqUAXAAsV3TgEmDRAFZeEsAFwGLFBy4BliwN4AJgqRIALgEWDGDlJQJs+xvgAZ5aCsD2vwAe4MkBrDyAlZcEsOVvBwfYI4CVtzswP148+Dh+rfVNnsCewgAb6g7MRVE8/Dp6rdVNfj4AC7U/MD9eFMXp6LWWAYA9HyDMcOjrcGBq4t/+GLuWJ7D3FAbY0P7AXBXFSbWrtuyoAc6mzsD8/FAUZ/XCjWUKiwD7HaYFHBNVdY+ibbvmvrXWNwGcZF1gp+m7lAL2+jAs2IgoKxlgz3dhgA1tB+aqWHcyYq3tTQAnWc8MHrnW+qYAwD4/Uw4xGBpL47Po5qI7gCXaDEw1feuPOOrivAcDLFJaM9jj0kzPcVBbQsBeUxhgQzu76M1RdKRdNMASJTaDp38BxnMc1JYSsM8UBthQQkfRXlMYYENJzWCPKQywIYCV1x2Ym3on6fB5pSDw1F/mEmg81NUZmKv63ffHiwjXZK2/fAZw6NL5cSHAIqUHPPF3IgYbEWV1BuZmtYu2vwmLAU+ewgAbSumjSoAFSus0afo+GmBDqQFPncIAG+oMzPfH0XfRU6cwwIZ2B+bnh9OfH87iHmRNncIAG9o/Tbo4Xd7Yv2AIcDbtA1+dRD0PLqfuowE21BmYi0b3Ku4MnjaFATa09+Wz0+VF4fA1f4CzKbnTpIn7aIANJQg8aQoDbCitnwcDHLzEfh68Bh79aAAbSuzHhRthgAMFsPJS+3nwGnjswwFsyPLz4Pu3i2fXzdKvT4snnw/W2nmggMATpjDAhoYH5ten8+W3583il/PlbWsNcEYND8z9+8vl3avLdmlwrdDAIx8PYEPdgWl+T8fOWdLd6+vl/bvPzdI/2130oypp4PFTGGBDw+fB9U65BX553nD3rNXeFBp43AMCbGj4NGl3Bq+X9tda3xQUePQUBtjQMPDOe/BfAc6y4V30r09vdo6iZ9xFj95HA2xo+CCrPQ+uJ3G19PSyf63VTWGBx05hgA2l+ONCgAPWvaoy5m+6OwQe85AAG+o5yBq51vqmwMAjpzDAhroHWU5/I8f+Wu1NACdZdwbH//JZB3jEYwJsKNmDrJFTGGBDaQO7PyjAhnrOg6NfdLcjDLBvKV50B3DAkrwmawvs/KgAG0oZeMwUBthQ96K7+mtJ6eyiAQ5Q33mw/VR4PmDXhwXYUMKnSeWYKQywIYCVlzyw4+MCbChtYPcpDLCh9IHdHhhgQ4kDO09hgA0l94vQAA5b95Id+987erjW+iYxYKdHBthQupfsbIUB9ijZi+4ADtPhF8BHr9XeJAfs8tAAG0r3mqwdYYCnl/ppEsCeZQHs8NgAG7J8N8lprdVNUsBuUxhgQylfk7UFtj84wIaSvmRnKwzw1ABWXga7aKd9NMCGMjjIcprCABtK/zSpdJrCABvKAthhCgNsaDMw1RFWmh9VAuxVNjPY8vgAG8rhNKl0mMIAGwJYeduBudp8b8V+4U4MYMtOPOSgaCr5S3a2wgBPKY+DLIAn1xmY+q+2c7q0Mgrw8GchoQZEW52BuahtXYTnB7ZNYYANZXIUbZ3CABvKBtgyhQE2lMOPCwH2qDswN2n+uHANPHRdT6DxUFcup0mlZQoDbCgv4IGLaz3HQW0HV3ScufxO4SjAg1MYYEPd8+CH/3lxluh5MMDT2jtNqs+UEj1NGt5HA2woJ+ChKQywoe55cL2LTvU8uBycwgAbyuc8uBUGeFwZnSYBPKV8PotugU2/UCvYiCgrL2DzFAbYUCbXZO0A998TYEO5XJO1IwzwmPI6yAJ4dDl9Ft0C994VYEM5fRa9FgZ4RFl9VNkC990XYEPZARumMMCGsvosGuDx5fVZdAvcc2eADeV2mlQapjDAhvIEPrw3wIZ2B6bZQbv87bJxgXunMMCGtgPz80Nz9PzjRdIfdAA8sp0fNrSw9VcM3dfa3jQr8MHdATa0GZjt7/N3+KwyLnDfFAbY0O6vUWqXEv+go+ydwgAbyhK4ZwoDbAhg5WULvLcCwIZ2gDeX7KQPfDiFATaU4SdZLXB3DYANZQp8MIUBNgSw8jIG7qwCsKFcgfenMMCGcgbeXQdgQ9kClwA7lTXwzkoAG8oXuATYpbyBt2sBbChj4BJghwBWXubAm9UANpQzcAmwvdyB1+sBbChr4BJga9kDFwAPljdwCbCt/IELgIeyDMz928Wz62bpdrF4ejmwVhzgEmBLwwPz69P58tvzeunu1WW7ZFgrHnAB8EDDA3P//rKhXbVdSge4BHi44YG5e329vH/3uf2n1Qx+VJUWcAGwueGBuX22Bb57+WQtndIMLgEebMwM3i4lBlwAbGzMe/Dyy7l5rWjAJcBD2Y6i37TvvLs76/SAC4BNOZ0HN+dIi0Wa78GrKQywocw/yQLYlhLgAmBDGoBLgM0BrDwVwAib0wFcAmxKDzDCvSkBZgqbUgSMcF8AK08TMMI9qQFeAtybKmCED9MDzBTuTRcwwgcpAmYK96UMGOH9NAEj3JMqYHbSh6kDRribLmCm8EH6gBHupAyYKbyfQmCEd9MGjPBe6oDZSXdTCYzwNn3ATOFOOoER3qQQGOHdNAKzk95JKzDCbSqBEd6mE5id9Ca9wAg3KQVGeJ1WYITb1ALzNrxKLzDCTbqBEdYMjHCdZmCEl8qBeRvWDozwEQAfubByYIS1Ax+9sHrgY38b1g985MLHAXzEwmqAI+fJIJca4MF/WRS+j2/bvCeDXEcBLC8MsHWEfEfY8q+FhQG2jpDvCNv+vawwwNYR8h1h6x1EhQG2jpDvCNvvISkMsHWEfEfY4S6CwgBbR8h3hF3uIycMsHWEfEfY6U5ixDN/rHIQwO296jy35LF5sQDe3E1IGGDrU/R9ic53FCEG2PoUfV+i+z0liAG2PkXflzjirgLEAFufou9LHHXn4MQAW5+i70sceffAxABbn6LvSxy9QlBhgK1P0fclTlglIDHA1qfo+xInrRSMGGDrU/R9idPWCkUMsPUp+r7EqesVQZABtj5F35c4fc0iADLA1qfo+xK9VvZGBtj6FH1fouf6Bz/wG3v/MLv6iQHs+CAChXhe9icOsPsDCRXq+fU/aYDHP+AosGLieqGeLMDCmTc/CzTA0rldtSuGDLB0Y683CAwNsHTjNx8UGWDpvD4K90cGWDrPCeiLDLB0Ad5GfSYzwNKF2fxkZIClE/sgzXEtgIUT/SDN4d4ACyeyeffZDLB0Ypt3QwZYOtHN25EBlm6WzZuhAZZuts33IwMs3ayb30cu+Ia/eFE2D/B8Rds8wPMUe/MACxd78wALF3vzk4Hv3y6eXe8tAZze5qcC//p0vvz2vLsEcIKbnwp8//5yeffqsrMEcIKbnwp89/p6ef/uc2fpUVUfMEVsKvDtszXrdsm+FiXU+BlsX4sSKth7MKWZ7Sj6zeYo+s3wUTSlmdN5cD11befBlGbBPsmiNANYeQArD2DlAaw8gJUHsPIAVh7AygNYeQArD2DlAay8icCHPZr9MhU2P7R5P+CeHoV6IDYfdPMAK988wMo3z+GS8gBWHsDKA1h5ACsvDHDnmtpZay7Gbzc/+7O4e7lYnMfb/O1i8dT66oMAd79bOme39UtsNz/7s6i/ynP358+xNl//t73drmnzQYC732uZsS9P/lVfk7/a/OzP4rYezy/nsTZft92uafNBgLvfTJu1+jW1m4/yLLbbjbL5as5aNh8EuPvd0lmrgdvNx3gW9Ve24m3+7uWTz7bNM4N9un/7Zpn4DiTv9+AVcLQ3wbuX1TF0vM3XWQ8BAh1Fv4l0FN28pnbzsz+LlW+0zbc7ZcvmOQ+e3rdF3Xm08+Bq+9V78BznwZRuACsPYOUBrDyAlQew8gBWHsDKOx7gnx+aK/5PqsXvv3/c3Pzff8d7SnN0TMCnzf8//Lp76661yo4NePnjxdnurQCrqQVeXp00qt8fV/vrs/r/T1fL1R+//61aOFvtzU+Wqz9/+yPu0/bt+IBvHn6tgJuZ+/3xWf1nM6mvfvvj++Nq9139+fPDSXNb/efyqrtLz64jBK4kK+A/rWZmDfy/r6uFynv1Z7vbvqln794uPbuOELiZwcuL3QPqm2oX/aCd1b9/vGl3y1erb9qexnvOATo+4IuTVvXHi6KZzNXCg4+bmbsLnPneuenogOtd7nofXC3Xizc15M12Bm920Q8UHGEfG3BzHryepdWftXcN+f3xFrg+uFr9r7pv7srHBLx5R22mbfO2W+2xq7fi6v34wd9Xs7n5d7unSZn7HhHwkQaw8gBWHsDKA1h5ACsPYOX9HxR5yLQYZ6daAAAAAElFTkSuQmCC" style="display: block; margin: auto;" /></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#output for the Great Black-backed Gull </span>
 <span class="kw">summary</span>(x[[<span class="dv">2</span>]])</code></pre></div>
 <pre><code>## Summary of a distance sampling object fitted via the MCDS engine:
 ##  PARAMETERS   VALUES   UNITS     
-##  effort       11496.65 Kilometers
-##  samples      27581.00 Line      
-##  width          300.00 Meters    
-##  left             0.00 Meters    
-##  observations   311.00 clusters  
+##  effort       994.7093 Kilometers
+##  samples      443.0000 Line      
+##  width        300.0000 Meters    
+##  left           0.0000 Meters    
+##  observations 143.0000 clusters  
 ## 
 ## 
 ## Detection function used : Half-normal key, k(y) = Exp(-y**2/(2*A(1)**2))
 ## Parameters of the detection function:
 ##  Parameters  Estimates         SE % of var.  95% Lower  95% Upper  df
-##        A(1) 3.6670e+02 1.1280e+02        NA         NA         NA  NA
-##        A(2) 8.3880e-02 8.8600e-02        NA         NA         NA  NA
-##        f(0) 4.0245e-03 4.3538e-04     10.82 3.2548e-03 4.9761e-03 309
-##           p 8.2827e-01 8.9605e-02     10.82 6.6987e-01 1.0000e+00 309
-##         ESW 2.4848e+02 2.6882e+01     10.82 2.0096e+02 3.0724e+02 309
+##        A(1) 1.0160e+02 7.01400000        NA         NA         NA  NA
+##        f(0) 7.8796e-03 0.00052772       6.7 6.9036e-03 8.9937e-03 142
+##           p 4.2303e-01 0.02833100       6.7 3.7063e-01 4.8284e-01 142
+##         ESW 1.2691e+02 8.49940000       6.7 1.1119e+02 1.4485e+02 142
 ## 
 ## Density estimates for the entire survey area:
 ##  Parameters Estimates       SE % of var. 95% Lower 95% Upper
-##          DS   0.10887 0.013673     12.56  0.085149   0.13919
-##        E(S)   1.14770 0.023902      2.08  1.101600   1.19570
-##           D   0.12495 0.015907     12.73  0.097403   0.16028
-##           N   0.00000       NA        NA        NA        NA
+##          DS    1.1328 0.128630     11.36   0.90695    1.4148
+##        E(S)    1.4730 0.062924      4.27   1.35380    1.6027
+##           D    1.6686 0.202440     12.13   1.31600    2.1156
+##           N    2.0000 0.242650     12.13   1.00000    2.0000
 ## 
-## Model AICc = 850.38</code></pre>
+## Model AICc = 356.83</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">predicted_hist</span>(x[[<span class="dv">2</span>]])</code></pre></div>
-<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">##output for the Herring gull
-<span class="kw">summary</span>(x[[<span class="dv">1</span>]])</code></pre></div>
+<span class="kw">summary</span>(x[[<span class="dv">3</span>]])</code></pre></div>
 <pre><code>## Summary of a distance sampling object fitted via the MCDS engine:
 ##  PARAMETERS   VALUES   UNITS     
-##  effort       11496.65 Kilometers
-##  samples      27581.00 Line      
-##  width          300.00 Meters    
-##  left             0.00 Meters    
-##  observations  1381.00 clusters  
+##  effort       994.7093 Kilometers
+##  samples      443.0000 Line      
+##  width        300.0000 Meters    
+##  left           0.0000 Meters    
+##  observations 177.0000 clusters  
 ## 
 ## 
 ## Detection function used : Half-normal key, k(y) = Exp(-y**2/(2*A(1)**2))
 ## Parameters of the detection function:
-##  Parameters  Estimates         SE % of var.  95% Lower  95% Upper   df
-##        A(1) 2.0140e+02 9.31900000        NA         NA         NA   NA
-##        A(2) 2.5110e-01 0.04014000        NA         NA         NA   NA
-##        f(0) 5.7762e-03 0.00023101         4 5.3405e-03 6.2474e-03 1379
-##           p 5.7708e-01 0.02308000         4 5.3355e-01 6.2416e-01 1379
-##         ESW 1.7312e+02 6.92390000         4 1.6007e+02 1.8725e+02 1379
+##  Parameters   Estimates         SE % of var. 95% Lower  95% Upper  df
+##        A(1) 116.9000000  8.2880000        NA        NA         NA  NA
+##        A(2)   0.5012000  0.1561000        NA        NA         NA  NA
+##        A(3)  -0.2564000  0.2179000        NA        NA         NA  NA
+##        f(0)   0.0084084  0.0011334     13.48  0.006452   0.010958 174
+##           p   0.3964300  0.0534360     13.48  0.304190   0.516630 174
+##         ESW 118.9300000 16.0310000     13.48 91.256000 154.990000 174
 ## 
 ## Density estimates for the entire survey area:
-##  Parameters Estimates       SE % of var. 95% Lower 95% Upper
-##          DS   0.69385 0.034903      5.03   0.62872   0.76572
-##        E(S)   1.33940 0.017171      1.28   1.30610   1.37350
-##           D   0.92930 0.048242      5.19   0.83943   1.02880
-##           N   1.00000 0.051912      5.19   1.00000   1.00000
+##  Parameters Estimates      SE % of var. 95% Lower 95% Upper
+##          DS    1.4962 0.23120     15.45    1.1058    2.0244
+##        E(S)    1.8386 0.10668      5.80    1.6398    2.0615
+##           D    2.7510 0.45407     16.51    1.9928    3.7976
+##           N    3.0000 0.49517     16.51    2.0000    4.0000
 ## 
-## Model AICc = 3827.4</code></pre>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">predicted_hist</span>(x[[<span class="dv">1</span>]])</code></pre></div>
-<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+## Model AICc = 447.58</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">predicted_hist</span>(x[[<span class="dv">3</span>]])</code></pre></div>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
 </div>
 <div id="rare-species-case" class="section level2">
 <h2>Rare species case</h2>
 <p>It is also possible to correct the observed densities of a rare species by using the detection curve of a similar species by using multipliers. As usual, the user can choose the key function and adjustment for the reference species or can simply let Distance pick the best model for the reference species (estimator=NULL).</p>
 <p>Distance will first estimate the detection function of the reference species and will then fit a uniform detection function to the rare species but will use a multiplier derived from the detection function of the reference species.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#'### </span>
-<span class="kw">library</span>(GeoAviR)
+<span class="kw">library</span>(R2MCDS)
 
 ### Import and filter data
-<span class="kw">data</span>(quebec)
-d &lt;-<span class="st"> </span><span class="kw">distance.filter</span>(quebec, <span class="dt">transect.id =</span> <span class="st">&quot;WatchID&quot;</span>, <span class="dt">distance.field =</span> <span class="st">&quot;Distance&quot;</span>, <span class="dt">distance.labels =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C&quot;</span>, <span class="st">&quot;D&quot;</span>), 
+<span class="kw">data</span>(laridae)
+d &lt;-<span class="st"> </span><span class="kw">mcds.filter</span>(laridae, <span class="dt">transect.id =</span> <span class="st">&quot;WatchID&quot;</span>, <span class="dt">distance.field =</span> <span class="st">&quot;Distance&quot;</span>, <span class="dt">distance.labels =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C&quot;</span>, <span class="st">&quot;D&quot;</span>), 
                      <span class="dt">distance.midpoints =</span> <span class="kw">c</span>(<span class="dv">25</span>, <span class="dv">75</span>, <span class="dv">150</span>, <span class="dv">250</span>), <span class="dt">effort.field =</span> <span class="st">&quot;WatchLenKm&quot;</span>, <span class="dt">lat.field =</span> <span class="st">&quot;LatStart&quot;</span>, 
                      <span class="dt">long.field =</span> <span class="st">&quot;LongStart&quot;</span>, <span class="dt">sp.field =</span> <span class="st">&quot;Alpha&quot;</span>, <span class="dt">date.field =</span> <span class="st">&quot;Date&quot;</span>)
 
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-x&lt;-<span class="kw">distance.wrap</span>(d,<span class="dt">SMP_EFFORT=</span><span class="st">&quot;WatchLenKm&quot;</span>,<span class="dt">DISTANCE=</span><span class="st">&quot;Distance&quot;</span>,<span class="dt">SIZE=</span><span class="st">&quot;Count&quot;</span>,
-                 <span class="dt">units=</span><span class="kw">list</span>(<span class="dt">Type=</span><span class="st">&quot;Line&quot;</span>,<span class="dt">Distance=</span><span class="st">&quot;Perp&quot;</span>,<span class="dt">Length_units=</span><span class="st">&quot;Kilometers&quot;</span>,
-                            <span class="dt">Distance_units=</span><span class="st">&quot;Meters&quot;</span>,<span class="dt">Area_units=</span><span class="st">&quot;Square kilometers&quot;</span>),
-                 <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">200</span>,<span class="dv">300</span>), <span class="dt">estimator=</span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;HN&quot;</span>,<span class="st">&quot;CO&quot;</span>)),
-                 <span class="dt">lsub=</span><span class="kw">list</span>(<span class="dt">Alpha=</span><span class="kw">c</span>(<span class="st">&quot;HERG&quot;</span>)), <span class="dt">rare=</span> <span class="kw">list</span>(<span class="dt">Alpha=</span><span class="kw">c</span>(<span class="st">&quot;RBGU&quot;</span>)), <span class="dt">split=</span><span class="ot">TRUE</span>,
-                 <span class="dt">STR_LABEL=</span><span class="st">&quot;STR_LABEL&quot;</span>,<span class="dt">STR_AREA=</span><span class="st">&quot;STR_AREA&quot;</span>,<span class="dt">SMP_LABEL=</span><span class="st">&quot;WatchID&quot;</span>,
-                 <span class="dt">path=</span><span class="st">&quot;c:/temp/distance&quot;</span>,
-                 <span class="dt">pathMCDS=</span><span class="st">&quot;C:/Distance 6&quot;</span>,<span class="dt">verbose=</span><span class="ot">FALSE</span>)
+x &lt;-<span class="st"> </span><span class="kw">mcds.wrap</span>(d,<span class="dt">SMP_EFFORT=</span><span class="st">&quot;WatchLenKm&quot;</span>,<span class="dt">DISTANCE=</span><span class="st">&quot;Distance&quot;</span>,<span class="dt">SIZE=</span><span class="st">&quot;Count&quot;</span>,
+               <span class="dt">units=</span><span class="kw">list</span>(<span class="dt">Type=</span><span class="st">&quot;Line&quot;</span>,<span class="dt">Distance=</span><span class="st">&quot;Perp&quot;</span>,<span class="dt">Length_units=</span><span class="st">&quot;Kilometers&quot;</span>,
+                          <span class="dt">Distance_units=</span><span class="st">&quot;Meters&quot;</span>,<span class="dt">Area_units=</span><span class="st">&quot;Square kilometers&quot;</span>),
+               <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">200</span>,<span class="dv">300</span>), <span class="dt">estimator=</span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;HN&quot;</span>,<span class="st">&quot;CO&quot;</span>)),
+               <span class="dt">lsub=</span><span class="kw">list</span>(<span class="dt">Alpha=</span><span class="kw">c</span>(<span class="st">&quot;HERG&quot;</span>)), <span class="dt">rare=</span> <span class="kw">list</span>(<span class="dt">Alpha=</span><span class="kw">c</span>(<span class="st">&quot;RBGU&quot;</span>)), <span class="dt">split=</span><span class="ot">TRUE</span>,
+               <span class="dt">STR_LABEL=</span><span class="st">&quot;STR_LABEL&quot;</span>,<span class="dt">STR_AREA=</span><span class="st">&quot;STR_AREA&quot;</span>,<span class="dt">SMP_LABEL=</span><span class="st">&quot;WatchID&quot;</span>,
+               <span class="dt">path=</span><span class="st">&quot;c:/temp/distance&quot;</span>,
+               <span class="dt">pathMCDS=</span><span class="st">&quot;C:/Distance 6&quot;</span>,<span class="dt">verbose=</span><span class="ot">FALSE</span>)
 x</code></pre></div>
 <pre><code>## Distance sampling object fitted via the MCDS engine:
 ## 
 ## Detection function: Uniform key
 ## 
-## Estimated abundance in covered region: 0 (NA-NA) 95% CI
+## Estimated abundance in covered region: 0 (0-1) 95% CI
 ## 
-## Model AICc = 447.08
+## Model AICc = 38.032
 ## 
 ## Files created by the MCDS engine are saved in the diectory:
 ## c:/temp/distance</code></pre>
@@ -231,28 +261,28 @@ x</code></pre></div>
 <span class="kw">summary</span>(x)</code></pre></div>
 <pre><code>## Summary of a distance sampling object fitted via the MCDS engine:
 ##  PARAMETERS   VALUES   UNITS     
-##  effort       11496.65 Kilometers
-##  samples      27581.00 Line      
-##  width          300.00 Meters    
-##  left             0.00 Meters    
-##  observations   153.00 clusters  
+##  effort       994.7093 Kilometers
+##  samples      443.0000 Line      
+##  width        300.0000 Meters    
+##  left           0.0000 Meters    
+##  observations  11.0000 clusters  
 ## 
 ## 
 ## Detection function used : Uniform key, k(y) = 1/W
 ## Parameters of the detection function:
-##  Parameters  Estimates SE % of var.  95% Lower  95% Upper  df
-##        f(0) 3.3333e-03  0         0 3.3333e-03 3.3333e-03 153
-##           p 1.0000e+00  0         0 1.0000e+00 1.0000e+00 153
-##         ESW 3.0000e+02  0         0 3.0000e+02 3.0000e+02 153
+##  Parameters  Estimates SE % of var.  95% Lower  95% Upper df
+##        f(0) 3.3333e-03  0         0 3.3333e-03 3.3333e-03 11
+##           p 1.0000e+00  0         0 1.0000e+00 1.0000e+00 11
+##         ESW 3.0000e+02  0         0 3.0000e+02 3.0000e+02 11
 ## 
 ## Density estimates for the entire survey area:
-##  Parameters Estimates        SE % of var. 95% Lower 95% Upper
-##          DS  0.064323 0.0086172     13.40  0.049524  0.083543
-##        E(S)  1.522900 0.1057700      6.95  1.327800  1.746600
-##           D  0.097955 0.0147820     15.09  0.072987  0.131470
-##           N  0.000000        NA        NA        NA        NA
+##  Parameters Estimates       SE % of var. 95% Lower 95% Upper
+##          DS  0.092984 0.045564     49.00  0.037376   0.23133
+##        E(S)  4.272700 1.128900     26.42  2.395200   7.62200
+##           D  0.397300 0.221180     55.67  0.142390   1.10860
+##           N  0.000000 0.000000     55.67  0.000000   1.00000
 ## 
-## Model AICc = 447.08</code></pre>
+## Model AICc = 38.032</code></pre>
 </div>
 
 

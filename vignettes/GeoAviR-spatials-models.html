@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Christian Roy" />
+
+<meta name="date" content="2017-03-06" />
+
+<title>GeoAviR spatial models</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">GeoAviR spatial models</h1>
+<h4 class="author"><em>Christian Roy</em></h4>
+<h4 class="date"><em>2017-03-06</em></h4>
+
+
+
+<div id="startified-models-with-distance.wrap" class="section level2">
+<h2>Startified models with distance.wrap</h2>
+<p>R2MCDS can be used twith stratified model of distance sampling.</p>
+<p>The first step is to transform the survey lines form the project into a spatial object.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(R2MCDS)
+<span class="kw">library</span>(rgdal)</code></pre></div>
+<pre><code>## Warning: package 'rgdal' was built under R version 3.3.2</code></pre>
+<pre><code>## rgdal: version: 1.2-5, (SVN revision 648)
+##  Geospatial Data Abstraction Library extensions to R successfully loaded
+##  Loaded GDAL runtime: GDAL 2.0.1, released 2015/09/15
+##  Path to GDAL shared files: C:/Users/royc/Documents/R/win-library/3.3/rgdal/gdal
+##  Loaded PROJ.4 runtime: Rel. 4.9.2, 08 September 2015, [PJ_VERSION: 492]
+##  Path to PROJ.4 shared files: C:/Users/royc/Documents/R/win-library/3.3/rgdal/proj
+##  Linking to sp version: 1.2-4</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">### Import and filter the observation data
+<span class="kw">data</span>(quebec)
+df1 &lt;-<span class="st"> </span><span class="kw">mcds.filter</span>(quebec, <span class="dt">transect.id =</span> <span class="st">&quot;WatchID&quot;</span>, <span class="dt">distance.field =</span> <span class="st">&quot;Distance&quot;</span>, <span class="dt">distance.labels =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C&quot;</span>, <span class="st">&quot;D&quot;</span>), 
+                     <span class="dt">distance.midpoints =</span> <span class="kw">c</span>(<span class="dv">25</span>, <span class="dv">75</span>, <span class="dv">150</span>, <span class="dv">250</span>), <span class="dt">effort.field =</span> <span class="st">&quot;WatchLenKm&quot;</span>, <span class="dt">lat.field =</span> <span class="st">&quot;LatStart&quot;</span>, 
+                     <span class="dt">long.field =</span> <span class="st">&quot;LongStart&quot;</span>, <span class="dt">sp.field =</span> <span class="st">&quot;Alpha&quot;</span>, <span class="dt">date.field =</span> <span class="st">&quot;Date&quot;</span>)
+### Build a shapefile with transect starts
+transect &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">lat=</span>df1$LatStart,<span class="dt">lon=</span>df1$LongStart)
+<span class="kw">coordinates</span>(transect) &lt;-<span class="st"> </span><span class="er">~</span>lon +<span class="st"> </span>lat
+transect&lt;-<span class="kw">SpatialPointsDataFrame</span>(transect,<span class="dt">data=</span>df1[,<span class="st">&quot;Count&quot;</span>,<span class="dt">drop=</span><span class="ot">FALSE</span>])
+<span class="kw">proj4string</span>(transect)&lt;-<span class="kw">CRS</span>(<span class="st">&quot;+proj=longlat +datum=WGS84 +no_defs +ellps=WGS84 +towgs84=0,0,0&quot;</span>)</code></pre></div>
+<p>The second step is to import the shapefile of the survey area and to associate each survey line to a zone in the survey area</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">### Import data and transform into a a spatial polygon
+<span class="kw">data</span>(zonegulf)
+zonegulf&lt;-<span class="kw">spTransform</span>(zonegulf,<span class="kw">CRS</span>(<span class="kw">proj4string</span>(transect)))
+
+<span class="co">#overlay transect and Zones</span>
+transect_id &lt;-<span class="st"> </span><span class="kw">over</span>(transect,zonegulf)
+df1$zone &lt;-<span class="st"> </span>transect_id$id
+df1$zone_area&lt;-<span class="st"> </span>transect_id$area
+df1 &lt;-<span class="st"> </span>df1[!<span class="kw">is.na</span>(df1$zone),]</code></pre></div>
+<p>In our case, observations were made during bouts of a few minutes (identified by WatchID) each day. We will therefore use the day as the sample unit and we will sum the length of all the bout made within a day to calculate the total effort for the day.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">### Build labels for samples. (zone +date)
+df1$SMP_LABEL&lt;-<span class="kw">paste</span>(df1$zone,df1$Date,<span class="dt">sep=</span><span class="st">&quot;_&quot;</span>)
+### Aggregate effor by Sample unit
+effort &lt;-<span class="st"> </span><span class="kw">aggregate</span>(WatchLenKm~SMP_LABEL,<span class="dt">data=</span><span class="kw">unique</span>(df1[,<span class="kw">c</span>(<span class="st">&quot;SMP_LABEL&quot;</span>,<span class="st">&quot;WatchID&quot;</span>,<span class="st">&quot;WatchLenKm&quot;</span>)]),sum)
+<span class="kw">names</span>(effort)[<span class="dv">2</span>] &lt;-<span class="st"> &quot;SMP_EFFORT&quot;</span>
+df1 &lt;-<span class="st"> </span><span class="kw">merge</span>(df1,effort,<span class="dt">sort=</span><span class="ot">FALSE</span>)</code></pre></div>
+<p>We then run the analysis. For this example we will use the observations of Black-legged Kittiwake (Rissa tridactyla). For simplicity, we will only run a detection model with a half-normal key, a cosine adjustement and no explanatory variable.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">###Run the analysis for the Gull species only
+mod1 &lt;-<span class="st"> </span><span class="kw">mcds.wrap</span>(df1,<span class="dt">SMP_LABEL=</span><span class="st">&quot;SMP_LABEL&quot;</span>,<span class="dt">SMP_EFFORT=</span><span class="st">&quot;SMP_EFFORT&quot;</span>,
+                   <span class="dt">DISTANCE=</span><span class="st">&quot;Distance&quot;</span>,<span class="dt">SIZE=</span><span class="st">&quot;Count&quot;</span>,
+                   <span class="dt">units=</span><span class="kw">list</span>(<span class="dt">Type=</span><span class="st">&quot;Line&quot;</span>,<span class="dt">Distance=</span><span class="st">&quot;Perp&quot;</span>,<span class="dt">Length_units=</span><span class="st">&quot;Kilometers&quot;</span>,
+                              <span class="dt">Distance_units=</span><span class="st">&quot;Meters&quot;</span>,<span class="dt">Area_units=</span><span class="st">&quot;Square kilometers&quot;</span>),
+                   <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">200</span>,<span class="dv">300</span>), <span class="dt">estimator=</span><span class="ot">NULL</span>,
+                   <span class="dt">detection=</span><span class="st">&quot;All&quot;</span>,<span class="dt">lsub=</span><span class="kw">list</span>(<span class="dt">Alpha=</span><span class="kw">c</span>(<span class="st">&quot;COMU&quot;</span>)),<span class="dt">split=</span><span class="ot">TRUE</span>,<span class="dt">empty=</span><span class="ot">NULL</span>,
+                   <span class="dt">STR_LABEL=</span><span class="st">&quot;SMP_LABEL&quot;</span>,<span class="dt">STR_AREA=</span><span class="st">&quot;zone_area&quot;</span>,<span class="dt">stratum=</span><span class="st">&quot;STR_LABEL&quot;</span>,
+                   <span class="dt">path=</span><span class="st">&quot;c:/temp/distance&quot;</span>,
+                   <span class="dt">pathMCDS=</span><span class="st">&quot;C:/Distance 6&quot;</span>,<span class="dt">verbose=</span><span class="ot">FALSE</span>)</code></pre></div>
+<pre><code>## Warning: running command '&quot;C:/Distance 6/MCDS&quot; 0, &quot;c:/temp/distance/
+## input_COMU_UN_CO.tmp&quot;' had status 2</code></pre>
+<pre><code>## Warning: running command '&quot;C:/Distance 6/MCDS&quot; 0, &quot;c:/temp/distance/
+## input_COMU_UN_PO.tmp&quot;' had status 2</code></pre>
+<pre><code>## Warning: running command '&quot;C:/Distance 6/MCDS&quot; 0, &quot;c:/temp/distance/
+## input_COMU_HN_CO.tmp&quot;' had status 2</code></pre>
+<pre><code>## Warning: running command '&quot;C:/Distance 6/MCDS&quot; 0, &quot;c:/temp/distance/
+## input_COMU_HN_HE.tmp&quot;' had status 2</code></pre>
+<pre><code>## Warning: running command '&quot;C:/Distance 6/MCDS&quot; 0, &quot;c:/temp/distance/
+## input_COMU_HA_CO.tmp&quot;' had status 2</code></pre>
+<pre><code>## Warning: running command '&quot;C:/Distance 6/MCDS&quot; 0, &quot;c:/temp/distance/
+## input_COMU_HA_PO.tmp&quot;' had status 2</code></pre>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
