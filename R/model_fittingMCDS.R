@@ -1,7 +1,11 @@
 model_fittingMCDS <-
 function(x,units){
 	#browser()
-	res<-vector("list",length=2)
+	
+  #Change units type fro printing
+  units$Type <- c("Line Transect","Point Transect","Cue Count survey")[match(toupper(units$Type),c("LINE","POINT", "CUE"))]
+  #
+  res<-vector("list",length=2)
 	names(res)<-c("Global","Stratum")
 	w<-grep("Detection Fct/Global/Parameter Estimates",x)
 	if(any(w)){

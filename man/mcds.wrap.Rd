@@ -33,7 +33,7 @@ mcds.wrap(dataset, path, pathMCDS, SMP_LABEL = "SMP_LABEL",
 
 \item{STR_AREA}{Name of the column to use for the stratum area.}
 
-\item{units}{list of th units used for the analysis. Contains the Type of analysis (Line or Point), the Distance enfine to use (Perp or Radial), 
+\item{units}{list of th units used for the analysis. Contains the Type of analysis (Line or Point), the Distance engine to use (Perp or Radial), 
 the Length units, the Distance units, and the Area_units.For the possible units of distance and area see Distance 6.2 documentation.}
 
 \item{breaks}{A vector giving the distance intervals in meters to be used in the analysis.}

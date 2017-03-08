@@ -16,7 +16,7 @@
 
 #'@param SMP_LABEL Name of the column to use for the transect/watch label.
 
-#'@param units list of th units used for the analysis. Contains the Type of analysis (Line or Point), the Distance enfine to use (Perp or Radial), 
+#'@param units list of th units used for the analysis. Contains the Type of analysis (Line or Point), the Distance engine to use (Perp or Radial), 
 #'the Length units, the Distance units, and the Area_units.For the possible units of distance and area see Distance 6.2 documentation.     
 
 #'@param SMP_EFFORT Length in of the transect or the transect/watch unit.
