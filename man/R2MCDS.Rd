@@ -10,10 +10,10 @@ This package will allow the user to call the MCDS engine from Distance 6.2 in th
 }
 \details{
 \tabular{ll}{
-Package: \tab GeoAviR\cr
+Package: \tab R2MCDS\cr
 Type: \tab Package\cr
-Version: \tab 0.8.3\cr
-Date: \tab 2015-10-26\cr
+Version: \tab 0.9.1\cr
+Date: \tab 2017-08-20\cr
 License: \tab GPL-2\cr
 LazyLoad: \tab yes\cr
 }
