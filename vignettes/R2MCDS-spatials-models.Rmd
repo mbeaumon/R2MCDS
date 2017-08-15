@@ -48,7 +48,7 @@ df1 <- df1[!is.na(df1$zone),]
 
 ```
 
-In our case, observations were made during bouts of a few minutes (identified by WatchID) each day. We will therefore use the day as the sample unit and we will sum the length of all the bout made within a day to calculate the total effort for the day.
+In our case, observations were made during bouts of a few minutes (identified by `WatchID`) each day. We will therefore use the day as the sample unit and we will sum the length of all the bout made within a day to calculate the total effort for the day.
 
 
 ```{r}

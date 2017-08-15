@@ -9,7 +9,7 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-GeoAviR allows the to run some basic distance analysis on the dataset via the MCDS engine of Distance 6.2. The analyzes are currently restricted to line transect and to bin data. Distance sampling models are run via the _distance.wrap()_ function while strips transect models are analyzed with the function _strip.wrap()_. The distance model support 3 different key functions (Uniform, Half-normal and Hazard rate) and 3 different series adjustment (Cosine, Simple polynomial, Hermite polynomial).
+GeoAviR allows the to run some basic distance analysis on the dataset via the MCDS engine of Distance 6.2. The analyzes are currently restricted to line transect and to bin data. Distance sampling models are run via the `distance.wrap()` while strips transect models are analyzed with the function `strip.wrap()`. The distance model support 3 different key functions (Uniform, Half-normal and Hazard rate) and 3 different series adjustment (Cosine, Simple polynomial, Hermite polynomial). 
 
 ##Basic model with distance.wrap
 
@@ -41,7 +41,7 @@ x <- mcds.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
                    path="c:/temp/distance",
                    pathMCDS="C:/Distance 6",verbose=FALSE)
 ```
-The distance.warp function will return a warning after fitting each model (not shown in the example above). These warning will include a "status" number that is associated with the status of the model by the MCDS engine. The numbers should be intrepreted as:
+The distance.warp function will return a warning after fitting each model (not shown in the example above). These warning will include a "status" number that is associated with the status of the model by the <span style="font-family:Courier New"> MCDS </span> engine. The numbers should be intrepreted as:
 
 - "1" the analysis ran without errors
 - "2" the analysis ran with warnings
@@ -49,9 +49,9 @@ The distance.warp function will return a warning after fitting each model (not s
 - "4" the analysis was not performed because of errors in the MCDS files
 - ">4" a major error occured 
 
-The function _distance.wrap()_ will not return an output for any model which had a status above 2.A detailed description of each error message can be found in the Distance user guide (pages 333-344).  
+The function `distance.wrap()` will not return an output for any model which had a status above 2.A detailed description of each error message can be found in the Distance user guide (pages 333-344).  
 
-Since we ran more than one model for a set of observations the model are stored into a _distanceList_ object which consist of a list of _distanceFit_ object. The output of each detection model can therefore be accessed by subsetting the list.
+Since we ran more than one model for a set of observations the model are stored into a `distanceList` object which consist of a list of `distanceFit` object. The output of each detection model can therefore be accessed by subsetting the list.
 ```{r,warning=FALSE,message=FALSE,fig.height=5,fig.width=5,fig.align='center'}
 x
 ####summary of one model
@@ -60,10 +60,10 @@ predicted_hist(x[[2]])
 ```
 
 
-The summary of a _distanceFit_ object emulate the output of Distance 6.2 and present 3 tables. The first table contains all the information related to the encounter rate, the second table presents the parameters related to the detection probability, and the third table present the information related to the density/abundance in the survey area. A detailed description of the output can be found in the Distance user guide (Chapter 9 and page 330).
+The summary of a `distanceFit` object emulate the output of Distance 6.2 and present 3 tables. The first table contains all the information related to the encounter rate, the second table presents the parameters related to the detection probability, and the third table present the information related to the density/abundance in the survey area. A detailed description of the output can be found in the Distance user guide (Chapter 9 and page 330).
 
 
-If the user is interested in keeping only the best model in the _distanceList_ the function _keep.best.model()_ will keep only the model with the lowest AICc value. If more than one model have the best AIC score the keep.best.model function will select one model randomly.
+If the user is interested in keeping only the best model in the `distanceList` the function `keep.best.model()` will keep only the model with the lowest AICc value. If more than one model have the best AIC score the keep.best.model function will select one model randomly.
 
 ```{r,warning=FALSE,message=FALSE,fig.height=5,fig.width=5,fig.align='center'}
 ##### Keep the 'best' model in the list
@@ -99,7 +99,7 @@ x
 summary(x[[2]])
 ```
 
-Once again it is possible to select the model with the lowest AIC value via the _keep.best.model()_ function.
+Once again it is possible to select the model with the lowest AIC value via the `keep.best.model()` function.
 
 ```{r,warning=FALSE,message=FALSE,fig.height=5,fig.width=5,fig.align='center'}
 ##### Keep the 'best' model in the list

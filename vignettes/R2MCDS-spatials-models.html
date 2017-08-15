@@ -12,9 +12,9 @@
 
 <meta name="author" content="Christian Roy" />
 
-<meta name="date" content="2017-03-06" />
+<meta name="date" content="2017-08-15" />
 
-<title>GeoAviR spatial models</title>
+<title>R2MCDS spatial models</title>
 
 
 
@@ -68,9 +68,9 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 
 
-<h1 class="title toc-ignore">GeoAviR spatial models</h1>
+<h1 class="title toc-ignore">R2MCDS spatial models</h1>
 <h4 class="author"><em>Christian Roy</em></h4>
-<h4 class="date"><em>2017-03-06</em></h4>
+<h4 class="date"><em>2017-08-15</em></h4>
 
 
 
@@ -80,14 +80,14 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 <p>The first step is to transform the survey lines form the project into a spatial object.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(R2MCDS)
 <span class="kw">library</span>(rgdal)</code></pre></div>
-<pre><code>## Warning: package 'rgdal' was built under R version 3.3.2</code></pre>
-<pre><code>## rgdal: version: 1.2-5, (SVN revision 648)
+<pre><code>## Warning: package 'rgdal' was built under R version 3.3.3</code></pre>
+<pre><code>## rgdal: version: 1.2-8, (SVN revision 663)
 ##  Geospatial Data Abstraction Library extensions to R successfully loaded
 ##  Loaded GDAL runtime: GDAL 2.0.1, released 2015/09/15
 ##  Path to GDAL shared files: C:/Users/royc/Documents/R/win-library/3.3/rgdal/gdal
 ##  Loaded PROJ.4 runtime: Rel. 4.9.2, 08 September 2015, [PJ_VERSION: 492]
 ##  Path to PROJ.4 shared files: C:/Users/royc/Documents/R/win-library/3.3/rgdal/proj
-##  Linking to sp version: 1.2-4</code></pre>
+##  Linking to sp version: 1.2-5</code></pre>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">### Import and filter the observation data
 <span class="kw">data</span>(quebec)
 df1 &lt;-<span class="st"> </span><span class="kw">mcds.filter</span>(quebec, <span class="dt">transect.id =</span> <span class="st">&quot;WatchID&quot;</span>, <span class="dt">distance.field =</span> <span class="st">&quot;Distance&quot;</span>, <span class="dt">distance.labels =</span> <span class="kw">c</span>(<span class="st">&quot;A&quot;</span>, <span class="st">&quot;B&quot;</span>, <span class="st">&quot;C&quot;</span>, <span class="st">&quot;D&quot;</span>), 
@@ -108,36 +108,66 @@ transect_id &lt;-<span class="st"> </span><span class="kw">over</span>(transect,
 df1$zone &lt;-<span class="st"> </span>transect_id$id
 df1$zone_area&lt;-<span class="st"> </span>transect_id$area
 df1 &lt;-<span class="st"> </span>df1[!<span class="kw">is.na</span>(df1$zone),]</code></pre></div>
-<p>In our case, observations were made during bouts of a few minutes (identified by WatchID) each day. We will therefore use the day as the sample unit and we will sum the length of all the bout made within a day to calculate the total effort for the day.</p>
+<p>In our case, observations were made during bouts of a few minutes (identified by <code>WatchID</code>) each day. We will therefore use the day as the sample unit and we will sum the length of all the bout made within a day to calculate the total effort for the day.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">### Build labels for samples. (zone +date)
 df1$SMP_LABEL&lt;-<span class="kw">paste</span>(df1$zone,df1$Date,<span class="dt">sep=</span><span class="st">&quot;_&quot;</span>)
 ### Aggregate effor by Sample unit
 effort &lt;-<span class="st"> </span><span class="kw">aggregate</span>(WatchLenKm~SMP_LABEL,<span class="dt">data=</span><span class="kw">unique</span>(df1[,<span class="kw">c</span>(<span class="st">&quot;SMP_LABEL&quot;</span>,<span class="st">&quot;WatchID&quot;</span>,<span class="st">&quot;WatchLenKm&quot;</span>)]),sum)
 <span class="kw">names</span>(effort)[<span class="dv">2</span>] &lt;-<span class="st"> &quot;SMP_EFFORT&quot;</span>
 df1 &lt;-<span class="st"> </span><span class="kw">merge</span>(df1,effort,<span class="dt">sort=</span><span class="ot">FALSE</span>)</code></pre></div>
-<p>We then run the analysis. For this example we will use the observations of Black-legged Kittiwake (Rissa tridactyla). For simplicity, we will only run a detection model with a half-normal key, a cosine adjustement and no explanatory variable.</p>
+<p>We then run the analysis. For this example we will use the observations of Black-legged Kittiwake (Rissa tridactyla). For simplicity, we will only run a detection model with a Hazard rate key function with Cosine adjustment and no explanatory variable.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">###Run the analysis for the Gull species only
 mod1 &lt;-<span class="st"> </span><span class="kw">mcds.wrap</span>(df1,<span class="dt">SMP_LABEL=</span><span class="st">&quot;SMP_LABEL&quot;</span>,<span class="dt">SMP_EFFORT=</span><span class="st">&quot;SMP_EFFORT&quot;</span>,
                    <span class="dt">DISTANCE=</span><span class="st">&quot;Distance&quot;</span>,<span class="dt">SIZE=</span><span class="st">&quot;Count&quot;</span>,
                    <span class="dt">units=</span><span class="kw">list</span>(<span class="dt">Type=</span><span class="st">&quot;Line&quot;</span>,<span class="dt">Distance=</span><span class="st">&quot;Perp&quot;</span>,<span class="dt">Length_units=</span><span class="st">&quot;Kilometers&quot;</span>,
                               <span class="dt">Distance_units=</span><span class="st">&quot;Meters&quot;</span>,<span class="dt">Area_units=</span><span class="st">&quot;Square kilometers&quot;</span>),
-                   <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">200</span>,<span class="dv">300</span>), <span class="dt">estimator=</span><span class="ot">NULL</span>,
-                   <span class="dt">detection=</span><span class="st">&quot;All&quot;</span>,<span class="dt">lsub=</span><span class="kw">list</span>(<span class="dt">Alpha=</span><span class="kw">c</span>(<span class="st">&quot;COMU&quot;</span>)),<span class="dt">split=</span><span class="ot">TRUE</span>,<span class="dt">empty=</span><span class="ot">NULL</span>,
+                   <span class="dt">breaks=</span><span class="kw">c</span>(<span class="dv">0</span>,<span class="dv">50</span>,<span class="dv">100</span>,<span class="dv">200</span>,<span class="dv">300</span>), <span class="dt">estimator=</span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">&quot;HA&quot;</span>,<span class="st">&quot;CO&quot;</span>)),
+                   <span class="dt">detection=</span><span class="st">&quot;All&quot;</span>,<span class="dt">lsub=</span><span class="kw">list</span>(<span class="dt">Alpha=</span><span class="kw">c</span>(<span class="st">&quot;BLKI&quot;</span>)),<span class="dt">split=</span><span class="ot">TRUE</span>,<span class="dt">empty=</span><span class="ot">NULL</span>,
                    <span class="dt">STR_LABEL=</span><span class="st">&quot;SMP_LABEL&quot;</span>,<span class="dt">STR_AREA=</span><span class="st">&quot;zone_area&quot;</span>,<span class="dt">stratum=</span><span class="st">&quot;STR_LABEL&quot;</span>,
                    <span class="dt">path=</span><span class="st">&quot;c:/temp/distance&quot;</span>,
                    <span class="dt">pathMCDS=</span><span class="st">&quot;C:/Distance 6&quot;</span>,<span class="dt">verbose=</span><span class="ot">FALSE</span>)</code></pre></div>
 <pre><code>## Warning: running command '&quot;C:/Distance 6/MCDS&quot; 0, &quot;c:/temp/distance/
-## input_COMU_UN_CO.tmp&quot;' had status 2</code></pre>
-<pre><code>## Warning: running command '&quot;C:/Distance 6/MCDS&quot; 0, &quot;c:/temp/distance/
-## input_COMU_UN_PO.tmp&quot;' had status 2</code></pre>
-<pre><code>## Warning: running command '&quot;C:/Distance 6/MCDS&quot; 0, &quot;c:/temp/distance/
-## input_COMU_HN_CO.tmp&quot;' had status 2</code></pre>
-<pre><code>## Warning: running command '&quot;C:/Distance 6/MCDS&quot; 0, &quot;c:/temp/distance/
-## input_COMU_HN_HE.tmp&quot;' had status 2</code></pre>
-<pre><code>## Warning: running command '&quot;C:/Distance 6/MCDS&quot; 0, &quot;c:/temp/distance/
-## input_COMU_HA_CO.tmp&quot;' had status 2</code></pre>
-<pre><code>## Warning: running command '&quot;C:/Distance 6/MCDS&quot; 0, &quot;c:/temp/distance/
-## input_COMU_HA_PO.tmp&quot;' had status 2</code></pre>
+## input_BLKI_HA_CO.tmp&quot;' had status 2</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod1</code></pre></div>
+<pre><code>## Distance sampling object fitted via the MCDS engine:
+## 
+## Detection function: Hazard Rate key
+## 
+## Estimated abundance in covered region: 15451000 (7667000-31137000) 95% CI
+## 
+## Model AICc = 282.44
+## 
+## Files created by the MCDS engine are saved in the directory:
+## c:/temp/distance</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">summary</span>(mod1)</code></pre></div>
+<pre><code>## Summary of a distance sampling object fitted via the MCDS engine:
+##  PARAMETERS   VALUES   UNITS        
+##  effort       681.8332 Kilometers   
+##  samples       88.0000 Line Transect
+##  width        300.0000 Meters       
+##  left           0.0000 Meters       
+##  observations 105.0000 clusters     
+## 
+## 
+## Detection function used : Hazard Rate key, k(y) = 1 - Exp(-(y/A(1))**-A(2))
+## Parameters of the detection function:
+##  Parameters  Estimates         SE % of var.  95% Lower  95% Upper  df
+##        A(1) 4.7950e+01 41.3600000        NA         NA         NA  NA
+##        A(2) 1.0110e+00  0.4031000        NA         NA         NA  NA
+##        f(0) 8.9822e-03  0.0032136     35.78  0.0045129   0.017878 103
+##           p 3.7110e-01  0.1327700     35.78  0.1864500   0.738620 103
+##         ESW 1.1133e+02 39.8310000     35.78 55.9360000 221.590000 103
+## 
+## Density estimates for the Global survey area:
+##  Parameters  Estimates % of var.     df  95% Lower  95% Upper
+##          DS 2.8623e+00     35.81 103.42 1.4372e+00 5.7004e+00
+##           D 5.6284e+00     36.50 111.40 2.7929e+00 1.1342e+01
+##           N 1.5451e+07     36.50 111.40 7.6670e+06 3.1137e+07
+## 
+## For stratified models use 'stratum=T' to get indivudal strata estimates
+## Model AICc = 282.44</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">predicted_hist</span>((mod1))</code></pre></div>
+<p><img src="data:image/png;base64,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" alt /><!-- --></p>
 </div>
 
 

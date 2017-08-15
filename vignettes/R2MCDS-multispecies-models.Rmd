@@ -11,7 +11,7 @@ vignette: >
 
 ##Multispecies analysis
 
-If the user has collected the same data for many species and is interested in running the same model for many species, it is possible to do so via the 'lsub' and 'split' argument. The 'lsub' argument consists of a list that contains all the species that the user want to include in the analysis and the 'split' option indicate whether the species should be analyzed together (FALSE) or separately (TRUE).
+If the user has collected the same data for many species and is interested in running the same model for many species, it is possible to do so via the `lsub` and `split` argument. The `lsub` argument consists of a list that contains all the species that the user want to include in the analysis and the `split` option indicate whether the species should be analyzed together (`split=FALSE`) or separately (`split=TRUE`).
 
 For simplicity we will run this example with only one detection function (Half-normal key function with Cosine adjustment). However it is possible to run models with different key functions and subsequently chose the best model for each species.
 ```{r,warning=FALSE,message=FALSE,fig.height=5,fig.width=5,fig.align='center'}
@@ -49,7 +49,7 @@ predicted_hist(x[[3]])
 
 ##Rare species case
 
-It is also possible to correct the observed densities of a rare species by using the detection curve of a similar species by using multipliers. As usual, the user can choose the key function and adjustment for the reference species or can simply let Distance pick the best model for the reference species (estimator=NULL).
+It is also possible to correct the observed densities of a rare species by using the detection curve of a similar species by using multipliers. As usual, the user can choose the key function and adjustment for the reference species or can simply let Distance pick the best model for the reference species (i.e. `estimator=NULL`).
 
 Distance will first estimate the detection function of the reference species and will then fit a uniform detection function to the rare species but will use a multiplier derived from the detection function of the reference species.  
   

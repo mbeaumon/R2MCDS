@@ -39,9 +39,13 @@ mod1 <- mcds.wrap(df1,SMP_LABEL="SMP_LABEL",SMP_EFFORT="SMP_EFFORT",
                    DISTANCE="Distance",SIZE="Count",
                    units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
                               Distance_units="Meters",Area_units="Square kilometers"),
-                   breaks=c(0,50,100,200,300), estimator=NULL,
-                   detection="All",lsub=list(Alpha=c("COMU")),split=TRUE,empty=NULL,
+                   breaks=c(0,50,100,200,300), estimator=list(c("HA","CO")),
+                   detection="All",lsub=list(Alpha=c("BLKI")),split=TRUE,empty=NULL,
                    STR_LABEL="SMP_LABEL",STR_AREA="zone_area",stratum="STR_LABEL",
                    path="c:/temp/distance",
                    pathMCDS="C:/Distance 6",verbose=FALSE)
+mod1
+summary(mod1)
+predicted_hist((mod1))
+
 
