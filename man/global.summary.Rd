@@ -2,7 +2,7 @@
 % Please edit documentation in R/Global.summary.R
 \name{global.summary}
 \alias{global.summary}
-\title{Create a PDF file that summarize the ouput of the Distance software.}
+\title{Create a PDF file that summarize the output of the Distance software.}
 \usage{
 global.summary(model, ...)
 }

@@ -1,5 +1,5 @@
 #' @export
-#'@title Create a PDF file that summarize the ouput of the Distance software. 
+#'@title Create a PDF file that summarize the output of the Distance software. 
 #'
 #'
 #'@description The file contains a chi-square test table, a predicted density table, a summary of the the detection function, a summary for the model and a histogram of detection. 
