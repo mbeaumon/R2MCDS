@@ -1,5 +1,5 @@
 ---
-title: "GeoAviR Multi-species models"
+title: "R2MCDS Multi-species models"
 author: "Christian Roy"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette

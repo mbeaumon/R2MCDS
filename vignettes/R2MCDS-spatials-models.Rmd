@@ -1,5 +1,5 @@
 ---
-title: "GeoAviR spatial models"
+title: "R2MCDS spatial models"
 author: "Christian Roy"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
