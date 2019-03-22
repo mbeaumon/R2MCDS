@@ -16,8 +16,11 @@
 
 #'@param SMP_LABEL Name of the column to use for the transect/watch label.
 
-#'@param units list of th units used for the analysis. Contains the Type of analysis (Line or Point), the Distance engine to use (Perp or Radial), 
-#'the Length units, the Distance units, and the Area_units.For the possible units of distance and area see Distance 6.2 documentation.     
+#'@param Type Name of the type of transects (Line, Point, or Cue)
+
+#'@param units List of the units used for the analysis. Contains the Distance engine to use (Perp or Radial)
+#'depending on the type of transects, the Length units, the Distance units, and the Area_units.
+#'For the possible units of distance and area see Distance 6.2 documentation.     
 
 #'@param SMP_EFFORT Length in of the transect or the transect/watch unit.
 
@@ -109,7 +112,7 @@
 #'
 #'### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
 #'dist.out1 <- mcds.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
-#'                          units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
+#'                          Type="Line", units=list(Distance="Perp",Length_units="Kilometers",
 #'                                     Distance_units="Meters",Area_units="Square kilometers"),
 #'                          breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
 #'                          STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
@@ -123,7 +126,7 @@
 #'alcids$Year <- as.numeric(alcids$Year)
 #'
 #'dist.out2 <- mcds.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
-#'                           units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
+#'                           Type="Line", units=list(Distance="Perp",Length_units="Kilometers",
 #'                                      Distance_units="Meters",Area_units="Square kilometers"),
 #'                           breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
 #'                           lsub=list(Year=c(2007,2008)), split=TRUE, empty="Year",
@@ -147,8 +150,9 @@ mcds.wrap <-
            DISTANCE="DISTANCE",
            SIZE="SIZE",                												
            STR_LABEL="STR_LABEL",
-           STR_AREA="STR_AREA",												
-           units=list(Type="Line",Distance="Perp",Length_units="Kilometer",
+           STR_AREA="STR_AREA",	
+           Type=NULL,
+           units=list(Distance="Perp",Length_units="Kilometer",
                       Distance_units="Meter",Area_units="Square kilometer"),
            breaks=c(0,50,100,200,300),
            covariates=NULL,
@@ -183,10 +187,13 @@ mcds.wrap <-
       stop("Monotone must be set to 'none' when  factors or covariates are included")
   
     #Check for units
-    if(length(units)!= 5)
-      stop("Units list must includes values for Type, Distance, Length_units, Distance_units and Area_units")
+    if(length(units)!= 4)
+      stop("Units list must includes values for Distance, Length_units, Distance_units and Area_units")
     
-    if(toupper(units$Type)%in%c("LINE","POINT", "CUE")==FALSE)
+    if(is.null(Type))
+       stop("Type of sampling has to be indicated")
+    
+    if(toupper(Type)%in%c("LINE","POINT", "CUE")==FALSE)
       stop("Type of sampling available are: Line, Point or Cue")
     
     if(toupper(units$Distance)%in%c("PERP","RADIAL")==FALSE)
@@ -195,8 +202,8 @@ mcds.wrap <-
     # if(toupper(units$Type)%in%c("POINT", "CUE") & toupper(units$Distance)!=c("RADIAL"))
     #   stop("For Points and Cue sampling scheme Distance must be set to radial")
     
-    # Automatic Distance unit when units$Type = Point or Cue
-    if(toupper(units$Type)%in%c("POINT", "CUE") & toupper(units$Distance)!=c("RADIAL")) {
+    # Automatic Distance unit when Type = Point or Cue
+    if(toupper(Type)%in%c("POINT", "CUE") & toupper(units$Distance)!=c("RADIAL")) {
       units$Distance = c("Radial")
       warning("Distance value has been replaced from Perp to Radial")
     }
@@ -235,7 +242,7 @@ mcds.wrap <-
 
     # Automatic values for multiplier argument depending on the type argument
     if(is.null(multiplier)){
-      if(units$Type == "Line"){
+      if(Type == "Line"){
         multiplier <- c(2,0,0)
       }else{
         multiplier <- c(1,0,0)
@@ -376,10 +383,10 @@ mcds.wrap <-
       
       opts2<-list()
       opts2["Options;"]<-""
-      opts2["Type="] <- paste(units$Type,";",sep="")
+      opts2["Type="] <- paste(Type,";",sep="")
       
       #opts2["Length /Measure="] <- paste("'",units$Length_units,"';",sep="")
-      if(units$Type=="Line"){
+      if(Type=="Line"){
         opts2["Length /Measure="] <- paste("'",units$Length_units,"';",sep="")
       }
       if(units$Distance=="Perp"){
@@ -575,7 +582,7 @@ mcds.wrap <-
           y<-readLines(file.path(path,det.file[j]))
           ans<-vector(mode="list",length=10)
           ans[[1]]<- input.data
-          ans[[2]]<- model_fittingMCDS(x=x, units=units)
+          ans[[2]]<- model_fittingMCDS(x=x, units=units, Type=Type)
           ans[[3]]<- parameter_estimatesMCDS(x)
           ans[[4]]<- ifelse(!is.null(factor) | !is.null(covariates)==T,param_namesMCDS(x),"No covariates in the model") 
           ans[[5]]<- chi_square_testMCDS(x)
