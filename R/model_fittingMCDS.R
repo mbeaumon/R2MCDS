@@ -1,5 +1,5 @@
 model_fittingMCDS <-
-function(x,units){
+function(x,units,Type){
 	#browser()
 	
   #Change units type for printing
@@ -21,6 +21,7 @@ function(x,units){
 	  l<-sapply(l,function(i){
 	  	i<-paste(i[i!=""],collapse=" ")
 	  })[1]
+	  #browser()
 	  descrip <- c("effort","samples","width","left","observations")
     units <- c(units$Length_units, Type, units$Distance_units, units$Distance_units, "clusters")
 	  ans<-data.frame(PARAMETERS=descrip, VALUES=ans, UNITS=units)
