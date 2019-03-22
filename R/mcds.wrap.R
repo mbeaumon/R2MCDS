@@ -191,8 +191,14 @@ mcds.wrap <-
     if(toupper(units$Distance)%in%c("PERP","RADIAL")==FALSE)
       stop("Type of distance available are: Perp or Radial")
     
-    if(toupper(units$Type)%in%c("POINT", "CUE") & toupper(units$Distance)!=c("RADIAL"))
-      stop("For Points and Cue sampling scheme Distance must be set to radial")
+    # if(toupper(units$Type)%in%c("POINT", "CUE") & toupper(units$Distance)!=c("RADIAL"))
+    #   stop("For Points and Cue sampling scheme Distance must be set to radial")
+    
+    # Automatic Distance unit when units$Type = Point or Cue
+    if(toupper(units$Type)%in%c("POINT", "CUE") & toupper(units$Distance)!=c("RADIAL")) {
+      units$Distance = c("Radial")
+      warning("Distance value has been replaced from Perp to Radial")
+    }
     
     
     if(toupper(units$Length_units)%in%c("CENTIMETERS", "METERS", "KILOMETERS", "MILES", 
