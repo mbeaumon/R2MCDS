@@ -172,18 +172,18 @@ mcds.wrap <-
       stop("Detection options are 'All' or 'Stratum'")
     
     if(toupper(monotone)%in%c("NONE","WEAK", "STRICT")==FALSE)
-      stop("monotone options are 'None', 'Weak' or 'Strict'")
+      stop("Monotone options are 'None', 'Weak' or 'Strict'")
     
     #Check for monotone options
     if(!is.null(covariates) & monotone!="none")
-      stop("monotone must be set to 'none' when  factors or covariates are included")
+      stop("Monotone must be set to 'none' when  factors or covariates are included")
     
     if(!is.null(factor) & monotone!="none")
-      stop("monotone must be set to 'none' when  factors or covariates are included")
+      stop("Monotone must be set to 'none' when  factors or covariates are included")
   
     #Check for units
     if(length(units)!= 5)
-      stop("units list must includes values for Type, Distance, Length_units, Distance_units and Area_units")
+      stop("Units list must includes values for Type, Distance, Length_units, Distance_units and Area_units")
     
     if(toupper(units$Type)%in%c("LINE","POINT", "CUE")==FALSE)
       stop("Type of sampling available are: Line, Point or Cue")
@@ -203,12 +203,12 @@ mcds.wrap <-
     
     if(toupper(units$Length_units)%in%c("CENTIMETERS", "METERS", "KILOMETERS", "MILES", 
                                     "INCHES", "FEET", "YARDS", "NAUTICAL MILES")==FALSE)
-      stop("Distance units must be one of thse: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches', 
+      stop("Distance units must be one of these: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches', 
            'Feet', 'Yards', Or 'Nautical Miles'")  
     
     if(toupper(units$Distance_units)%in%c("CENTIMETERS", "METERS", "KILOMETERS", "MILES", 
                                     "INCHES", "FEET", "YARDS", "NAUTICAL MILES")==FALSE)
-      stop("Distance units must be one of thse: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches', 
+      stop("Distance units must be one of these: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches', 
            'Feet', 'Yards', Or 'Nautical Miles'")  
     
     if(toupper(units$Area_units)%in%c("SQUARE CENTIMETERS", "SQUARE METERS", "SQUARE KILOMETERS", "SQUARE MILES", 
