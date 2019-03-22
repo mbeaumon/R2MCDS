@@ -13,8 +13,8 @@
 #'                          long.field = "LongStart", sp.field = "Alpha", date.field = "Date") 
 #'
 #'### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-#'dist.out1 <-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
-#'                          units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
+#'dist.out1 <-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",Type="Line",
+#'                          units=list(Distance="Perp",Length_units="Kilometers",
 #'                                     Distance_units="Meters",Area_units="Square kilometers"),
 #'                          breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
 #'                          STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
@@ -51,8 +51,8 @@ predicted_hist <- function(model){
 #'                          long.field = "LongStart", sp.field = "Alpha", date.field = "Date") 
 #'
 #'### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-#'dist.out1 <- mcds.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
-#'                          units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
+#'dist.out1 <- mcds.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",Type="Line",
+#'                          units=list(Distance="Perp",Length_units="Kilometers",
 #'                                     Distance_units="Meters",Area_units="Square kilometers"),
 #'                          breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
 #'                          STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
