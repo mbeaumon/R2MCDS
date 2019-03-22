@@ -161,7 +161,7 @@ mcds.wrap <-
            detection="All", 
            monotone="Strict",
            estimator=NULL,
-           multiplier=c(2,0,0), 
+           multiplier=NULL, 
            empty=NULL,
            verbose=FALSE
   ){
@@ -232,7 +232,19 @@ mcds.wrap <-
       }   
     }
     
-    
+    # Automatic values for multiplier argument depending on the type argument
+    if(!units$Type == "Line"){
+      if(is.null(multiplier)){
+        multiplier = c(1, 0, 0)
+        if(units$Type == "Line"){
+          multiplier <- c(2, 0, 0)
+        }else{
+          multiplier <- c(1, 0, 0)
+        }
+        
+      }
+    }
+
     # this recursively fits a model to get an estimate of p for a rarer species
     if(!is.null(rare)){		
       if(!names(rare)%in%names(dataset)){stop(paste("The column",names(rare)[1],"not in dataset"))}
