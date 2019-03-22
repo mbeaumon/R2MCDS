@@ -366,7 +366,7 @@ function(dataset, path, pathMCDS, SMP_LABEL="SMP_LABEL", SMP_EFFORT="SMP_EFFORT"
 		y<-readLines(file.path(path,det.file[i]))
 		ans<-vector(mode="list",length=8)
 		ans[[1]] <-input.data
-    ans[[2]] <-model_fittingMCDS(x, units=units)
+    ans[[2]] <-model_fittingMCDS(x, units=units, Type=Type)
 		ans[[3]] <-parameter_estimatesMCDS(x)
 		ans[[4]] <- "No covariates in strip transect models"
 		ans[[5]] <-chi_square_testMCDS(x)
