@@ -162,10 +162,11 @@ mcds.wrap <-
            monotone="Strict",
            estimator=NULL,
            multiplier=NULL, 
+           #multiplier = c(2, 0, 0),
            empty=NULL,
            verbose=FALSE
   ){
-    
+    #browser()
     ##Make sure input are correct
     #check for detection options
     if(toupper(detection)%in%c("ALL","STRATUM")==FALSE)
@@ -231,17 +232,13 @@ mcds.wrap <-
         dataset[,factor[i]] <- as.character(dataset[,factor[i]])
       }   
     }
-    
+
     # Automatic values for multiplier argument depending on the type argument
-    if(!units$Type == "Line"){
-      if(is.null(multiplier)){
-        multiplier = c(1, 0, 0)
-        if(units$Type == "Line"){
-          multiplier <- c(2, 0, 0)
-        }else{
-          multiplier <- c(1, 0, 0)
-        }
-        
+    if(is.null(multiplier)){
+      if(units$Type == "Line"){
+        multiplier <- c(2,0,0)
+      }else{
+        multiplier <- c(1,0,0)
       }
     }
 
