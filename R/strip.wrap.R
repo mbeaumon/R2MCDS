@@ -16,7 +16,9 @@
 
 #'@param SMP_LABEL Name of the column to use for the transect/watch label.
 
-#'@param units list of th units used for the analysis. Contains the Type of analysis (Line or Point), the Distance enfine to use (Perp or Radial), 
+#'@param Type Name of the type of transects (Line, Point, or Cue)
+
+#'@param units list of th units used for the analysis. Contains the Distance engine to use (Perp or Radial), 
 #'the Length units, the Distance units, and the Area_units.For the possible units of distance and area see Distance 6.2 documentation.     
 
 #'@param SMP_EFFORT Length in km of the transect or the transect/watch unit.
@@ -89,8 +91,8 @@
 #'                          long.field = "LongStart", sp.field = "Alpha", date.field = "Date") 
 #'
 #'### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-#'strip.out1 <-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",SIZE="Count", breaks=c(0,300),
-#'                          units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
+#'strip.out1 <-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",SIZE="Count", breaks=c(0,300),Type="Line",
+#'                          units=list(Distance="Perp",Length_units="Kilometers",
 #'                                     Distance_units="Meters",Area_units="Square kilometers"),
 #'                          STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
 #'                          path="c:/temp/distance",
@@ -101,24 +103,27 @@
 
 strip.wrap <-
 function(dataset, path, pathMCDS, SMP_LABEL="SMP_LABEL", SMP_EFFORT="SMP_EFFORT",
-				SIZE="SIZE", STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",	
-        units=list(Type="Line",Distance="Perp",Length_units="Kilometer",
+				SIZE="SIZE", STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",Type=NULL,
+        units=list(Distance="Perp",Length_units="Kilometer",
                    Distance_units="Meter",Area_units="Square kilometer"),
 				breaks=c(0,300), lsub=NULL, stratum=NULL, split=TRUE,period=NULL,
 				detection="All", multiplier=2, empty=NULL, verbose=FALSE
 ){
 	
   #Check for units
-  if(length(units)!= 5)
-    stop("units list must includes values for Type, Distance, Length_units, Distance_units and Area_units")
+  if(length(units)!= 4)
+    stop("units list must includes values for Distance, Length_units, Distance_units and Area_units")
   
-  if(toupper(units$Type)%in%c("LINE","POINT", "CUE")==FALSE)
+  if(is.null(Type))
+    stop("Type of sampling has to be indicated")
+  
+  if(toupper(Type)%in%c("LINE","POINT", "CUE")==FALSE)
     stop("Type of sampling available are: Line, Point or Cue")
   
   if(toupper(units$Distance)%in%c("PERP","RADIAL")==FALSE)
     stop("Type of distance available are: Perp or Radial")
   
-  if(toupper(units$Type)%in%c("POINT", "CUE") & toupper(units$Distance)!=c("RADIAL"))
+  if(toupper(Type)%in%c("POINT", "CUE") & toupper(units$Distance)!=c("RADIAL"))
     stop("For Points and Cue sampling scheme Distance must be set to radial")
   
   
@@ -264,7 +269,7 @@ function(dataset, path, pathMCDS, SMP_LABEL="SMP_LABEL", SMP_EFFORT="SMP_EFFORT"
 		opts[""]<-"None"
 		opts[""]<-"None"
 		opts["Options;"]<-""
-		opts["Type="] <- paste(units$Type,";",sep="")
+		opts["Type="] <- paste(Type,";",sep="")
 		opts["Length /Measure="] <- paste("'",units$Length_units,"';",sep="")
 		if(units$Distance=="Perp"){
 		  opts["Distance=Perp /Measure="] <- paste("'",units$Distance_units,"';",sep="")    
