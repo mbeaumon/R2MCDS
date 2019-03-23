@@ -2,6 +2,11 @@ R2MCDS
 =======
 This package will allow the user to call the MCDS engine from Distance 6.2 in the R environment.
 
+Version 0.9.2
+=======
+* 
+* 
+
 Version 0.9.1
 =======
 * renamed "predicted_hist" to "plot.distanceFit"
