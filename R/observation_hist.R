@@ -11,6 +11,7 @@
 #'@param color fill color for the bars
 #'@param ungroup will plot the Count histogram instead of the group histogram if TRUE 
 #'@param rescale set the height of the first bin
+#'@param Type Type of transect
 #'@details
 #' Make a histogram of the observations in function of the distance class
 #'@section Author:Christian Roy
@@ -23,9 +24,10 @@
 #'#END
 
 
-observation_hist <- function(dataset, count, dist.class, keep.class, breaks, color="white",ungroup=F, rescale=1){
+observation_hist <- function(dataset, count, dist.class, keep.class, breaks, color="white",ungroup=F, rescale=1, Type = c("Line", "Point")){
     
-    ##Keep only the distance class desired
+    Type <- match.arg(Type)
+      ##Keep only the distance class desired
     dataset <- droplevels(dataset[dataset[,dist.class]%in%keep.class,])
     if(ungroup==T){
       ## Make sure to transform groups into individuals
@@ -36,11 +38,25 @@ observation_hist <- function(dataset, count, dist.class, keep.class, breaks, col
 
     levels(Observations) <- sapply(2:length(breaks), function(i){ mean(c(breaks[i-1],breaks[i]))})
     ##Make histogram df
+    #browser()
+    
     d <- as.numeric(as.character(Observations))
     h <- hist(d, breaks = breaks, plot =FALSE)
-    if( !is.na(rescale)==T){
-      h$density <- h$density*rescale/h$density[1]
+    
+    if(Type == "Point"){
+      h.point <- h$density/(pi*breaks[-1]^2 - pi*breaks[-length(breaks)]^2)
     }
+    
+    if( !is.na(rescale)==T){
+      if(Type == "Line"){
+        h$density <- h$density*rescale/h$density[1]       
+      }else{
+        h$density <- h.point*rescale/h.point[1]        
+      }
+
+    }
+    
+    
     r <- data.frame(h[2:4], xmin = head(h$breaks, -1), xmax = h$breaks[-1])
     #Make graph
     ggplot() +
