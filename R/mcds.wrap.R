@@ -151,9 +151,11 @@ mcds.wrap <-
            SIZE="SIZE",                												
            STR_LABEL="STR_LABEL",
            STR_AREA="STR_AREA",	
-           Type=NULL,
-           units=list(Distance="Perp",Length_units="Kilometer",
-                      Distance_units="Meter",Area_units="Square kilometer"),
+           Type=c("Line", "Point", "Cue"),
+           units=list(Distance="Perp",
+                      Length_units="Kilometer",
+                      Distance_units="Meter",
+                      Area_units="Square kilometer"),
            breaks=c(0,50,100,200,300),
            covariates=NULL,
            factor=NULL,
@@ -162,22 +164,27 @@ mcds.wrap <-
            split=TRUE,
            rare=NULL, 
            period=NULL,
-           detection="All", 
-           monotone="Strict",
+           detection=c("All","Stratum"), 
+           monotone=c("Strict", "None","Weak"),
            estimator=NULL,
            multiplier=NULL, 
            #multiplier = c(2, 0, 0),
            empty=NULL,
            verbose=FALSE
   ){
-    #browser()
+    #print(match.call())
+    Type <- match.arg(Type) #Set Type = "Line" as the default value
+    detection <- match.arg(detection)
+    monotone <- match.arg(monotone)
+    
     ##Make sure input are correct
     #check for detection options
-    if(toupper(detection)%in%c("ALL","STRATUM")==FALSE)
-      stop("Detection options are 'All' or 'Stratum'")
     
-    if(toupper(monotone)%in%c("NONE","WEAK", "STRICT")==FALSE)
-      stop("Monotone options are 'None', 'Weak' or 'Strict'")
+    # if(toupper(detection)%in%c("ALL","STRATUM")==FALSE)
+    #   stop("Detection options are 'All' or 'Stratum'")
+    
+    # if(toupper(monotone)%in%c("STRICT", "NONE","WEAK")==FALSE)
+    #   stop("Monotone options are 'None', 'Weak' or 'Strict'")
     
     #Check for monotone options
     if(!is.null(covariates) & monotone!="none")
@@ -190,37 +197,31 @@ mcds.wrap <-
     if(length(units)!= 4)
       stop("Units list must includes values for Distance, Length_units, Distance_units and Area_units")
     
-    if(is.null(Type))
-       stop("Type of sampling has to be indicated")
-    
-    if(toupper(Type)%in%c("LINE","POINT", "CUE")==FALSE)
-      stop("Type of sampling available are: Line, Point or Cue")
-    
     if(toupper(units$Distance)%in%c("PERP","RADIAL")==FALSE)
       stop("Type of distance available are: Perp or Radial")
     
     # if(toupper(units$Type)%in%c("POINT", "CUE") & toupper(units$Distance)!=c("RADIAL"))
     #   stop("For Points and Cue sampling scheme Distance must be set to radial")
     
-    # Automatic Distance unit when Type = Point or Cue
-    if(toupper(Type)%in%c("POINT", "CUE") & toupper(units$Distance)!=c("RADIAL")) {
-      units$Distance = c("Radial")
-      warning("Distance value has been replaced from Perp to Radial")
+    # Automatic Distance unit when Type = Point
+    if(toupper(Type)%in%c("POINT") & toupper(units$Distance)!=c("RADIAL")) {
+      units$Distance <- c("Radial")
+      warning("Distance value has been replaced from 'Perp' to 'Radial'")
+    }
+    # Automatic Effort unit when Type = Point
+    if(toupper(Type)%in%c("POINT") & toupper(units$Length_units)!=c("NB OF POINTS")) {
+      units$Length_units <- c("Nb of Points")
+      warning("Effort value has been replaced to 'Nb of Points'")
     }
     
     
-    if(toupper(units$Length_units)%in%c("CENTIMETERS", "METERS", "KILOMETERS", "MILES", 
-                                    "INCHES", "FEET", "YARDS", "NAUTICAL MILES")==FALSE)
-      stop("Distance units must be one of these: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches', 
-           'Feet', 'Yards', Or 'Nautical Miles'")  
+    if(toupper(units$Length_units)%in%c("CENTIMETERS", "METERS", "KILOMETERS", "MILES", "INCHES", "FEET", "YARDS", "NAUTICAL MILES", "NB OF POINTS")==FALSE)
+      stop("Distance units must be one of these: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches','Feet', 'Yards', 'Nautical Miles', or 'Number of Points'")  
     
-    if(toupper(units$Distance_units)%in%c("CENTIMETERS", "METERS", "KILOMETERS", "MILES", 
-                                    "INCHES", "FEET", "YARDS", "NAUTICAL MILES")==FALSE)
-      stop("Distance units must be one of these: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches', 
-           'Feet', 'Yards', Or 'Nautical Miles'")  
+    if(toupper(units$Distance_units)%in%c("CENTIMETERS", "METERS", "KILOMETERS", "MILES", "INCHES", "FEET", "YARDS", "NAUTICAL MILES")==FALSE)
+      stop("Distance units must be one of these: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches','Feet', 'Yards', Or 'Nautical Miles'")  
     
-    if(toupper(units$Area_units)%in%c("SQUARE CENTIMETERS", "SQUARE METERS", "SQUARE KILOMETERS", "SQUARE MILES", 
-                                          "SQUARE INCHES", "SQUARE FEET", "SQUARE YARDS", "HECTARES")==FALSE)
+    if(toupper(units$Area_units)%in%c("SQUARE CENTIMETERS", "SQUARE METERS", "SQUARE KILOMETERS", "SQUARE MILES","SQUARE INCHES", "SQUARE FEET", "SQUARE YARDS", "HECTARES")==FALSE)
       stop("Distance units must be one of these: 'Square centimeters', 'Square meters', 'Square kilometers', 'Square miles', 'Square inches', 'Square feet', 'Square yards', Or 'Hectares'")  
     
     #get the list of arguments
