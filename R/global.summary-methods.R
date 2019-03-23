@@ -3,7 +3,7 @@
 #'
 #'
 #'@description The file contains a chi-square test table, a predicted density table, a summary of the the detection function, a summary for the model and a histogram of detection. 
-#'@param model The output of a distance model fitted with the \code{\link{mcds.wrap}} function (of class "\code{distanceFit}" or "list").
+#'@param model The output of a distance model fitted with the \code{\link{mcds.wrap}} function (of class \code{distanceFit} or \code{distanceList}).
 #'@param species vector containing the name of species in each output.
 #'@param file Name for the file.
 #'@param directory Where to save the output.
