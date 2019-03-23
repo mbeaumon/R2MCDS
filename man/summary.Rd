@@ -7,7 +7,7 @@
 \alias{print.summary.distanceList}
 \alias{summary.distanceFit}
 \alias{summary.distanceList}
-\title{Summary and print methods for \code{distanceFit} and \code{distanceList} objects}
+\title{Summary and print methods}
 \usage{
 \method{print}{distanceFit}(x, ...)
 
@@ -22,5 +22,8 @@
 \method{summary}{distanceList}(x, ...)
 }
 \description{
-Test
+Summary and print methods for \code{distanceFit} and \code{distanceList} objects
+}
+\details{
+See the help file of \code{\link{mcds.wrap}}
 }
