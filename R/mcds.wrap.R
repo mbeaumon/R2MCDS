@@ -16,11 +16,11 @@
 
 #'@param SMP_LABEL Name of the column to use for the transect/watch label.
 
-#'@param Type Name of the type of transects ("Line", "Point", or "Cue"). Default value is "Line".
+#'@param Type Name of the type of transects \code{("Line", "Point", or "Cue")}. Default value is \coce{"Line"}.
 
-#'@param units List of the units used for the analysis. Contains the Distance engine to use (Perp or Radial)
+#'@param units List of the units used for the analysis. Contains the Distance engine to use (\code{"Perp"} or \code{"Radial"}).
 #'depending on the type of transects, the Length units, the Distance units, and the Area_units.
-#'For the possible units of distance and area see Distance 6.2 documentation.     
+#'For the possible units of distance and area see Distance 7.0 documentation.     
 
 #'@param SMP_EFFORT Length in of the transect or the transect/watch unit.
 

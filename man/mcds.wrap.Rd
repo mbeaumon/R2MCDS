@@ -34,11 +34,11 @@ mcds.wrap(dataset, path, pathMCDS, SMP_LABEL = "SMP_LABEL",
 
 \item{STR_AREA}{Name of the column to use for the stratum area.}
 
-\item{Type}{Name of the type of transects ("Line", "Point", or "Cue"). Default value is "Line".}
+\item{Type}{Name of the type of transects \code{("Line", "Point", or "Cue")}. Default value is \coce{"Line"}.}
 
-\item{units}{List of the units used for the analysis. Contains the Distance engine to use (Perp or Radial)
+\item{units}{List of the units used for the analysis. Contains the Distance engine to use (\code{"Perp"} or \code{"Radial"}).
 depending on the type of transects, the Length units, the Distance units, and the Area_units.
-For the possible units of distance and area see Distance 6.2 documentation.}
+For the possible units of distance and area see Distance 7.0 documentation.}
 
 \item{breaks}{A vector giving the distance intervals in meters to be used in the analysis.}
 
