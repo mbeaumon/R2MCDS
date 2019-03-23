@@ -1,6 +1,8 @@
+#'Summary and print methods
+#'
 #'Summary and print methods for \code{distanceFit} and \code{distanceList} objects
 #'
-#'Test
+#'See the help file of \code{\link{mcds.wrap}}
 #'
 #'@rdname summary
 #'@export
