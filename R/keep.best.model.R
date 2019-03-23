@@ -1,10 +1,10 @@
-#' @export
+#'@export
 #'@title Keep the best model of a distanceList object
 #'
 #'
 #'@description This function keep the model with the lowest AICc value in a distanceList object.
 
-#'@param x A \code{\link{distanceList}} object.
+#'@param x A \code{distanceList} object. See \code{\link{mcds.wrap}}
 
 #'@details
 #'Select the model with the smallest AICc value. If more than one model have a Delta AICc equal to zero the uniform models
