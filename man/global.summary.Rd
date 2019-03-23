@@ -7,7 +7,7 @@
 global.summary(model, ...)
 }
 \arguments{
-\item{model}{The output of a distance model fitted with the \code{\link{distance.wrap}} function (of class "\code{distanceFit}" or "list").}
+\item{model}{The output of a distance model fitted with the \code{\link{mcds.wrap}} function (of class "\code{distanceFit}" or "list").}
 
 \item{species}{vector containing the name of species in each output.}
 
@@ -22,7 +22,7 @@ This function will prints all the summary tables and an histogram with the predi
 The file contains a chi-square test table, a predicted density table, a summary of the the detection function, a summary for the model and a histogram of detection.
 }
 \details{
-This function creates a visual summary of the output file saved as a PDF. See the help files for \code{\link{distance.wrap}} for other examples.
+This function creates a visual summary of the output file saved as a PDF. See the help files for \code{\link{mcds.wrap}} for other examples.
 }
 \section{Author}{
 Christian Roy
@@ -45,7 +45,7 @@ DISTANCE<-"Distance"
 SIZE<-"Count"
 
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-x<-distance.wrap(alcids,path=path,pathMCDS=pathMCDS,breaks=breaks,STR_LABEL=STR_LABEL,STR_AREA=STR_AREA,SMP_LABEL=SMP_LABEL,SMP_EFFORT=SMP_EFFORT,DISTANCE=DISTANCE,SIZE=SIZE,verbose=FALSE)
+x<-mcds.wrap(alcids,path=path,pathMCDS=pathMCDS,breaks=breaks,STR_LABEL=STR_LABEL,STR_AREA=STR_AREA,SMP_LABEL=SMP_LABEL,SMP_EFFORT=SMP_EFFORT,DISTANCE=DISTANCE,SIZE=SIZE,verbose=FALSE)
 global.summary(model=x, species="alcids", file="alcidae_global", directory="C:/temp/distance") 
 END
 }
