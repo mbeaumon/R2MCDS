@@ -1,4 +1,4 @@
-#' @export
+#'@export
 #'@title Plot a detection histogram of apparent density.
 #'
 #'
@@ -25,48 +25,49 @@
 
 
 observation_hist <- function(dataset, count, dist.class, keep.class, breaks, color="white",ungroup=F, rescale=1, Type = c("Line", "Point")){
-    
-    Type <- match.arg(Type)
-      ##Keep only the distance class desired
-    dataset <- droplevels(dataset[dataset[,dist.class]%in%keep.class,])
-    if(ungroup==T){
-      ## Make sure to transform groups into individuals
-      Observations <- rep(dataset[,dist.class],as.numeric(dataset[,count]))
-    }else{
-      Observations <- dataset[,dist.class]
-    }
-
-    levels(Observations) <- sapply(2:length(breaks), function(i){ mean(c(breaks[i-1],breaks[i]))})
-    ##Make histogram df
-    #browser()
-    
-    d <- as.numeric(as.character(Observations))
-    h <- hist(d, breaks = breaks, plot =FALSE)
-    
-    if(Type == "Point"){
-      h.point <- h$density/(pi*breaks[-1]^2 - pi*breaks[-length(breaks)]^2)
-    }
-    
-    if( !is.na(rescale)==T){
-      if(Type == "Line"){
-        h$density <- h$density*rescale/h$density[1]       
-      }else{
-        h$density <- h.point*rescale/h.point[1]        
-      }
-
-    }
-    
-    
-    r <- data.frame(h[2:4], xmin = head(h$breaks, -1), xmax = h$breaks[-1])
-    #Make graph
-    ggplot() +
-      geom_rect(data=r,aes(xmin = xmin, xmax = xmax, ymin = 0, ymax = density),colour="black", fill=color) +
-      scale_y_continuous(limits=c(0,max(h$density))) +
-      theme_bw() +
-      theme(axis.line = element_line(colour = "black"),
-            panel.grid.major = element_blank(),
-            panel.grid.minor = element_blank(),
-            panel.border = element_blank(),
-            panel.background = element_blank()) 
+  
+  Type <- match.arg(Type)
+  ##Keep only the distance class desired
+  dataset <- droplevels(dataset[dataset[,dist.class]%in%keep.class,])
+  if(ungroup==T){
+    ## Make sure to transform groups into individuals
+    Observations <- rep(dataset[,dist.class],as.numeric(dataset[,count]))
+  }else{
+    Observations <- dataset[,dist.class]
   }
+  
+  levels(Observations) <- sapply(2:length(breaks), function(i){ mean(c(breaks[i-1],breaks[i]))})
+  ##Make histogram df
+  #browser()
+  
+  d <- as.numeric(as.character(Observations))
+  h <- hist(d, breaks = breaks, plot =FALSE)
+  
+  if(Type == "Point"){
+    h.point <- h$density/(pi*breaks[-1]^2 - pi*breaks[-length(breaks)]^2)
+  }
+  
+  if( !is.na(rescale)==T){
+    if(Type == "Line"){
+      h$density <- h$density*rescale/h$density[1]       
+    }else{
+      h$density <- h.point*rescale/h.point[1]        
+    }
+    
+  }
+  
+  
+  r <- data.frame(h[2:4], xmin = head(h$breaks, -1), xmax = h$breaks[-1])
+  #Make graph
+  ggplot() +
+    geom_rect(data=r,aes(xmin = xmin, xmax = xmax, ymin = 0, ymax = density),colour="black", fill=color) +
+    scale_y_continuous(limits=c(0,max(h$density))) +
+    theme_bw() +
+    theme(axis.line = element_line(colour = "black"),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank(),
+          panel.border = element_blank(),
+          panel.background = element_blank()) 
+}
+
 
