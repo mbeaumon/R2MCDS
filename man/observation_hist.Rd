@@ -5,7 +5,8 @@
 \title{Plot a detection histogram of apparent density.}
 \usage{
 observation_hist(dataset, count, dist.class, keep.class, breaks,
-  color = "white", ungroup = F, rescale = 1)
+  color = "white", ungroup = F, rescale = 1, Type = c("Line",
+  "Point"))
 }
 \arguments{
 \item{dataset}{A \code{\link{data.frame}} containing observations.}
@@ -23,6 +24,8 @@ observation_hist(dataset, count, dist.class, keep.class, breaks,
 \item{ungroup}{will plot the Count histogram instead of the group histogram if TRUE}
 
 \item{rescale}{set the height of the first bin}
+
+\item{Type}{Type of transect}
 }
 \description{
 This function will allow the user to visualise the histogram of observations in function of distance class.
@@ -38,7 +41,7 @@ Christian Roy
 ###Import the data
 data(alcidae)
 
-###Check the naÃ¯ve detection histogram for alcidae
+###Check the naïve detection histogram for alcidae
 Observation_hist(alcidae, count="Count", dist.class="Distance", keep.class=c("A", "B", "C", "D"), breaks=c(0,50,100,200,300), color="white")
 #END
 }
