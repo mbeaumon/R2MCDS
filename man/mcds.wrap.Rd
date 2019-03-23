@@ -6,13 +6,14 @@
 \usage{
 mcds.wrap(dataset, path, pathMCDS, SMP_LABEL = "SMP_LABEL",
   SMP_EFFORT = "SMP_EFFORT", DISTANCE = "DISTANCE", SIZE = "SIZE",
-  STR_LABEL = "STR_LABEL", STR_AREA = "STR_AREA", units = list(Type =
-  "Line", Distance = "Perp", Length_units = "Kilometer", Distance_units =
-  "Meter", Area_units = "Square kilometer"), breaks = c(0, 50, 100, 200, 300),
-  covariates = NULL, factor = NULL, lsub = NULL, stratum = NULL,
-  split = TRUE, rare = NULL, period = NULL, detection = "All",
-  monotone = "Strict", estimator = NULL, multiplier = c(2, 0, 0),
-  empty = NULL, verbose = FALSE)
+  STR_LABEL = "STR_LABEL", STR_AREA = "STR_AREA", Type = c("Line",
+  "Point", "Cue"), units = list(Distance = "Perp", Length_units =
+  "Kilometer", Distance_units = "Meter", Area_units = "Square kilometer"),
+  breaks = c(0, 50, 100, 200, 300), covariates = NULL, factor = NULL,
+  lsub = NULL, stratum = NULL, split = TRUE, rare = NULL,
+  period = NULL, detection = c("All", "Stratum"),
+  monotone = c("Strict", "None", "Weak"), estimator = NULL,
+  multiplier = NULL, empty = NULL, verbose = FALSE)
 }
 \arguments{
 \item{dataset}{A \code{\link{data.frame}} with observations.}
@@ -33,8 +34,11 @@ mcds.wrap(dataset, path, pathMCDS, SMP_LABEL = "SMP_LABEL",
 
 \item{STR_AREA}{Name of the column to use for the stratum area.}
 
-\item{units}{list of th units used for the analysis. Contains the Type of analysis (Line or Point), the Distance engine to use (Perp or Radial), 
-the Length units, the Distance units, and the Area_units.For the possible units of distance and area see Distance 6.2 documentation.}
+\item{Type}{Name of the type of transects (Line, Point, or Cue)}
+
+\item{units}{List of the units used for the analysis. Contains the Distance engine to use (Perp or Radial)
+depending on the type of transects, the Length units, the Distance units, and the Area_units.
+For the possible units of distance and area see Distance 6.2 documentation.}
 
 \item{breaks}{A vector giving the distance intervals in meters to be used in the analysis.}
 
@@ -118,7 +122,7 @@ alcids <- mcds.filter(alcidae, transect.id = "WatchID", distance.field = "Distan
 
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
 dist.out1 <- mcds.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
-                         units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
+                         Type="Line", units=list(Distance="Perp",Length_units="Kilometers",
                                     Distance_units="Meters",Area_units="Square kilometers"),
                          breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
                          STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
@@ -126,12 +130,16 @@ dist.out1 <- mcds.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE=
                          pathMCDS="C:/Distance 6",verbose=FALSE)
 
 summary(dist.out1)
+
 ### Run separate analysis for years 2008-2009
+alcids$Year <- substr(alcids$Date, start = 1, stop = 4)
+alcids$Year <- as.numeric(alcids$Year)
+
 dist.out2 <- mcds.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
-                          units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
+                          Type="Line", units=list(Distance="Perp",Length_units="Kilometers",
                                      Distance_units="Meters",Area_units="Square kilometers"),
                           breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
-                          lsub=list(Year=c(2008,2009)), split=TRUE, empty="Year",
+                          lsub=list(Year=c(2007,2008)), split=TRUE, empty="Year",
                           STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
                           path="c:/temp/distance",
                          pathMCDS="C:/Distance 6",verbose=FALSE)
