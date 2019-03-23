@@ -174,17 +174,14 @@ mcds.wrap <-
   ){
     #print(match.call())
     Type <- match.arg(Type) #Set Type = "Line" as the default value
-    detection <- match.arg(detection)
-    monotone <- match.arg(monotone)
+    detection <- match.arg(detection) # Set detection = "All" as the default value
+    monotone <- match.arg(monotone) # Set monotone = "Strict" as the default value
     
     ##Make sure input are correct
     #check for detection options
     
-    # if(toupper(detection)%in%c("ALL","STRATUM")==FALSE)
-    #   stop("Detection options are 'All' or 'Stratum'")
-    
-    # if(toupper(monotone)%in%c("STRICT", "NONE","WEAK")==FALSE)
-    #   stop("Monotone options are 'None', 'Weak' or 'Strict'")
+    if(toupper(Type)%in%c("CUE"))
+      stop("Cue count survey is not implemented in this package")
     
     #Check for monotone options
     if(!is.null(covariates) & monotone!="none")
