@@ -15,7 +15,7 @@ global.summary(model, ...)
   directory = "C:/temp/distance")
 }
 \arguments{
-\item{model}{The output of a distance model fitted with the \code{\link{mcds.wrap}} function (of class "\code{distanceFit}" or "list").}
+\item{model}{The output of a distance model fitted with the \code{\link{mcds.wrap}} function (of class \code{distanceFit} or \code{distanceList}).}
 
 \item{species}{vector containing the name of species in each output.}
 

@@ -35,6 +35,10 @@
 #'global.summary(model=x, species="alcids", file="alcidae_global", directory="C:/temp/distance") 
 #'END
 
+
+#'@export
+#'@rdname global.summary
+#'
 global.summary <-
 	function (model, ...) {
 		UseMethod("global.summary", model)
