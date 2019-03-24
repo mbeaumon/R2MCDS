@@ -16,11 +16,11 @@
 
 #'@param SMP_LABEL Name of the column to use for the transect/watch label.
 
-#'@param Type Name of the type of transects ("Line", "Point", or "Cue"). Default value is "Line".
+#'@param Type Name of the type of transects \code{("Line", "Point", or "Cue")}. Default value is \coce{"Line"}.
 
-#'@param units List of the units used for the analysis. Contains the Distance engine to use (Perp or Radial)
+#'@param units List of the units used for the analysis. Contains the Distance engine to use (\code{"Perp"} or \code{"Radial"}).
 #'depending on the type of transects, the Length units, the Distance units, and the Area_units.
-#'For the possible units of distance and area see Distance 6.2 documentation.     
+#'For the possible units of distance and area see Distance 7.0 documentation.     
 
 #'@param SMP_EFFORT Length in of the transect or the transect/watch unit.
 
@@ -62,9 +62,8 @@
 #'length 2 with the first element the key function and the second element the expansion term (ex: \code{list(c("HN","CO"),c("HA","PO")}).
 #'When \code{rare != NULL}, only one set is used (UN-CO) for the final specific model. 
 
-#'@param multiplier Value by which the estimates of density or abundance are multiplied. The first value is the multiplier, the second the SE and the third the degree of freedom associated with the multiplier (useful when using the probability of detection as a multiplier in a two-step analyses with the second step). Default value \code{multiplier = c(2,0,0)} meaning
-#'only one-half of the transect is surveyed and the value is known with certainty with an infinite degree of freedom. When \code{rare != NULL}, the multiplier will be modified to account
-#'for the probability of detection.
+#'@param multiplier Value by which the estimates of density or abundance are multiplied. The first value is the multiplier, the second the SE and the third the degree of freedom associated with the multiplier (useful when using the probability of detection as a multiplier in a two-step analyses with the second step). Default value when \code{Type = "Line"} and \code{multiplier = NULL} is set to \code{multiplier = c(2,0,0)} meaning
+#'only one-half of the transect is surveyed and the value is known with certainty with an infinite degree of freedom. When \code{rare != NULL}, the multiplier will be modified to account for the probability of detection. When \code{Type = "Point"} and \code{multiplier = NULL}, the multiplier is set to \code{multiplier = c(2,0,0)}. Values provided by the user will override these default settings.
 
 #'@param empty Determine how empty transects are to be selected in the analysis. When \code{empty = NULL}, all
 #'empty transects are included for every element of \code{lsub}. For example, when models are splitted according
