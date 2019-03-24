@@ -95,6 +95,7 @@ global.summary.distanceFit <- function(model, species, file="tempo", directory="
 	sink()
 	attach(environment()) 
 	wd <- getwd()
+	on.exit(setwd(wd))
 	setwd(directory)
 	Sweave(paste(directory,paste(file,".Rnw",sep=""),sep="/"))
 	tools::texi2pdf(paste(directory,paste(file,".tex",sep=""),sep="/"))
@@ -102,7 +103,6 @@ global.summary.distanceFit <- function(model, species, file="tempo", directory="
 	#Clean wd
 	to.remove <- dir()[grep(file, dir())][-match(paste(file,".pdf",sep=""),dir()[grep(file, dir())])]
 	file.remove(to.remove)
-	setwd(wd)
 	detach(environment()) 
 }  
 
@@ -162,6 +162,7 @@ global.summary.distanceList <- function(model, species, file="tempo", directory=
 						",fill=TRUE)
 		sink()
 		wd <- getwd()
+		on.exit(setwd(wd))
 		setwd(directory)
 		attach(environment()) 
 		Sweave(paste(directory,paste(nfile,".Rnw",sep=""),sep="/"))
@@ -169,7 +170,6 @@ global.summary.distanceList <- function(model, species, file="tempo", directory=
 		#Clean wd
 		to.remove <- dir()[grep(nfile, dir())][-match(paste(nfile,".pdf",sep=""),dir()[grep(nfile, dir())])]
 		file.remove(to.remove)
-		setwd(wd)
 		detach(environment()) 
 	}
 }  
