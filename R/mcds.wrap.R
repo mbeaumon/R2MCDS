@@ -315,11 +315,11 @@ mcds.wrap <-
       stop("Cue count survey is not implemented in this package")
     
     #Check for monotone options
-    if(!is.null(covariates) & monotone!="none")
-      stop("Monotone must be set to 'none' when  factors or covariates are included")
+    if(!is.null(covariates) & monotone!="None")
+      stop("Monotone must be set to 'None' when  factors or covariates are included")
     
-    if(!is.null(factor) & monotone!="none")
-      stop("Monotone must be set to 'none' when  factors or covariates are included")
+    if(!is.null(factor) & monotone!="None")
+      stop("Monotone must be set to 'None' when  factors or covariates are included")
   
     #Check for units
     if(length(units)!= 4)
