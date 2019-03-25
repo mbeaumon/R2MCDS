@@ -2,15 +2,15 @@
 #'@title Create a PDF file that summarize the output of the Distance software. 
 #'
 #'
-#'@description The file contains a chi-square test table, a predicted density table, a summary of the the detection function, a summary for the model and a histogram of detection. 
+#'@description The file contains a chi-square test table, a predicted density table, a summary of the the detection function, a summary for the model, and a histogram of detection. 
 #'@param model The output of a distance model fitted with the \code{\link{mcds.wrap}} function (of class \code{distanceFit} or \code{distanceList}).
-#'@param species vector containing the name of species in each output.
+#'@param species Vector containing the name of species in each output.
 #'@param file Name for the file.
 #'@param directory Where to save the output.
 #'@details
 #'This function creates a visual summary of the output file saved as a PDF. See the help files for \code{\link{mcds.wrap}} for other examples.
 #'@return
-#'This function will prints all the summary tables and an histogram with the predicted detection function in on a 11 X 8 inches PDF. If Global summary is applied on a list in will produce a serie of PDF. 
+#'This function will print all the summary tables and an histogram with the predicted detection function in on a 11 X 8 inches PDF. If Global summary is applied on a list, it will produce a serie of PDF. 
 #'@references 
 #'S.T. Buckland, D.R. Anderson, K.P. Burnham, J.L Laake, D.L. Borchers and L. Thomas. 2001. \emph{Introduction to Distance Sampling}. Estimating abundance of biological populations. Oxford University Press.
 #'@section Author:Christian Roy
