@@ -31,8 +31,27 @@
 #'SIZE<-"Count"
 #'
 #'### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-#'x<-mcds.wrap(alcids,path=path,pathMCDS=pathMCDS,breaks=breaks,STR_LABEL=STR_LABEL,STR_AREA=STR_AREA,SMP_LABEL=SMP_LABEL,SMP_EFFORT=SMP_EFFORT,DISTANCE=DISTANCE,SIZE=SIZE,verbose=FALSE)
-#'global.summary(model=x, species="alcids", file="alcidae_global", directory="C:/temp/distance") 
+#'x <- mcds.wrap(alcids,
+#'          SMP_EFFORT="WatchLenKm",
+#'          DISTANCE="Distance",
+#'          SIZE="Count",
+#'          Type="Line",
+#'          units=list(Distance="Perp",
+#'                     Length_units="Kilometers",
+#'                     Distance_units="Meters",
+#'                     Area_units="Square kilometers"),
+#'          breaks=c(0,50,100,200,300),
+#'          estimator=list(c("HN","CO")),
+#'          STR_LABEL="STR_LABEL",
+#'          STR_AREA="STR_AREA",
+#'          SMP_LABEL="WatchID",
+#'          path="c:/temp/distance",
+#'          pathMCDS="C:/Distance 7.2",
+#'          verbose=FALSE)
+#'global.summary(model=x,
+#'               species="alcids",
+#'               file="alcidae_global",
+#'               directory="C:/temp/distance") 
 #'END
 
 
