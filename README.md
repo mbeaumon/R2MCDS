@@ -4,8 +4,15 @@ This package will allow the user to call the MCDS engine from Distance 6.2 in th
 
 Version 0.9.2
 =======
-* 
-* 
+* Fixed a bug in the mcds.wrap example (separated analysis by year) 
+* Updated the R2MCDS functions to accommodate point count data analysis
+* Updated the package documentation
+*	Tested the compatibility of the package with the most up-to-date versions of DISTANCE and R
+* Updated vignettes
+* Updated helpfiles
+* Added one example of basic analysis based on point transect data in the help file of mcds.wrap() function
+
+
 
 Version 0.9.1
 =======
