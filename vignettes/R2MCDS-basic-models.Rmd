@@ -9,7 +9,7 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-**R2MCDS** allows to run some basic distance analysis on the dataset via the <span style="font-family:Courier New"> MCDS </span> engine of Distance 7.2. The analyzes are currently restricted to line transect, to point transect, and to binned data. Models based on line and point transect data are run via the `mcds.wrap()` function while strips transect models are analyzed with the function `strip.wrap()`. The distance models support 3 different key functions (Uniform, Half-normal and Hazard rate) and 3 different adjustment terms (Cosine, Simple polynomial, Hermite polynomial). 
+**R2MCDS** allows to run some basic distance analysis on the dataset via the <span style="font-family:Courier New"> MCDS </span> engine of Distance 7.2. The analyzes are currently restricted to line transect, to point transect, and to binned data. Models based on line and point transect data are run via the `mcds.wrap()` function by setting `Type` and `Distance` arguments. Strips transect models are analyzed with the function `strip.wrap()`. The distance models support 3 different key functions (Uniform, Half-normal and Hazard rate) and 3 different adjustment terms (Cosine, Simple polynomial, Hermite polynomial). 
 
 ##Basic model with `mcds.wrap()`
 
