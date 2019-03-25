@@ -18,9 +18,8 @@
 
 #'@param Type Name of the type of transects \code{("Line", "Point", or "Cue")}. Default value is \code{"Line"}.
 
-#'@param units List of the units used for the analysis. Contains the Distance engine to use (\code{"Perp"} or \code{"Radial"}).
-#'depending on the type of transects, the Length units, the Distance units, and the Area_units.
-#'For the possible units of distance and area see Distance 7.0 documentation.     
+#'@param units List of the units used for the analysis. Contains the Distance engine to use (\code{"Perp"} or \code{"Radial"}) depending on the type of transects, the Length units, the Distance units, and the Area_units.
+#'For the possible units of distance and area see Distance 7.2 documentation.     
 
 #'@param SMP_EFFORT Length in of the transect or the transect/watch unit.
 
@@ -53,17 +52,17 @@
 #'@param period A vector of characters of length 2 containing the extreme dates for which the analysis
 #'should be restricted. Dates have to be in the "yyyy-mm-dd" format.
 
-#'@param detection Currently, set to \code{detection = "All"}. Can also be \code{detection = "Stratum"}. Default value is "All".
+#'@param detection Currently, set to \code{detection = "All"}. Can also be \code{detection = "Stratum"}. Default value is \code{"All"}.
 
-#'@param monotone Currently, set to \code{monotone = "Strict"}. Can also be \code{monotone = "Strict", "None", or "Weak"}. Default value is "Strict".
+#'@param monotone Currently, set to \code{monotone = "Strict"}. Can also be \code{monotone = "Strict", "None", or "Weak"}. Default value is \code{"Strict"}.
 
 #'@param estimator When set to \code{NULL}, the following key functions and expansion terms will be used: UN-CO, UN-PO, HN-CO, HN-HE, HA-CO and HA-PO.
-#'If the user wants to choose the key functions and the expansion terms used, a list has to be given with each element a vector of
+#'If the user wants to choose the key functions and the adjustment terms used, a list has to be given with each element a vector of
 #'length 2 with the first element the key function and the second element the expansion term (ex: \code{list(c("HN","CO"),c("HA","PO")}).
 #'When \code{rare != NULL}, only one set is used (UN-CO) for the final specific model. 
 
-#'@param multiplier Value by which the estimates of density or abundance are multiplied. The first value is the multiplier, the second the SE and the third the degree of freedom associated with the multiplier (useful when using the probability of detection as a multiplier in a two-step analyses with the second step). Default value when \code{Type = "Line"} and \code{multiplier = NULL} is set to \code{multiplier = c(2,0,0)} meaning
-#'only one-half of the transect is surveyed and the value is known with certainty with an infinite degree of freedom. When \code{rare != NULL}, the multiplier will be modified to account for the probability of detection. When \code{Type = "Point"} and \code{multiplier = NULL}, the multiplier is set to \code{multiplier = c(2,0,0)}. Values provided by the user will override these default settings.
+#'@param multiplier Value by which the estimates of density or abundance are multiplied. The first value is the \code{multiplier}, the second the \code{SE} and the third the \code{degree of freedom} associated with the \code{multiplier} (useful when using the probability of detection as a \code{multiplier} in a two-step analyses with the second step). Default value when \code{Type = "Line"} and \code{multiplier = NULL} is set to \code{multiplier = c(2,0,0)} meaning
+#'only one-half of the transect is surveyed and the value is known with certainty with an infinite degree of freedom. When \code{rare != NULL}, the multiplier will be modified to account for the probability of detection. When \code{Type = "Point"} and \code{multiplier = NULL}, the multiplier is set to \code{multiplier = c(1,0,0)}. Values provided by the user will override these default settings.
 
 #'@param empty Determine how empty transects are to be selected in the analysis. When \code{empty = NULL}, all
 #'empty transects are included for every element of \code{lsub}. For example, when models are splitted according

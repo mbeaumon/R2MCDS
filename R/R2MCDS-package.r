@@ -1,6 +1,6 @@
-#'@title Calling  Distance 6.2 MCDS engine from R.
+#'@title Calling  Distance 7.2 MCDS engine from R.
 #'
-#'@description This package will allow the user to call the MCDS engine from Distance 6.2 in the R environment.
+#'@description This package will allow the user to call the MCDS engine from Distance 7.2 in the R environment.
 #'
 #'@name R2MCDS
 #'@docType package
@@ -8,8 +8,8 @@
 #'\tabular{ll}{
 #'Package: \tab R2MCDS\cr
 #'Type: \tab Package\cr
-#'Version: \tab 0.9.1\cr
-#'Date: \tab 2017-08-20\cr
+#'Version: \tab 0.9.2\cr
+#'Date: \tab 2019-03-25\cr
 #'License: \tab GPL-2\cr
 #'LazyLoad: \tab yes\cr
 #'}
@@ -23,42 +23,59 @@
 #'### Simple models without stratification
 #'### Import and filter data
 #'data(alcidae)
-#'alcids <- mcds.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
-#'                          distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", lat.field = "LatStart", 
-#'                          long.field = "LongStart", sp.field = "Alpha", date.field = "Date") 
+#'alcids <- mcds.filter(alcidae,
+#'                      transect.id = "WatchID",
+#'                      distance.field = "Distance",
+#'                      distance.labels = c("A", "B", "C", "D"),
+#'                      distance.midpoints = c(25, 75, 150, 250),
+#'                      effort.field = "WatchLenKm",
+#'                      lat.field = "LatStart",
+#'                      long.field = "LongStart",
+#'                      sp.field = "Alpha",
+#'                      date.field = "Date") 
 #'
-#'### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-#'dist.out1 <- mcds.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",Type="Line",
-#'                          units=list(Distance="Perp",Length_units="Kilometers",
-#'                                     Distance_units="Meters",Area_units="Square kilometers"),
-#'                          breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
-#'                          STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
-#'                          path="c:/temp/distance",
-#'                          pathMCDS="C:/Distance 6",verbose=FALSE)
+#'### Run analysis with the MCDS engine based on line transect data. Here, the WatchID is used as the sample.
+#'dist.out1 <- mcds.wrap(alcids,
+#'                       SMP_EFFORT="WatchLenKm",
+#'                       DISTANCE="Distance",
+#'                       SIZE="Count",
+#'                       Type="Line",
+#'                       units=list(Distance="Perp",
+#'                                  Length_units="Kilometers",
+#'                                  Distance_units="Meters",
+#'                                  Area_units="Square kilometers"),
+#'                       breaks=c(0,50,100,200,300),
+#'                       estimator=list(c("HN","CO")),
+#'                       STR_LABEL="STR_LABEL",
+#'                       STR_AREA="STR_AREA",
+#'                       SMP_LABEL="WatchID", 
+#'                       path="c:/temp/distance",
+#'                       pathMCDS="C:/Distance 7",
+#'                       verbose=FALSE)
 #'
 #'summary(dist.out1)
 #'##END
 NULL
 
-#'@title sample dataset distance analysis
+#'@title Sample dataset distance analysis
 #'
 #'@description A sample dataset containing observation of alcidae made in the Eastern Canada Seabirds At Sea (ECSAS) program.
 #'@format  A data frame with 1670 observations on the following 14 variables.
 #'  \describe{
-#'    \item{\code{CruiseID}}{unique cruise ID.}
-#'    \item{\code{WatchID}}{unique watch ID.}
+#'    \item{\code{CruiseID}}{Unique cruise ID.}
+#'    \item{\code{WatchID}}{Unique watch ID.}
 #'    \item{\code{Observer}}{Categorical variable identifying the different observers.}
-#'    \item{\code{Date}}{date of the watch.}
-#'    \item{\code{StartTime}}{start time of the watch.}
-#'    \item{\code{EndTime}}{end time of the watch.}
-#'    \item{\code{LatStart}}{latitude at start of the watch, decimal degrees.}
-#'    \item{\code{LongStart}}{longitude at start of the watch, decimal degrees.}
-#'    \item{\code{WatchLenKm}}{distance travelled during the watch in kilometers (estimated from platform speed and observation length since many watches don't have start and end positions).}
-#'    \item{\code{Alpha}}{four letter code of the species.}
+#'    \item{\code{Date}}{Date of the watch.}
+#'    \item{\code{StartTime}}{Start time of the watch.}
+#'    \item{\code{EndTime}}{End time of the watch.}
+#'    \item{\code{LatStart}}{Latitude at start of the watch, decimal degrees.}
+#'    \item{\code{LongStart}}{Longitude at start of the watch, decimal degrees.}
+#'    \item{\code{WatchLenKm}}{Distance travelled during the watch in kilometers (estimated from platform speed and observation length since many watches don't have start and end positions).}
+#'    \item{\code{Alpha}}{Four letter code of the species.}
 #'    \item{\code{English}}{English name.}
-#'    \item{\code{Latin}}{scientific name.}
+#'    \item{\code{Latin}}{Scientific name.}
 #'    \item{\code{Distance}}{Classes of distances for the observations. A=0-50m, B=50-100m, C=100-200m, D=200-300m.}
-#'    \item{\code{Count}}{number of individuals.}
+#'    \item{\code{Count}}{Number of individuals.}
 #'  }
 #'
 #'@seealso \code{\link{mcds.filter}}
@@ -71,20 +88,20 @@ NULL
 #'@description A sample dataset containing observation of seabirds made in the Eastern Canada Seabirds At Sea (ECSAS) programin the Gulf of St-Lawrence.
 #'@format A data frame with 1291 observations on the following 14 variables.
 #'  \describe{
-#'    \item{\code{CruiseID}}{unique cruise ID.}
-#'    \item{\code{WatchID}}{unique watch ID.}
+#'    \item{\code{CruiseID}}{Unique cruise ID.}
+#'    \item{\code{WatchID}}{Unique watch ID.}
 #'    \item{\code{Observer}}{Categorical variable identifying the different observers.}
-#'    \item{\code{Date}}{date of the watch.}
-#'    \item{\code{StartTime}}{start time of the watch.}
-#'    \item{\code{EndTime}}{end time of the watch.}
-#'    \item{\code{LatStart}}{latitude at start of the watch, decimal degrees.}
-#'    \item{\code{LongStart}}{longitude at start of the watch, decimal degrees.}
-#'    \item{\code{WatchLenKm}}{distance travelled during the watch in kilometers (estimated from platform speed and observation length since many watches don't have start and end positions).}
-#'    \item{\code{Alpha}}{four letter code of the species.}
+#'    \item{\code{Date}}{Date of the watch.}
+#'    \item{\code{StartTime}}{Start time of the watch.}
+#'    \item{\code{EndTime}}{End time of the watch.}
+#'    \item{\code{LatStart}}{Latitude at start of the watch, decimal degrees.}
+#'    \item{\code{LongStart}}{Longitude at start of the watch, decimal degrees.}
+#'    \item{\code{WatchLenKm}}{Distance travelled during the watch in kilometers (estimated from platform speed and observation length since many watches don't have start and end positions).}
+#'    \item{\code{Alpha}}{Four letter code of the species.}
 #'    \item{\code{English}}{English name.}
-#'    \item{\code{Latin}}{scientific name.}
+#'    \item{\code{Latin}}{Scientific name.}
 #'    \item{\code{Distance}}{Classes of distances for the observations. A=0-50m, B=50-100m, C=100-200m, D=200-300m.}
-#'    \item{\code{Count}}{number of individuals.}
+#'    \item{\code{Count}}{Number of individuals.}
 #'  }
 #'@seealso \code{\link{mcds.filter}}
 #'@docType data
@@ -97,20 +114,20 @@ NULL
 #'@description A sample dataset containing observation of alcidae made in the Eastern Canada Seabirds At Sea (ECSAS) program.
 #'@format A data frame with 583 observations on the following 14 variables.
 #'  \describe{
-#'    \item{\code{CruiseID}}{unique cruise ID.}
-#'    \item{\code{WatchID}}{unique watch ID.}
+#'    \item{\code{CruiseID}}{Unique cruise ID.}
+#'    \item{\code{WatchID}}{Unique watch ID.}
 #'    \item{\code{Observer}}{Categorical variable identifying the different observers.}
-#'    \item{\code{Date}}{date of the watch.}
-#'    \item{\code{StartTime}}{start time of the watch.}
-#'    \item{\code{EndTime}}{end time of the watch.}
-#'    \item{\code{LatStart}}{latitude at start of the watch, decimal degrees.}
-#'    \item{\code{LongStart}}{longitude at start of the watch, decimal degrees.}
-#'    \item{\code{WatchLenKm}}{distance travelled during the watch in kilometers (estimated from platform speed and observation length since many watches don't have start and end positions).}
-#'    \item{\code{Alpha}}{four letter code of the species.}
+#'    \item{\code{Date}}{Date of the watch.}
+#'    \item{\code{StartTime}}{Start time of the watch.}
+#'    \item{\code{EndTime}}{End time of the watch.}
+#'    \item{\code{LatStart}}{Latitude at start of the watch, decimal degrees.}
+#'    \item{\code{LongStart}}{Longitude at start of the watch, decimal degrees.}
+#'    \item{\code{WatchLenKm}}{Distance travelled during the watch in kilometers (estimated from platform speed and observation length since many watches don't have start and end positions).}
+#'    \item{\code{Alpha}}{Four letter code of the species.}
 #'    \item{\code{English}}{English name.}
-#'    \item{\code{Latin}}{scientific name.}
+#'    \item{\code{Latin}}{Scientific name.}
 #'    \item{\code{Distance}}{Classes of distances for the observations. A=0-50m, B=50-100m, C=100-200m, D=200-300m.}
-#'    \item{\code{Count}}{number of individuals.}
+#'    \item{\code{Count}}{Number of individuals.}
 #'  }
 #'@seealso \code{\link{mcds.filter}}
 #'@docType data
@@ -123,8 +140,8 @@ NULL
 #'@description This file gives the boundaries of fishing zones in the Gulf of St-Lawrence.
 #'@format  A SpatialPolygonsDataFrame.
 #'  \describe{
-#'    \item{\code{id}}{the global polygon to which the point is}
-#'    \item{\code{area}}{size of the fishing zone in km}
+#'    \item{\code{id}}{The global polygon to which the point is.}
+#'    \item{\code{area}}{Size of the fishing zone in km.}
 #'  }
 #'@docType data
 #'@name zonegulf

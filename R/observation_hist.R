@@ -2,16 +2,16 @@
 #'@title Plot a detection histogram of apparent density.
 #'
 #'
-#'@description This function will allow the user to visualise the histogram of observations in function of distance class.
+#'@description This function will allow the user to visualise the histogram of observations in function of \code{"distance"} class.
 #'@param dataset  A \code{\link{data.frame}} containing observations.
-#'@param count which column in the data.frame hold the information for the cluster size.
-#'@param dist.class which column in the data.frame hold the information for the distance class.
+#'@param count Which column in the \code{\link{data.frame}} hold the information for the cluster size.
+#'@param dist.class which column in the data.frame hold the information for the \code{"distance"} class.
 #'@param keep.class which class of observations should be used for the analysis.
 #'@param breaks what are the intervals for the distance analysis.
-#'@param color fill color for the bars
-#'@param ungroup will plot the Count histogram instead of the group histogram if TRUE 
-#'@param rescale set the height of the first bin
-#'@param Type Type of transect
+#'@param color Fill color for the bars.
+#'@param ungroup Will plot the Count histogram instead of the group histogram if \code{TRUE}. 
+#'@param rescale Set the height of the first bin.
+#'@param Type Type of transect data.
 #'@details
 #' Make a histogram of the observations in function of the distance class
 #'@section Author:Christian Roy
@@ -20,7 +20,12 @@
 #'data(alcidae)
 #'
 #'###Check the naïve detection histogram for alcidae
-#'Observation_hist(alcidae, count="Count", dist.class="Distance", keep.class=c("A", "B", "C", "D"), breaks=c(0,50,100,200,300), color="white")
+#'Observation_hist(alcidae,
+#'                 count="Count",
+#'                 dist.class="Distance",
+#'                 keep.class=c("A", "B", "C", "D"),
+#'                 breaks=c(0,50,100,200,300),
+#'                 color="white")
 #'#END
 
 

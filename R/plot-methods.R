@@ -1,24 +1,41 @@
 #' Title Plot a detection histogram of apparent density and the predicted detction curve for the model.
 #'
-#'@param model A distanceFit object
+#'@param model A \code{distanceFit} object
 #'
 #'@details
-#' Make a histogram of the observations and the predicted detection curve in function of the distance class 
+#' Make a histogram of the observations and the predicted detection curve in function of the distance class. 
 #'@section Author:Christian Roy
 #'@examples
 #'data(alcidae)
-#'alcids <- mcds.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
-#'                          distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", lat.field = "LatStart", 
-#'                          long.field = "LongStart", sp.field = "Alpha", date.field = "Date") 
+#'alcids <- mcds.filter(alcidae,
+#'                      transect.id = "WatchID",
+#'                      distance.field = "Distance",
+#'                      distance.labels = c("A", "B", "C", "D"),
+#'                      distance.midpoints = c(25, 75, 150, 250),
+#'                      effort.field = "WatchLenKm",
+#'                      lat.field = "LatStart",
+#'                      long.field = "LongStart",
+#'                      sp.field = "Alpha",
+#'                      date.field = "Date") 
 #'
-#'### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-#'dist.out1 <- mcds.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",Type="Line",
-#'                          units=list(Distance="Perp",Length_units="Kilometers",
-#'                                     Distance_units="Meters",Area_units="Square kilometers"),
-#'                          breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
-#'                          STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
-#'                          path="c:/temp/distance",
-#'                          pathMCDS="C:/Distance 6",verbose=FALSE)
+#'### Run analysis with the MCDS engine based on line transect data. Here, the WatchID is used as the sample.
+#'dist.out1 <- mcds.wrap(alcids,
+#'                       SMP_EFFORT="WatchLenKm",
+#'                       DISTANCE="Distance",
+#'                       SIZE="Count",
+#'                       Type="Line",
+#'                       units=list(Distance="Perp",
+#'                                  Length_units="Kilometers",
+#'                                  Distance_units="Meters",
+#'                                  Area_units="Square kilometers"),
+#'                       breaks=c(0,50,100,200,300),
+#'                       estimator=list(c("HN","CO")),
+#'                       STR_LABEL="STR_LABEL",
+#'                       STR_AREA="STR_AREA",
+#'                       SMP_LABEL="WatchID", 
+#'                       path="c:/temp/distance",
+#'                       pathMCDS="C:/Distance 7",
+#'                       verbose=FALSE)
 #'
 #'summary(dist.out1)
 #'plot(dist.out1)
