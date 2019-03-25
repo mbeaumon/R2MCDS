@@ -4,12 +4,12 @@ author: "Christian Roy"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Startified analysis}
+  %\VignetteIndexEntry{4. Spatial models}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
 
-##Startified models with `distance.wrap()`
+##Startified models with `mcds.wrap()`
 
 R2MCDS can be used with stratified model of distance sampling. 
 

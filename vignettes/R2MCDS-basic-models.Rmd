@@ -4,16 +4,16 @@ author: "Christian Roy"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Basic analysis}
+  %\VignetteIndexEntry{1. Basic analysis}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
 
-**R2MCDS** allows to run some basic distance analysis on the dataset via the MCDS engine of Distance 7.2. The analyzes are currently restricted to line transect, point transect, and to binned data. Distance sampling models are run via the `mcds.wrap()` while strips transect models are analyzed with the function `strip.wrap()`. The distance model support 3 different key functions (Uniform, Half-normal and Hazard rate) and 3 different series adjustment (Cosine, Simple polynomial, Hermite polynomial). 
+**R2MCDS** allows to run some basic distance analysis on the dataset via the <span style="font-family:Courier New"> MCDS </span> engine of Distance 7.2. The analyzes are currently restricted to line transect, to point transect, and to binned data. Models based on line and point transect data are run via the `mcds.wrap()` function while strips transect models are analyzed with the function `strip.wrap()`. The distance models support 3 different key functions (Uniform, Half-normal and Hazard rate) and 3 different adjustment terms (Cosine, Simple polynomial, Hermite polynomial). 
 
 ##Basic model with `mcds.wrap()`
 
-If the user does not input any models via the estimator argument the function distance.wrap will fit by default the 6 possible detection functions available in Distance 7.2:
+If the user does not input any models via the `estimator` argument the function `mcds.wrap()` will fit by default the 6 possible detection functions available in Distance 7.2:
 
 - Uniform key function with Cosine adjustement
 - Uniform key function with Hermine polynomial adjustement
@@ -37,7 +37,7 @@ alcids <- mcds.filter(alcidae,
                       sp.field = "Alpha",
                       date.field = "Date")
 
-### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
+### Run analysis with the MCDS engine based on line transect data. Here, the WatchID is used as the sample.
 x <- mcds.wrap(alcids,
                SMP_EFFORT="WatchLenKm",
                DISTANCE="Distance",
@@ -55,17 +55,17 @@ x <- mcds.wrap(alcids,
                pathMCDS="C:/Program Files (x86)/Distance 7",
                verbose=FALSE)
 ```
-The `distance.wrap()` function will return a warning after fitting each model (not shown in the example above). These warning will include a "status" number that is associated with the status of the model by the <span style="font-family:Courier New"> MCDS </span> engine. The numbers should be intrepreted as:
+The `mcds.wrap()` function will return a warning after fitting each model (not shown in the example above). These warning will include a "status" number that is associated with the status of the model by the <span style="font-family:Courier New"> MCDS </span> engine. The numbers should be intrepreted as:
 
 - "1" the analysis ran without errors
 - "2" the analysis ran with warnings
 - "3" the analysis ran with errors
-- "4" the analysis was not performed because of errors in the MCDS files
+- "4" the analysis was not performed because of errors in the <span style="font-family:Courier New"> MCDS </span> files
 - ">4" a major error occured 
 
-The function `distance.wrap()` will not return an output for any model which had a status above 2. A detailed description of each error message can be found in the Distance user guide (pages 365-375).  
+The function `mcds.wrap()` will not return an output for any model which had a status above 2. A detailed description of each error message can be found in the Distance user guide (pages 365-375).  
 
-Since we ran more than one model for a set of observations the model are stored into a `distanceList` object which consist of a list of `distanceFit` object. The output of each detection model can therefore be accessed by subsetting the list.
+Since we ran more than one model for a set of observations the model are stored into a `distanceList` object which consist of a list of `distanceFit` objects. The output of each detection model can therefore be accessed by subsetting the list.
 ```{r,warning=FALSE,message=FALSE,fig.height=5,fig.width=5,fig.align='center'}
 x
 ####summary of one model
@@ -86,9 +86,9 @@ summary(x.best)
 plot.distanceFit(x.best)
 ```
 
-##Selecting the key function and adjustement with `distance.wrap()`
+##Selecting the key function and adjustement with `mcds.wrap()`
 
-It is possible for the user to select the key function and adjustment. For example, instead of running the 6 models by default the user may want to restrict his analysis to the half-normal key function with a cosine adjustment and the hazard rate key function with a polynomial adjustment. He can do so via the `estimator` option. The estimator option consists of a list of elements where each element is a vector containing the first two letters of the key function and the first two letters of the expansion term. It is important to remember, however, that the list of detection key is restricted to the 6 key that have been presented above. 
+It is possible for the user to select the key function and adjustment. For example, instead of running the 6 models by default the user may want to restrict his analysis to the half-normal key function with a cosine adjustment and the hazard rate key function with a polynomial adjustment. He can do so via the `estimator` argument. The estimator argument consists of a list of elements where each element is a vector containing the first two letters of the key function and the first two letters of the adjustment term. It is important to remember, however, that the list of detection key is restricted to the 6 key that have been presented above. 
 
 ```{r,warning=FALSE,message=FALSE}
 library(R2MCDS)
@@ -105,7 +105,7 @@ alcids <- mcds.filter(alcidae,
                       sp.field = "Alpha",
                       date.field = "Date")
 
-### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
+### Run analysis with the MCDS engine based on line transect data. Here, the WatchID is used as the sample.
 x <- mcds.wrap(alcids,
                SMP_EFFORT="WatchLenKm",
                DISTANCE="Distance",
@@ -127,7 +127,7 @@ x
 summary(x[[2]])
 ```
 
-Once again it is possible to select the model with the lowest AIC value via the `keep.best.model()` function.
+Once again, it is possible to select the model with the lowest AIC value via the `keep.best.model()` function.
 
 ```{r,warning=FALSE,message=FALSE,fig.height=5,fig.width=5,fig.align='center'}
 ##### Keep the 'best' model in the list

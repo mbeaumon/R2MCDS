@@ -4,13 +4,13 @@ author: "Christian Roy"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Analysis including explanatory variables}
+  %\VignetteIndexEntry{2. Analysis with covariables}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
 #Including explanatory variables in the analysis
 
-The distance analyses are made via the MCDS engine of DISTANCE 7.2 and the analyses are currently restricted to binned data. The distance models that can be fitted are derived from 2 different key functions (Half-normal and Hazard rate) and 3 different series adjustment (Cosine, Simple polynomial, and Hermite polynomial). The uniform model is not available for this type of analysis as explanatory variables cannot be used with this type of model. 
+The distance analyses are made via the <span style="font-family:Courier New"> MCDS </span> engine of DISTANCE 7.2 and the analyses are currently restricted to binned data. The distance models that can be fitted are derived from 2 different key functions (Half-normal and Hazard rate) and 3 different series adjustment (Cosine, Simple polynomial, and Hermite polynomial). The uniform model is not available for this type of analysis as explanatory variables cannot be used with this type of model. 
 
 ##Basic model
 
@@ -23,7 +23,7 @@ By default the function will fit a total of 4 different model to the data:
 
 Covariates have been divided between factor covariates ('factor'), and non-factor covariates ('covariates'). Factor covariates classify the data into different categories while non-factor covariates must be numeric. A simple example of a factor would be the effect of the observer on the detection function while the effect of temperature would be a good example for non-factor covariates. 
 
-For analysis with covariables it will be important to set `monotone` option to 'none' otherwise the `distance.wrap()` function will return an error message. It is also important to note that it can take considerably more time to fit models with covariables.
+For analysis with covariables it will be important to set `monotone` option to 'none' otherwise the `mcds.wrap()` function will return an error message. It is also important to note that it can take considerably more time to fit models with covariables.
 
 We can start with a simple example using the observations of `Alcidae` of the Gulf of St-Lawrence by observers from the Canadian Wildlife Service <span style="font-family:Courier New"> Eastern Canadian Seabirds at Sea_ (ECSAS) </span> monitoring program. We will use the different observers as a an explanatory variable and we run all four possible models. 
 

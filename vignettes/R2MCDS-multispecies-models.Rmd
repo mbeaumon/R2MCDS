@@ -4,7 +4,7 @@ author: "Christian Roy"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Multispecies analysis}
+  %\VignetteIndexEntry{3. Multi-species models}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
