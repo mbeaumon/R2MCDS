@@ -6,13 +6,14 @@
 \usage{
 mcds.wrap(dataset, path, pathMCDS, SMP_LABEL = "SMP_LABEL",
   SMP_EFFORT = "SMP_EFFORT", DISTANCE = "DISTANCE", SIZE = "SIZE",
-  STR_LABEL = "STR_LABEL", STR_AREA = "STR_AREA", units = list(Type =
-  "Line", Distance = "Perp", Length_units = "Kilometer", Distance_units =
-  "Meter", Area_units = "Square kilometer"), breaks = c(0, 50, 100, 200, 300),
-  covariates = NULL, factor = NULL, lsub = NULL, stratum = NULL,
-  split = TRUE, rare = NULL, period = NULL, detection = "All",
-  monotone = "Strict", estimator = NULL, multiplier = c(2, 0, 0),
-  empty = NULL, verbose = FALSE)
+  STR_LABEL = "STR_LABEL", STR_AREA = "STR_AREA", Type = c("Line",
+  "Point", "Cue"), units = list(Distance = "Perp", Length_units =
+  "Kilometer", Distance_units = "Meter", Area_units = "Square kilometer"),
+  breaks = c(0, 50, 100, 200, 300), covariates = NULL, factor = NULL,
+  lsub = NULL, stratum = NULL, split = TRUE, rare = NULL,
+  period = NULL, detection = c("All", "Stratum"),
+  monotone = c("Strict", "None", "Weak"), estimator = NULL,
+  multiplier = NULL, empty = NULL, verbose = FALSE)
 }
 \arguments{
 \item{dataset}{A \code{\link{data.frame}} with observations.}
@@ -33,8 +34,11 @@ mcds.wrap(dataset, path, pathMCDS, SMP_LABEL = "SMP_LABEL",
 
 \item{STR_AREA}{Name of the column to use for the stratum area.}
 
-\item{units}{list of th units used for the analysis. Contains the Type of analysis (Line or Point), the Distance engine to use (Perp or Radial), 
-the Length units, the Distance units, and the Area_units.For the possible units of distance and area see Distance 6.2 documentation.}
+\item{Type}{Name of the type of transects \code{("Line", "Point", or "Cue")}. Default value is \coce{"Line"}.}
+
+\item{units}{List of the units used for the analysis. Contains the Distance engine to use (\code{"Perp"} or \code{"Radial"}).
+depending on the type of transects, the Length units, the Distance units, and the Area_units.
+For the possible units of distance and area see Distance 7.0 documentation.}
 
 \item{breaks}{A vector giving the distance intervals in meters to be used in the analysis.}
 
@@ -61,18 +65,17 @@ an element (ex: \code{list(Species = "HERG")}). Default value \code{NULL}. See d
 \item{period}{A vector of characters of length 2 containing the extreme dates for which the analysis
 should be restricted. Dates have to be in the "yyyy-mm-dd" format.}
 
-\item{detection}{Currently, set to \code{detection = "All"}. Can also be \code{detection = "Stratum"}.}
+\item{detection}{Currently, set to \code{detection = "All"}. Can also be \code{detection = "Stratum"}. Default value is "All".}
 
-\item{monotone}{Currently, set to \code{monotone = "Strict"}.}
+\item{monotone}{Currently, set to \code{monotone = "Strict"}. Can also be \code{monotone = "Strict", "None", or "Weak"}. Default value is "Strict".}
 
 \item{estimator}{When set to \code{NULL}, the following key functions and expansion terms will be used: UN-CO, UN-PO, HN-CO, HN-HE, HA-CO and HA-PO.
 If the user wants to choose the key functions and the expansion terms used, a list has to be given with each element a vector of
 length 2 with the first element the key function and the second element the expansion term (ex: \code{list(c("HN","CO"),c("HA","PO")}).
 When \code{rare != NULL}, only one set is used (UN-CO) for the final specific model.}
 
-\item{multiplier}{Value by which the estimates of density or abundance are multiplied. The first value is the multiplier, the second the SE and the third the degree of freedom associated with the multiplier (useful when using the probability of detection as a multiplier in a two-step analyses with the second step). Default value \code{multiplier = c(2,0,0)} meaning
-only one-half of the transect is surveyed and the value is known with certainty with an infinite degree of freedom. When \code{rare != NULL}, the multiplier will be modified to account
-for the probability of detection.}
+\item{multiplier}{Value by which the estimates of density or abundance are multiplied. The first value is the multiplier, the second the SE and the third the degree of freedom associated with the multiplier (useful when using the probability of detection as a multiplier in a two-step analyses with the second step). Default value when \code{Type = "Line"} and \code{multiplier = NULL} is set to \code{multiplier = c(2,0,0)} meaning
+only one-half of the transect is surveyed and the value is known with certainty with an infinite degree of freedom. When \code{rare != NULL}, the multiplier will be modified to account for the probability of detection. When \code{Type = "Point"} and \code{multiplier = NULL}, the multiplier is set to \code{multiplier = c(2,0,0)}. Values provided by the user will override these default settings.}
 
 \item{empty}{Determine how empty transects are to be selected in the analysis. When \code{empty = NULL}, all
 empty transects are included for every element of \code{lsub}. For example, when models are splitted according
@@ -108,38 +111,162 @@ Francois Rousseu, Christian Roy, Francois Bolduc
 }
 
 \examples{
-########################################
-### Simple models without stratification
+####################################################################
+### Simple models without stratification based on line transect data
 ### Import and filter data
 data(alcidae)
-alcids <- mcds.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
-                         distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", lat.field = "LatStart", 
-                         long.field = "LongStart", sp.field = "Alpha", date.field = "Date") 
+alcids <- mcds.filter(alcidae,
+                     transect.id = "WatchID",
+                     distance.field = "Distance",
+                     distance.labels = c("A", "B", "C", "D"),
+                     distance.midpoints = c(25, 75, 150, 250),
+                     effort.field = "WatchLenKm", lat.field = "LatStart",
+                     long.field = "LongStart",
+                     sp.field = "Alpha",
+                     date.field = "Date") 
 
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-dist.out1 <- mcds.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
-                         units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
-                                    Distance_units="Meters",Area_units="Square kilometers"),
-                         breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
-                         STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
-                         path="c:/temp/distance",
-                         pathMCDS="C:/Distance 6",verbose=FALSE)
+dist.out1 <- mcds.wrap(alcids,
+                      SMP_EFFORT="WatchLenKm",
+                      DISTANCE="Distance",
+                      SIZE="Count",
+                      Type="Line",
+                      units=list(Distance="Perp",
+                                 Length_units="Kilometers",
+                                 Distance_units="Meters",
+                                 Area_units="Square kilometers"),
+                      breaks=c(0,50,100,200,300),
+                      estimator=list(c("HN","CO")),
+                      STR_LABEL="STR_LABEL",
+                      STR_AREA="STR_AREA",
+                      SMP_LABEL="WatchID",
+                      path="c:/temp/distance",
+                      pathMCDS="C:/Distance 7.2",
+                      verbose=FALSE)
 
 summary(dist.out1)
+
 ### Run separate analysis for years 2008-2009
-dist.out2 <- mcds.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
-                          units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
-                                     Distance_units="Meters",Area_units="Square kilometers"),
-                          breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
-                          lsub=list(Year=c(2008,2009)), split=TRUE, empty="Year",
-                          STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
-                          path="c:/temp/distance",
-                         pathMCDS="C:/Distance 6",verbose=FALSE)
+alcids$Year <- substr(alcids$Date, start = 1, stop = 4)
+alcids$Year <- as.numeric(alcids$Year)
+
+dist.out2 <- mcds.wrap(alcids,
+                      SMP_EFFORT="WatchLenKm",
+                      DISTANCE="Distance",
+                      SIZE="Count",
+                      Type="Line",
+                      units=list(Distance="Perp",
+                                 Length_units="Kilometers",
+                                 Distance_units="Meters",
+                                 Area_units="Square kilometers"),
+                      breaks=c(0,50,100,200,300),
+                      estimator=list(c("HN","CO")),
+                      lsub=list(Year=c(2007,2008)),
+                      split=TRUE,
+                      empty="Year",
+                      STR_AREA="STR_AREA",
+                      SMP_LABEL="WatchID",
+                      path="c:/temp/distance",
+                      pathMCDS="C:/Distance 7.2",
+                      verbose=FALSE)
 
 ### Get the names of the different models produced
 names(dist.out2)
+
 #####summary for the Year 2008 model
 summary(dist.out2[["2008"]])
+
+#'####################################################################
+### Simple models without stratification based on point transect data
+library(AHMbook)
+#########################
+# Data simulation  #
+########################
+ll <- list()
+j <- 1:100
+al <- sample(300:1000, max(j))
+for (i in j){
+ simu.data <- sim.pdata(N = al[i],
+                        sigma = 1,
+                        B = 3,
+                        keep.all = TRUE,
+                        show.plot = TRUE)
+ print(simu.data$N.real)
+ tmp <- sim.pdata(N = al[i],
+                  sigma = 1,
+                  keep.all = FALSE,
+                  show.plot = FALSE)
+ ll[[i]] <- tmp
+}
+delta <- 0.5 # Width of distance bins
+B <- 3 # Max count distance
+dist.breaks <- seq(0, B, delta) # Make the interval cut points
+dclass <- lapply(ll, function(i){
+ i$d \%/\% delta + 1
+})
+nD <- length(dist.breaks) - 1 # How many intervals do you have
+DF <- data.frame()
+for(i in 1:length(ll)){
+ transect.id <- rep(paste("sp1", i, sep = ""), length(dclass[[i]]))
+ d.field <- dclass[[i]]
+ effort.field <- rep(1, length(dclass[[i]])) 
+ lat.field <- rep(47.0, length(dclass[[i]]))
+ long.field <- rep((-45.24 + i), length(dclass[[i]]))
+ sp.field <- rep("Piou", length(dclass[[i]]))
+ date.field <- rep("2019-03-15", length(dclass[[i]])) 
+ Count <- rep(1, length(dclass[[i]]))
+ real.abun <- rep(ll[[i]]$N.real, length(dclass[[i]]))
+ dt <- data.frame(transect.id ,
+                  d.field,
+                  effort.field,
+                  lat.field,
+                  long.field,
+                  sp.field,
+                  date.field,
+                  Count,
+                  real.abun)
+ DF <- rbind(DF, dt)
+}
+# Convert numerical distance value to categorical with letters
+DF$distance.field <- LETTERS[DF$d.field]
+DF$distance.field <- as.factor(DF$distance.field)
+summary(DF)
+###################
+###### Model ######
+###################
+library(R2MCDS)
+DF.1 <- mcds.filter(DF,
+                   transect.id = "transect.id",
+                   distance.field = "distance.field",
+                   distance.labels <- c("A", "B", "C", "D", "E", "F"),
+                   distance.midpoints <- c(0.25, 0.75, 1.25, 1.75, 2.25, 2.75),
+                   effort.field = "effort.field",
+                   lat.field = "lat.field",
+                   long.field = "long.field",
+                   sp.field = "sp.field",
+                   date.field = "date.field")
+### Run analysis with the MCDS engine.
+mod1 <- mcds.wrap(DF1,
+                 SMP_EFFORT="WatchLenKm",
+                 DISTANCE="Distance",
+                 SIZE="Count",
+                 Type="Point",
+                 units=list(Distance="Radial",
+                            Length_units="Meters",
+                            Distance_units="Meters",
+                            Area_units="Square meters"),
+                  breaks=c(0, 0.5, 1, 1.50, 2, 2.50, 3),
+                  SMP_LABEL="WatchID",
+                  STR_LABEL="STR_LABEL",
+                  STR_AREA="STR_AREA",
+                  estimator=list(c("HN","CO")),
+                  multiplier = c(1, 0, 0),
+                  path="c:/temp/distance",
+                  pathMCDS="C:/Distance 7.2",
+                  verbose=FALSE)
+mod1
+summary(mod1)
+plot.distanceFit(mod1)
 #END
 }
 \references{

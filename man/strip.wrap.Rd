@@ -6,11 +6,11 @@
 \usage{
 strip.wrap(dataset, path, pathMCDS, SMP_LABEL = "SMP_LABEL",
   SMP_EFFORT = "SMP_EFFORT", SIZE = "SIZE", STR_LABEL = "STR_LABEL",
-  STR_AREA = "STR_AREA", units = list(Type = "Line", Distance = "Perp",
+  STR_AREA = "STR_AREA", Type = NULL, units = list(Distance = "Perp",
   Length_units = "Kilometer", Distance_units = "Meter", Area_units =
-  "Square kilometer"), breaks = c(0, 300), lsub = NULL, stratum = NULL,
-  split = TRUE, period = NULL, detection = "All", multiplier = 2,
-  empty = NULL, verbose = FALSE)
+  "Square kilometer"), breaks = c(0, 300), lsub = NULL,
+  stratum = NULL, split = TRUE, period = NULL, detection = "All",
+  multiplier = 2, empty = NULL, verbose = FALSE)
 }
 \arguments{
 \item{dataset}{A \code{\link{data.frame}} with observations.}
@@ -29,7 +29,9 @@ strip.wrap(dataset, path, pathMCDS, SMP_LABEL = "SMP_LABEL",
 
 \item{STR_AREA}{Name of the column to use for the stratum area.}
 
-\item{units}{list of th units used for the analysis. Contains the Type of analysis (Line or Point), the Distance enfine to use (Perp or Radial), 
+\item{Type}{Name of the type of transects (Line, Point, or Cue)}
+
+\item{units}{list of th units used for the analysis. Contains the Distance engine to use (Perp or Radial), 
 the Length units, the Distance units, and the Area_units.For the possible units of distance and area see Distance 6.2 documentation.}
 
 \item{breaks}{Interval in meters to be used in the analysis.}
@@ -96,8 +98,8 @@ alcids <- distance.filter(alcidae, transect.id = "WatchID", distance.field = "Di
                          long.field = "LongStart", sp.field = "Alpha", date.field = "Date") 
 
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-strip.out1 <-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",SIZE="Count", breaks=c(0,300),
-                         units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
+strip.out1 <-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",SIZE="Count", breaks=c(0,300),Type="Line",
+                         units=list(Distance="Perp",Length_units="Kilometers",
                                     Distance_units="Meters",Area_units="Square kilometers"),
                          STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
                          path="c:/temp/distance",

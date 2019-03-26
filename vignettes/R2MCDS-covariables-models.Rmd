@@ -4,13 +4,13 @@ author: "Christian Roy"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteIndexEntry{2. Analysis with covariables}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
 #Including explanatory variables in the analysis
 
-The distance analyses are made via the MCDS engine of DISTANCE 6.2 and the analyses are currently restricted to binned data. The distance models that can be fitted are derived from 3 different key functions (Half-normal and Hazard rate) and 3 different series adjustment (Cosine, Simple polynomial, and Hermite polynomial). The uniform model is not available for this type of analysis as explanatory variables cannot be used with this type of model. 
+The distance analyses are made via the <span style="font-family:Courier New"> MCDS </span> engine of DISTANCE 7.2 and the analyses are currently restricted to binned data. The distance models that can be fitted are derived from 2 different key functions (Half-normal and Hazard rate) and 3 different series adjustment (Cosine, Simple polynomial, and Hermite polynomial). The uniform model is not available for this type of analysis as explanatory variables cannot be used with this type of model. 
 
 ##Basic model
 
@@ -23,9 +23,9 @@ By default the function will fit a total of 4 different model to the data:
 
 Covariates have been divided between factor covariates ('factor'), and non-factor covariates ('covariates'). Factor covariates classify the data into different categories while non-factor covariates must be numeric. A simple example of a factor would be the effect of the observer on the detection function while the effect of temperature would be a good example for non-factor covariates. 
 
-For analysis with covariables it will be important to set monotone option to 'none' otherwise the distance.wrap function will return an error message. It is also important to note that it can take onsiderably more time to fit models with covariables.
+For analysis with covariables it will be important to set `monotone` option to 'none' otherwise the `mcds.wrap()` function will return an error message. It is also important to note that it can take considerably more time to fit models with covariables.
 
-We can start with a simple example using the observations of `Alcidae` if the Gulf of St-Lawrence by observers from the Canadian Wildlife Service <span style="font-family:Courier New"> Eastern Canadian Seabirds at Sea_ (ECSAS) </span> monitoring program. We will use the different observers as a an explanatory variable and we run all four possible models. 
+We can start with a simple example using the observations of `Alcidae` of the Gulf of St-Lawrence by observers from the Canadian Wildlife Service <span style="font-family:Courier New"> Eastern Canadian Seabirds at Sea_ (ECSAS) </span> monitoring program. We will use the different observers as a an explanatory variable and we run all four possible models. 
 
 ```{r,warning=FALSE,message=FALSE}
 library(R2MCDS)
@@ -33,34 +33,52 @@ library(R2MCDS)
 set.seed(062)
 ### Import and filter data
 data(alcidae)
-alcids <- mcds.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
-                          distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", lat.field = "LatStart", 
-                          long.field = "LongStart", sp.field = "Alpha", date.field = "Date")
+alcids <- mcds.filter(alcidae,
+                      transect.id = "WatchID",
+                      distance.field = "Distance",
+                      distance.labels = c("A", "B", "C", "D"), 
+                      distance.midpoints = c(25, 75, 150, 250),
+                      effort.field = "WatchLenKm",
+                      lat.field = "LatStart", 
+                      long.field = "LongStart",
+                      sp.field = "Alpha",
+                      date.field = "Date")
 
 ### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-x <- mcds.wrap(alcids,SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
-                   units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
-                              Distance_units="Meters",Area_units="Square kilometers"),
-                   factor = c("Observer"), monotone = "none",
-                   breaks=c(0,50,100,200,300), SMP_LABEL="WatchID",
-                   STR_LABEL="STR_LABEL",STR_AREA="STR_AREA",
-                   path="c:/temp/distance",
-                   pathMCDS="C:/Distance 6",verbose=FALSE)
+x <- mcds.wrap(alcids,
+               SMP_EFFORT="WatchLenKm",
+               DISTANCE="Distance",
+               SIZE="Count",
+               Type="Line",
+               units=list(Distance="Perp",
+                          Length_units="Kilometers",
+                          Distance_units="Meters",
+                          Area_units="Square kilometers"),
+               #estimator=list(c("HN","CO")),
+               factor = c("Observer"),
+               monotone = "None",
+               breaks=c(0,50,100,200,300),
+               SMP_LABEL="WatchID",
+               STR_LABEL="STR_LABEL",
+               STR_AREA="STR_AREA",
+               path="C:/temp/distance",
+               pathMCDS="C:/Program Files (x86)/Distance 7",
+               verbose=FALSE)
 #Look at the output
 x
 ```
 
 All four models have converged. From this set of candidate models we can use the function `keep.best model()` to keep the best model and then look at the output with the function `summary()`.For our example the best model (i.e. the one with the lowest AICc value) is the Half-normal model with a cosine adjustment. 
 
-However, it is interesting to note that both hazard rate model have a similar value of AICc and are therefore equivalent for this example. when there is more than one model with the lowest AICc value, the function `keep.best model()` will select randomly between all the equivalent models as it is done in the program DISTANCE 6.2.
+However, it is interesting to note that both hazard rate model have a similar value of AICc and are therefore equivalent for this example. when there is more than one model with the lowest AICc value, the function `keep.best model()` will select randomly between all the equivalent models as it is done in the program DISTANCE 7.2.
 
 ```{r}
 #Keep only the best model basec on AICc and look at the output
 x.best <- keep.best.model(x)
 summary(x.best)
-predicted_hist((x.best))
+plot.distanceFit(x.best)
 ```
 
-The main differences in the model the summary of model with explanatory variables appear in the table `Parameters of the detection function`. There will be more parameters in the table than if the model would have been fit without variables. The description of each parameter is under the table. 
+The main differences in the summary of models with explanatory variables appear in the table `Parameters of the detection function`. There will be more parameters in the table than if the model would have been fit without variables. The description of each parameter is under the table. 
 
-In this analysis we would be particularly interested in looking at the mean effect (`Estimates`) and the associated standard error (`SE`) of the parameter A(2), A(3) and A(4) as they represent respectively the effect of the Observer1, Observer2 and Observer3. In our case the SE are so large that the 95% Credible Intervals will include zero for each of those parameters hereby indicating that the Observers had no effect on the detection function.
+In this analysis we would be particularly interested in looking at the mean effect (`Estimates`) and the associated standard error (`SE`) of the parameter `A(2)`, `A(3)` and `A(4)` as they represent respectively the effect of the Observer1, Observer2, and Observer3. In our case the SE are so large that the 95% Credible Intervals will include zero for each of those parameters hereby indicating that the Observers had no effect on the detection function.

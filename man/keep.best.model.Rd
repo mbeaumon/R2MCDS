@@ -7,7 +7,7 @@
 keep.best.model(x)
 }
 \arguments{
-\item{x}{A \code{\link{distanceList}} object.}
+\item{x}{A \code{distanceList} object. See \code{\link{mcds.wrap}}}
 }
 \value{
 An object of class \code{"distanceFit"}

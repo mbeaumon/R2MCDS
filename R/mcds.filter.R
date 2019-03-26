@@ -1,5 +1,5 @@
 #' @export
-#'@title Filter data before using it with mcds.wrap
+#'@title Filter data before using it with \code{\link{mcds.wrap}}
 #'
 #'
 #'@description Allow to change the names of the column of a data.frame so that it work seamlessly with \code{\link{mcds.wrap}}
@@ -7,7 +7,7 @@
 #'@param transect.id Name of the column containing the unique ID of each transect.
 #'@param distance.field Name of the column containing the distance classes of each observations. 
 #'@param distance.labels Classes of distance to keep for the analysis.
-#'@param distance.midpoints Midpoints in (m) of the classes of distance kept for the analysis.
+#'@param distance.midpoints Midpoints (m) of the classes of distance kept for the analysis.
 #'@param effort.field Name of the column containing the length of the transect/watch.
 #'@param lat.field Name of the column containing the latitude of the observations.
 #'@param long.field Name of the column containing the longitude of the observations.
@@ -23,9 +23,16 @@
 #'@section Author:Christian Roy
 #'@examples
 #'data(quebec)
-#'x<- mcds.filter(quebec, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
-#'                   distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", lat.field = "LatStart", 
-#'                   long.field = "LongStart", sp.field = "Alpha", date.field = "Date")
+#'x<- mcds.filter(quebec,
+#'                transect.id = "WatchID",
+#'                distance.field = "Distance",
+#'                distance.labels = c("A", "B", "C", "D"),
+#'                distance.midpoints = c(25, 75, 150, 250),
+#'                effort.field = "WatchLenKm",
+#'                lat.field = "LatStart",
+#'                long.field = "LongStart",
+#'                sp.field = "Alpha",
+#'                date.field = "Date")
 #'str(x)
 
 mcds.filter <-

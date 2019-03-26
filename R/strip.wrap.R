@@ -16,8 +16,10 @@
 
 #'@param SMP_LABEL Name of the column to use for the transect/watch label.
 
-#'@param units list of th units used for the analysis. Contains the Type of analysis (Line or Point), the Distance enfine to use (Perp or Radial), 
-#'the Length units, the Distance units, and the Area_units.For the possible units of distance and area see Distance 6.2 documentation.     
+#'@param Type Name of the type of transects (Line, Point, or Cue)
+
+#'@param units list of th units used for the analysis. Contains the Distance engine to use (Perp or Radial), 
+#'the Length units, the Distance units, and the Area_units.For the possible units of distance and area see Distance 7.2 documentation.     
 
 #'@param SMP_EFFORT Length in km of the transect or the transect/watch unit.
 
@@ -41,8 +43,8 @@
 
 #'@param detection Currently, set to \code{detection = "All"}. Can also be \code{detection = "Stratum"}.
 
-#'@param multiplier Value by which the estimates of density or abundance are multiplied. Default value \code{multiplier = 2} meaning
-#'only one-half of the transect is surveyed.
+#'@param multiplier Value by which the estimates of density or abundance are multiplied. The first value is the \code{multiplier}, the second the \code{SE} and the third the \code{degree of freedom} associated with the \code{multiplier} (useful when using the probability of detection as a \code{multiplier} in a two-step analyses with the second step). Default value when \code{Type = "Line"} and \code{multiplier = NULL} is set to \code{multiplier = c(2,0,0)} meaning
+#'only one-half of the transect is surveyed and the value is known with certainty with an infinite degree of freedom. When \code{rare != NULL}, the multiplier will be modified to account for the probability of detection. When \code{Type = "Point"} and \code{multiplier = NULL}, the multiplier is set to \code{multiplier = c(1,0,0)}. Values provided by the user will override these default settings.
 
 #'@param empty Determine how empty transects are to be selected in the analysis. When \code{empty = NULL}, all
 #'empty transects are included for every element of \code{lsub}. For example, when models are splitted according
@@ -84,41 +86,59 @@
 #'### Simple models without stratification
 #'### Import and filter data
 #'data(alcidae)
-#'alcids <- distance.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
-#'                          distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", lat.field = "LatStart", 
-#'                          long.field = "LongStart", sp.field = "Alpha", date.field = "Date") 
+#'alcids <- distance.filter(alcidae,
+#'                          transect.id = "WatchID",
+#'                          distance.field = "Distance",
+#'                          distance.labels = c("A", "B", "C", "D"), 
+#'                          distance.midpoints = c(25, 75, 150, 250),
+#'                          effort.field = "WatchLenKm",
+#'                          lat.field = "LatStart", 
+#'                          long.field = "LongStart",
+#'                          sp.field = "Alpha",
+#'                          date.field = "Date") 
 #'
 #'### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-#'strip.out1 <-distance.wrap(alcids, SMP_EFFORT="WatchLenKm",SIZE="Count", breaks=c(0,300),
-#'                          units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
-#'                                     Distance_units="Meters",Area_units="Square kilometers"),
-#'                          STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
-#'                          path="c:/temp/distance",
-#'                          pathMCDS="C:/Program Files (x86)/Distance 6")
+#'strip.out1 <-mcds.wrap(alcids,
+#'                       SMP_EFFORT="WatchLenKm",
+#'                       SIZE="Count",
+#'                       breaks=c(0,300),
+#'                       Type="Line",
+#'                       units=list(Distance="Perp",
+#'                                  Length_units="Kilometers",
+#'                                  Distance_units="Meters",
+#'                                  Area_units="Square kilometers"),
+#'                       STR_LABEL="STR_LABEL",
+#'                       STR_AREA="STR_AREA",
+#'                       SMP_LABEL="WatchID", 
+#'                       path="c:/temp/distance",
+#'                       pathMCDS="C:/Program Files (x86)/Distance 7")
 #'
 #'summary(strip.out1)
 #'#END
 
 strip.wrap <-
 function(dataset, path, pathMCDS, SMP_LABEL="SMP_LABEL", SMP_EFFORT="SMP_EFFORT",
-				SIZE="SIZE", STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",	
-        units=list(Type="Line",Distance="Perp",Length_units="Kilometer",
+				SIZE="SIZE", STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",Type=NULL,
+        units=list(Distance="Perp",Length_units="Kilometer",
                    Distance_units="Meter",Area_units="Square kilometer"),
 				breaks=c(0,300), lsub=NULL, stratum=NULL, split=TRUE,period=NULL,
 				detection="All", multiplier=2, empty=NULL, verbose=FALSE
 ){
 	
   #Check for units
-  if(length(units)!= 5)
-    stop("units list must includes values for Type, Distance, Length_units, Distance_units and Area_units")
+  if(length(units)!= 4)
+    stop("units list must includes values for Distance, Length_units, Distance_units and Area_units")
   
-  if(toupper(units$Type)%in%c("LINE","POINT", "CUE")==FALSE)
+  if(is.null(Type))
+    stop("Type of sampling has to be indicated")
+  
+  if(toupper(Type)%in%c("LINE","POINT", "CUE")==FALSE)
     stop("Type of sampling available are: Line, Point or Cue")
   
   if(toupper(units$Distance)%in%c("PERP","RADIAL")==FALSE)
     stop("Type of distance available are: Perp or Radial")
   
-  if(toupper(units$Type)%in%c("POINT", "CUE") & toupper(units$Distance)!=c("RADIAL"))
+  if(toupper(Type)%in%c("POINT", "CUE") & toupper(units$Distance)!=c("RADIAL"))
     stop("For Points and Cue sampling scheme Distance must be set to radial")
   
   
@@ -264,7 +284,7 @@ function(dataset, path, pathMCDS, SMP_LABEL="SMP_LABEL", SMP_EFFORT="SMP_EFFORT"
 		opts[""]<-"None"
 		opts[""]<-"None"
 		opts["Options;"]<-""
-		opts["Type="] <- paste(units$Type,";",sep="")
+		opts["Type="] <- paste(Type,";",sep="")
 		opts["Length /Measure="] <- paste("'",units$Length_units,"';",sep="")
 		if(units$Distance=="Perp"){
 		  opts["Distance=Perp /Measure="] <- paste("'",units$Distance_units,"';",sep="")    
@@ -361,7 +381,7 @@ function(dataset, path, pathMCDS, SMP_LABEL="SMP_LABEL", SMP_EFFORT="SMP_EFFORT"
 		y<-readLines(file.path(path,det.file[i]))
 		ans<-vector(mode="list",length=8)
 		ans[[1]] <-input.data
-    ans[[2]] <-model_fittingMCDS(x, units=units)
+    ans[[2]] <-model_fittingMCDS(x, units=units, Type=Type)
 		ans[[3]] <-parameter_estimatesMCDS(x)
 		ans[[4]] <- "No covariates in strip transect models"
 		ans[[5]] <-chi_square_testMCDS(x)

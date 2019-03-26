@@ -5,8 +5,8 @@
 \title{Filter data before using it with mcds.wrap}
 \usage{
 mcds.filter(x, transect.id = "WatchID", distance.field = "Distance",
-  distance.labels = c("A", "B", "C", "D"), distance.midpoints = c(25, 75,
-  150, 250), effort.field = "WatchLenKm", lat.field = "LatStart",
+  distance.labels = c("A", "B", "C", "D"), distance.midpoints = c(25,
+  75, 150, 250), effort.field = "WatchLenKm", lat.field = "LatStart",
   long.field = "LongStart", sp.field = "Alpha", date.field = "Date",
   distanceLabel.field = "Distance", dist2m = TRUE)
 }

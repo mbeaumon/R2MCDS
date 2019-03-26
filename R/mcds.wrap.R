@@ -16,8 +16,10 @@
 
 #'@param SMP_LABEL Name of the column to use for the transect/watch label.
 
-#'@param units list of th units used for the analysis. Contains the Type of analysis (Line or Point), the Distance engine to use (Perp or Radial), 
-#'the Length units, the Distance units, and the Area_units.For the possible units of distance and area see Distance 6.2 documentation.     
+#'@param Type Name of the type of transects \code{("Line", "Point", or "Cue")}. Default value is \code{"Line"}.
+
+#'@param units List of the units used for the analysis. Contains the Distance engine to use (\code{"Perp"} or \code{"Radial"}) depending on the type of transects, the Length units, the Distance units, and the Area_units.
+#'For the possible units of distance and area see Distance 7.2 documentation.     
 
 #'@param SMP_EFFORT Length in of the transect or the transect/watch unit.
 
@@ -50,18 +52,17 @@
 #'@param period A vector of characters of length 2 containing the extreme dates for which the analysis
 #'should be restricted. Dates have to be in the "yyyy-mm-dd" format.
 
-#'@param detection Currently, set to \code{detection = "All"}. Can also be \code{detection = "Stratum"}.
+#'@param detection Currently, set to \code{detection = "All"}. Can also be \code{detection = "Stratum"}. Default value is \code{"All"}.
 
-#'@param monotone Currently, set to \code{monotone = "Strict"}.
+#'@param monotone Currently, set to \code{monotone = "Strict"}. Can also be \code{monotone = "Strict", "None", or "Weak"}. Default value is \code{"Strict"}.
 
 #'@param estimator When set to \code{NULL}, the following key functions and expansion terms will be used: UN-CO, UN-PO, HN-CO, HN-HE, HA-CO and HA-PO.
-#'If the user wants to choose the key functions and the expansion terms used, a list has to be given with each element a vector of
+#'If the user wants to choose the key functions and the adjustment terms used, a list has to be given with each element a vector of
 #'length 2 with the first element the key function and the second element the expansion term (ex: \code{list(c("HN","CO"),c("HA","PO")}).
 #'When \code{rare != NULL}, only one set is used (UN-CO) for the final specific model. 
 
-#'@param multiplier Value by which the estimates of density or abundance are multiplied. The first value is the multiplier, the second the SE and the third the degree of freedom associated with the multiplier (useful when using the probability of detection as a multiplier in a two-step analyses with the second step). Default value \code{multiplier = c(2,0,0)} meaning
-#'only one-half of the transect is surveyed and the value is known with certainty with an infinite degree of freedom. When \code{rare != NULL}, the multiplier will be modified to account
-#'for the probability of detection.
+#'@param multiplier Value by which the estimates of density or abundance are multiplied. The first value is the \code{multiplier}, the second the \code{SE} and the third the \code{degree of freedom} associated with the \code{multiplier} (useful when using the probability of detection as a \code{multiplier} in a two-step analyses with the second step). Default value when \code{Type = "Line"} and \code{multiplier = NULL} is set to \code{multiplier = c(2,0,0)} meaning
+#'only one-half of the transect is surveyed and the value is known with certainty with an infinite degree of freedom. When \code{rare != NULL}, the multiplier will be modified to account for the probability of detection. When \code{Type = "Point"} and \code{multiplier = NULL}, the multiplier is set to \code{multiplier = c(1,0,0)}. Values provided by the user will override these default settings.
 
 #'@param empty Determine how empty transects are to be selected in the analysis. When \code{empty = NULL}, all
 #'empty transects are included for every element of \code{lsub}. For example, when models are splitted according
@@ -99,38 +100,174 @@
 #'@section Author:Francois Rousseu, Christian Roy, Francois Bolduc
 
 #'@examples
-#'########################################
-#'### Simple models without stratification
+#'####################################################################
+#'### Simple models without stratification based on line transect data
 #'### Import and filter data
 #'data(alcidae)
-#'alcids <- mcds.filter(alcidae, transect.id = "WatchID", distance.field = "Distance", distance.labels = c("A", "B", "C", "D"), 
-#'                          distance.midpoints = c(25, 75, 150, 250), effort.field = "WatchLenKm", lat.field = "LatStart", 
-#'                          long.field = "LongStart", sp.field = "Alpha", date.field = "Date") 
+#'alcids <- mcds.filter(alcidae,
+#'                      transect.id = "WatchID",
+#'                      distance.field = "Distance",
+#'                      distance.labels = c("A", "B", "C", "D"),
+#'                      distance.midpoints = c(25, 75, 150, 250),
+#'                      effort.field = "WatchLenKm", lat.field = "LatStart",
+#'                      long.field = "LongStart",
+#'                      sp.field = "Alpha",
+#'                      date.field = "Date") 
 #'
 #'### Run analysis with the MCDS engine. Here, the WatchID is used as the sample.
-#'dist.out1 <- mcds.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
-#'                          units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
-#'                                     Distance_units="Meters",Area_units="Square kilometers"),
-#'                          breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
-#'                          STR_LABEL="STR_LABEL", STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
-#'                          path="c:/temp/distance",
-#'                          pathMCDS="C:/Distance 6",verbose=FALSE)
+#'dist.out1 <- mcds.wrap(alcids,
+#'                       SMP_EFFORT="WatchLenKm",
+#'                       DISTANCE="Distance",
+#'                       SIZE="Count",
+#'                       Type="Line",
+#'                       units=list(Distance="Perp",
+#'                                  Length_units="Kilometers",
+#'                                  Distance_units="Meters",
+#'                                  Area_units="Square kilometers"),
+#'                       breaks=c(0,50,100,200,300),
+#'                       estimator=list(c("HN","CO")),
+#'                       STR_LABEL="STR_LABEL",
+#'                       STR_AREA="STR_AREA",
+#'                       SMP_LABEL="WatchID",
+#'                       path="c:/temp/distance",
+#'                       pathMCDS="C:/Distance 7.2",
+#'                       verbose=FALSE)
 #'
 #'summary(dist.out1)
+#'
 #'### Run separate analysis for years 2008-2009
-#'dist.out2 <- mcds.wrap(alcids, SMP_EFFORT="WatchLenKm",DISTANCE="Distance",SIZE="Count",
-#'                           units=list(Type="Line",Distance="Perp",Length_units="Kilometers",
-#'                                      Distance_units="Meters",Area_units="Square kilometers"),
-#'                           breaks=c(0,50,100,200,300), estimator=list(c("HN","CO")),
-#'                           lsub=list(Year=c(2008,2009)), split=TRUE, empty="Year",
-#'                           STR_AREA="STR_AREA",SMP_LABEL="WatchID", 
-#'                           path="c:/temp/distance",
-#'                          pathMCDS="C:/Distance 6",verbose=FALSE)
+#'alcids$Year <- substr(alcids$Date, start = 1, stop = 4)
+#'alcids$Year <- as.numeric(alcids$Year)
+#'
+#'dist.out2 <- mcds.wrap(alcids,
+#'                       SMP_EFFORT="WatchLenKm",
+#'                       DISTANCE="Distance",
+#'                       SIZE="Count",
+#'                       Type="Line",
+#'                       units=list(Distance="Perp",
+#'                                  Length_units="Kilometers",
+#'                                  Distance_units="Meters",
+#'                                  Area_units="Square kilometers"),
+#'                       breaks=c(0,50,100,200,300),
+#'                       estimator=list(c("HN","CO")),
+#'                       lsub=list(Year=c(2007,2008)),
+#'                       split=TRUE,
+#'                       empty="Year",
+#'                       STR_AREA="STR_AREA",
+#'                       SMP_LABEL="WatchID",
+#'                       path="c:/temp/distance",
+#'                       pathMCDS="C:/Distance 7.2",
+#'                       verbose=FALSE)
 #'
 #'### Get the names of the different models produced
 #'names(dist.out2)
+#'
 #'#####summary for the Year 2008 model
 #'summary(dist.out2[["2008"]])
+#'
+#'#'####################################################################
+#'### Simple models without stratification based on point transect data
+#'library(AHMbook)
+#'#########################
+#'# Data simulation  #
+#'########################
+#'ll <- list()
+#'j <- 1:100
+#'al <- sample(300:1000, max(j))
+
+#'for (i in j){
+#'  simu.data <- sim.pdata(N = al[i],
+#'                         sigma = 1,
+#'                         B = 3,
+#'                         keep.all = TRUE,
+#'                         show.plot = TRUE)
+#'  print(simu.data$N.real)
+#'  tmp <- sim.pdata(N = al[i],
+#'                   sigma = 1,
+#'                   keep.all = FALSE,
+#'                   show.plot = FALSE)
+#'  ll[[i]] <- tmp
+#'}
+
+
+#'delta <- 0.5 # Width of distance bins
+#'B <- 3 # Max count distance
+#'dist.breaks <- seq(0, B, delta) # Make the interval cut points
+#'dclass <- lapply(ll, function(i){
+#'  i$d %/% delta + 1
+#'})
+#'nD <- length(dist.breaks) - 1 # How many intervals do you have
+
+##########################
+### Dataframe building ###
+#########################
+#'DF <- data.frame()
+#'for(i in 1:length(ll)){
+#'  transect.id <- rep(paste("sp1", i, sep = ""), length(dclass[[i]]))
+#'  d.field <- dclass[[i]]
+#'  effort.field <- rep(1, length(dclass[[i]])) 
+#'  lat.field <- rep(47.0, length(dclass[[i]]))
+#'  long.field <- rep((-45.24 + i), length(dclass[[i]]))
+#'  sp.field <- rep("Piou", length(dclass[[i]]))
+#'  date.field <- rep("2019-03-15", length(dclass[[i]])) 
+#'  Count <- rep(1, length(dclass[[i]]))
+#'  real.abun <- rep(ll[[i]]$N.real, length(dclass[[i]]))
+  
+#'  dt <- data.frame(transect.id ,
+#'                   d.field,
+#'                   effort.field,
+#'                   lat.field,
+#'                   long.field,
+#'                   sp.field,
+#'                   date.field,
+#'                   Count,
+#'                   real.abun)
+#'  DF <- rbind(DF, dt)
+  
+#'}
+
+#'# Convert numerical distance value to categorical with letters
+#'DF$distance.field <- LETTERS[DF$d.field]
+#'DF$distance.field <- as.factor(DF$distance.field)
+
+#'summary(DF)
+
+#'###################
+#'###### Model ######
+#'###################
+#'library(R2MCDS)
+#'DF.1 <- mcds.filter(DF,
+#'                    transect.id = "transect.id",
+#'                    distance.field = "distance.field",
+#'                    distance.labels <- c("A", "B", "C", "D", "E", "F"),
+#'                    distance.midpoints <- c(0.25, 0.75, 1.25, 1.75, 2.25, 2.75),
+#'                    effort.field = "effort.field",
+#'                    lat.field = "lat.field",
+#'                    long.field = "long.field",
+#'                    sp.field = "sp.field",
+#'                    date.field = "date.field")
+#'### Run analysis with the MCDS engine.
+#'mod1 <- mcds.wrap(DF1,
+#'                  SMP_EFFORT="WatchLenKm",
+#'                  DISTANCE="Distance",
+#'                  SIZE="Count",
+#'                  Type="Point",
+#'                  units=list(Distance="Radial",
+#'                             Length_units="Meters",
+#'                             Distance_units="Meters",
+#'                             Area_units="Square meters"),
+#'                   breaks=c(0, 0.5, 1, 1.50, 2, 2.50, 3),
+#'                   SMP_LABEL="WatchID",
+#'                   STR_LABEL="STR_LABEL",
+#'                   STR_AREA="STR_AREA",
+#'                   estimator=list(c("HN","CO")),
+#'                   multiplier = c(1, 0, 0),
+#'                   path="c:/temp/distance",
+#'                   pathMCDS="C:/Distance 7.2",
+#'                   verbose=FALSE)
+#'mod1
+#'summary(mod1)
+#'plot.distanceFit(mod1)
 #'#END
 
 
@@ -143,9 +280,12 @@ mcds.wrap <-
            DISTANCE="DISTANCE",
            SIZE="SIZE",                												
            STR_LABEL="STR_LABEL",
-           STR_AREA="STR_AREA",												
-           units=list(Type="Line",Distance="Perp",Length_units="Kilometer",
-                      Distance_units="Meter",Area_units="Square kilometer"),
+           STR_AREA="STR_AREA",	
+           Type=c("Line", "Point", "Cue"),
+           units=list(Distance="Perp",
+                      Length_units="Kilometer",
+                      Distance_units="Meter",
+                      Area_units="Square kilometer"),
            breaks=c(0,50,100,200,300),
            covariates=NULL,
            factor=NULL,
@@ -154,57 +294,62 @@ mcds.wrap <-
            split=TRUE,
            rare=NULL, 
            period=NULL,
-           detection="All", 
-           monotone="Strict",
+           detection=c("All","Stratum"), 
+           monotone=c("Strict", "None","Weak"),
            estimator=NULL,
-           multiplier=c(2,0,0), 
+           multiplier=NULL, 
+           #multiplier = c(2, 0, 0),
            empty=NULL,
            verbose=FALSE
   ){
+    #print(match.call())
+    Type <- match.arg(Type) #Set Type = "Line" as the default value
+    detection <- match.arg(detection) # Set detection = "All" as the default value
+    monotone <- match.arg(monotone) # Set monotone = "Strict" as the default value
     
     ##Make sure input are correct
     #check for detection options
-    if(toupper(detection)%in%c("ALL","STRATUM")==FALSE)
-      stop("Detection options are 'All' or 'Stratum'")
     
-    if(toupper(monotone)%in%c("NONE","WEAK", "STRICT")==FALSE)
-      stop("monotone options are 'None', 'Weak' or 'Strict'")
+    if(toupper(Type)%in%c("CUE"))
+      stop("Cue count survey is not implemented in this package")
     
     #Check for monotone options
-    if(!is.null(covariates) & monotone!="none")
-      stop("monotone must be set to 'none' when  factors or covariates are included")
+    if(!is.null(covariates) & monotone!="None")
+      stop("Monotone must be set to 'None' when  factors or covariates are included")
     
-    if(!is.null(factor) & monotone!="none")
-      stop("monotone must be set to 'none' when  factors or covariates are included")
+    if(!is.null(factor) & monotone!="None")
+      stop("Monotone must be set to 'None' when  factors or covariates are included")
   
     #Check for units
-    if(length(units)!= 5)
-      stop("units list must includes values for Type, Distance, Length_units, Distance_units and Area_units")
-    
-    if(toupper(units$Type)%in%c("LINE","POINT", "CUE")==FALSE)
-      stop("Type of sampling available are: Line, Point or Cue")
+    if(length(units)!= 4)
+      stop("Units list must includes values for Distance, Length_units, Distance_units and Area_units")
     
     if(toupper(units$Distance)%in%c("PERP","RADIAL")==FALSE)
       stop("Type of distance available are: Perp or Radial")
     
-    if(toupper(units$Type)%in%c("POINT", "CUE") & toupper(units$Distance)!=c("RADIAL"))
-      stop("For Points and Cue sampling scheme Distance must be set to radial")
+    # if(toupper(units$Type)%in%c("POINT", "CUE") & toupper(units$Distance)!=c("RADIAL"))
+    #   stop("For Points and Cue sampling scheme Distance must be set to radial")
+    
+    # Automatic Distance unit when Type = Point
+    if(toupper(Type)%in%c("POINT") & toupper(units$Distance)!=c("RADIAL")) {
+      units$Distance <- c("Radial")
+      warning("Distance value has been replaced from 'Perp' to 'Radial'")
+    }
+    # Automatic Effort unit when Type = Point
+    if(toupper(Type)%in%c("POINT") & toupper(units$Length_units)!=c("NB OF POINTS")) {
+      units$Length_units <- c("Nb of Points")
+      warning("Effort value has been replaced to 'Nb of Points'")
+    }
     
     
-    if(toupper(units$Length_units)%in%c("CENTIMETERS", "METERS", "KILOMETERS", "MILES", 
-                                    "INCHES", "FEET", "YARDS", "NAUTICAL MILES")==FALSE)
-      stop("Distance units must be one of thse: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches', 
-           'Feet', 'Yards', Or 'Nautical Miles'")  
+    if(toupper(units$Length_units)%in%c("CENTIMETERS", "METERS", "KILOMETERS", "MILES", "INCHES", "FEET", "YARDS", "NAUTICAL MILES", "NB OF POINTS")==FALSE)
+      stop("Distance units must be one of these: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches','Feet', 'Yards', 'Nautical Miles', or 'Number of Points'")  
     
-    if(toupper(units$Distance_units)%in%c("CENTIMETERS", "METERS", "KILOMETERS", "MILES", 
-                                    "INCHES", "FEET", "YARDS", "NAUTICAL MILES")==FALSE)
-      stop("Distance units must be one of thse: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches', 
-           'Feet', 'Yards', Or 'Nautical Miles'")  
+    if(toupper(units$Distance_units)%in%c("CENTIMETERS", "METERS", "KILOMETERS", "MILES", "INCHES", "FEET", "YARDS", "NAUTICAL MILES")==FALSE)
+      stop("Distance units must be one of these: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches','Feet', 'Yards', Or 'Nautical Miles'")  
     
-    if(toupper(units$Area_units)%in%c("SQUARE CENTIMETERS", "SQUARE METERS", "SQUARE KILOMETERS", "SQUARE MILES", 
-                                          "SQUARE INCHES", "SQUARE FEET", "SQUARE YARDS", "HECTARES")==FALSE)
-      stop("Distance units must be one of thse: 'Centimeters', 'Meters', 'Kilometers', 'Miles', 'Inches', 
-           'Feet', 'Yards', Or 'Nautical Miles'")  
+    if(toupper(units$Area_units)%in%c("SQUARE CENTIMETERS", "SQUARE METERS", "SQUARE KILOMETERS", "SQUARE MILES","SQUARE INCHES", "SQUARE FEET", "SQUARE YARDS", "HECTARES")==FALSE)
+      stop("Distance units must be one of these: 'Square centimeters', 'Square meters', 'Square kilometers', 'Square miles', 'Square inches', 'Square feet', 'Square yards', Or 'Hectares'")  
     
     #get the list of arguments
     arguments<-as.list(environment())
@@ -222,8 +367,16 @@ mcds.wrap <-
         dataset[,factor[i]] <- as.character(dataset[,factor[i]])
       }   
     }
-    
-    
+
+    # Automatic values for multiplier argument depending on the type argument
+    if(is.null(multiplier)){
+      if(Type == "Line"){
+        multiplier <- c(2,0,0)
+      }else{
+        multiplier <- c(1,0,0)
+      }
+    }
+
     # this recursively fits a model to get an estimate of p for a rarer species
     if(!is.null(rare)){		
       if(!names(rare)%in%names(dataset)){stop(paste("The column",names(rare)[1],"not in dataset"))}
@@ -358,8 +511,12 @@ mcds.wrap <-
       
       opts2<-list()
       opts2["Options;"]<-""
-      opts2["Type="] <- paste(units$Type,";",sep="")
-      opts2["Length /Measure="] <- paste("'",units$Length_units,"';",sep="")
+      opts2["Type="] <- paste(Type,";",sep="")
+      
+      #opts2["Length /Measure="] <- paste("'",units$Length_units,"';",sep="")
+      if(Type=="Line"){
+        opts2["Length /Measure="] <- paste("'",units$Length_units,"';",sep="")
+      }
       if(units$Distance=="Perp"){
         opts2["Distance=Perp /Measure="] <- paste("'",units$Distance_units,"';",sep="")    
       }else{
@@ -520,8 +677,12 @@ mcds.wrap <-
       ### running distance
       run.cmd <- vector(mode="list",length=n.model)
       for(j in 1:n.model){
+        if(file.exists(file.path(pathMCDS,"MCDS.exe"))){
         cmd<-paste(shQuote(file.path(pathMCDS,"MCDS"))," 0, ",shQuote(file.path(path,inp.file[j])),sep="")
         run.cmd[j] <- try(system(cmd,wait=TRUE,ignore.stdout=FALSE,ignore.stderr=FALSE,invisible=TRUE), silent = TRUE)
+        }else{
+        stop("pathMCDS doesn't exist")
+        }
       }
       
       ####################################################
@@ -547,9 +708,12 @@ mcds.wrap <-
           }
           x<-readLines(file.path(path,res.file[j]))
           y<-readLines(file.path(path,det.file[j]))
-          ans<-vector(mode="list",length=10)
+          
+          #browser()
+          
+          ans<-vector(mode="list",length=11)
           ans[[1]]<- input.data
-          ans[[2]]<- model_fittingMCDS(x=x, units=units)
+          ans[[2]]<- model_fittingMCDS(x=x, units=units, Type=Type)
           ans[[3]]<- parameter_estimatesMCDS(x)
           ans[[4]]<- ifelse(!is.null(factor) | !is.null(covariates)==T,param_namesMCDS(x),"No covariates in the model") 
           ans[[5]]<- chi_square_testMCDS(x)
@@ -558,7 +722,8 @@ mcds.wrap <-
           ans[[8]]<- detection_probabilityMCDS(y, covariates=covariates)
           ans[[9]]<- AIC_MCDS(x)
           ans[[10]]<- path
-          names(ans)<-c("input_data","model_fitting","parameter_estimates","covar_key","chi_square_test","density_estimate","cluster_size","detection","AIC","path")
+          ans[[11]]<- unlist(strsplit(det.file[[j]], split = "." , fixed = TRUE))[1]
+          names(ans)<-c("input_data","model_fitting","parameter_estimates","covar_key","chi_square_test","density_estimate","cluster_size","detection","AIC","path", "Key_Adj")
           class(ans)<-"distanceFit"
           #list of model
           mans[[j]] <- ans

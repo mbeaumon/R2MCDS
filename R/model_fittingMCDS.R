@@ -1,10 +1,7 @@
 model_fittingMCDS <-
-function(x,units){
+function(x,units,Type){
 	#browser()
 	
-  #Change units type fro printing
-  units$Type <- c("Line Transect","Point Transect","Cue Count survey")[match(toupper(units$Type),c("LINE","POINT", "CUE"))]
-  #
   res<-vector("list",length=2)
 	names(res)<-c("Global","Stratum")
 	w<-grep("Detection Fct/Global/Parameter Estimates",x)
@@ -21,9 +18,10 @@ function(x,units){
 	  l<-sapply(l,function(i){
 	  	i<-paste(i[i!=""],collapse=" ")
 	  })[1]
+	  #browser()
 	  descrip <- c("effort","samples","width","left","observations")
-    units <- c(units$Length_units, units$Type, units$Distance_units, units$Distance_units, "clusters")
-	  ans<-data.frame(PARAMETERS=descrip, VALUES=ans, UNITS=units)
+    units <- c(units$Length_units, Type, units$Distance_units, units$Distance_units, "clusters")
+	  ans<-data.frame(PARAMETERS=descrip, VALUES=ans, UNITS=units, stringsAsFactors = FALSE)
 	  res$Global<-list()
 	  res$Global[[1]]<-ans
 	  res$Global[[2]]<-l
